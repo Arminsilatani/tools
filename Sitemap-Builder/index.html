@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+
+<title>Ultra Pro Sitemap Generator</title>
+
+<style>
+
+body{
+background:#0D0D0D;
+color:#f5f5f5;
+font-family:sans-serif;
+margin:0;
+padding:40px;
+}
+
+h1{
+color:#4ECDC4;
+margin-bottom:10px;
+}
+
+.card{
+background:#161616;
+padding:25px;
+border-radius:12px;
+margin-bottom:30px;
+box-shadow:0 0 0 1px #222;
+}
+
+input{
+background:#0D0D0D;
+border:1px solid #333;
+color:#f5f5f5;
+padding:10px;
+border-radius:6px;
+width:320px;
+}
+
+textarea{
+width:100%;
+height:240px;
+background:#0D0D0D;
+color:#f5f5f5;
+border:1px solid #333;
+padding:10px;
+margin-top:10px;
+font-family:monospace;
+border-radius:6px;
+}
+
+button{
+background:#4ECDC4;
+border:none;
+padding:8px 14px;
+border-radius:6px;
+cursor:pointer;
+margin-top:10px;
+font-weight:bold;
+}
+
+button:hover{
+opacity:0.9;
+}
+
+.section-title{
+color:#4ECDC4;
+margin-top:30px;
+}
+
+.report{
+background:#111;
+border:1px solid #222;
+padding:20px;
+border-radius:10px;
+font-size:14px;
+line-height:1.7;
+}
+
+.good{color:#4ECDC4}
+.warn{color:#ffcc66}
+.bad{color:#ff6b6b}
+
+</style>
+</head>
+
+<body>
+
+<h1>Ultra Pro Sitemap Generator</h1>
+
+<div class="card">
+
+<p>دامنه سایت</p>
+
+<input id="domain" placeholder="https://example.com">
+
+<br><br>
+
+<input type="file" webkitdirectory multiple id="folder">
+
+</div>
+
+<div id="output"></div>
+
+<div class="card">
+<h3 class="section-title">Processing Report</h3>
+<div id="report" class="report"></div>
+</div>
+
+<script>
+
+function copy(id){
+let t=document.getElementById(id)
+t.select()
+document.execCommand("copy")
+}
+
+document.getElementById("folder").addEventListener("change",async e=>{
+
+let domain=document.getElementById("domain").value.replace(/\/$/,'')
+
+let files=[...e.target.files]
+
+let htmlFiles=files.filter(f=>f.name.endsWith(".html"))
+
+let report=[]
+let images=[]
+let videos=[]
+let sections={}
+let roots={}
+
+for(const file of htmlFiles){
+
+let text=await file.text()
+
+let doc=new DOMParser().parseFromString(text,"text/html")
+
+let robots=doc.querySelector('meta[name="robots"]')
+
+if(robots && robots.content.includes("noindex")){
+report.push(`<span class="warn">noindex skipped:</span> ${file.webkitRelativePath}`)
+continue
+}
+
+let canonical=doc.querySelector('link[rel="canonical"]')
+
+let path=file.webkitRelativePath.replace(/index\.html$/,'').replace('.html','')
+
+let parts=path.split("/")
+
+let lang=parts[0]
+
+let rest=parts.slice(1)
+
+let section=rest[0] || "_root_"
+
+let slug=rest.join("/")
+
+let url=domain+"/"+path
+
+if(canonical){
+url=canonical.href
+}
+
+if(section=="_root_"){
+
+if(!roots[slug]) roots[slug]={}
+
+roots[slug][lang]=url
+
+}else{
+
+if(!sections[section]) sections[section]={}
+
+if(!sections[section][slug]) sections[section][slug]={}
+
+sections[section][slug][lang]=url
+
+}
+
+doc.querySelectorAll("img").forEach(i=>{
+
+let src=i.getAttribute("src")||i.getAttribute("data-src")
+
+if(src){
+
+if(!src.startsWith("http")) src=domain+"/"+src.replace(/^\//,'')
+
+images.push(src)
+
+}
+
+})
+
+doc.querySelectorAll("video source").forEach(v=>{
+
+if(v.src) videos.push(v.src)
+
+})
+
+doc.querySelectorAll("iframe").forEach(v=>{
+
+if(v.src.includes("youtube")||v.src.includes("vimeo"))
+
+videos.push(v.src)
+
+})
+
+}
+
+function priority(url){
+
+let depth=url.split("/").length-3
+
+if(depth<=1) return "1.0"
+
+if(depth==2) return "0.8"
+
+if(depth==3) return "0.6"
+
+return "0.5"
+
+}
+
+function changefreq(url){
+
+let depth=url.split("/").length-3
+
+if(depth<=1) return "daily"
+
+if(depth==2) return "weekly"
+
+return "monthly"
+
+}
+
+function buildMap(data){
+
+let xml=""
+
+for(let slug in data){
+
+let langs=data[slug]
+
+let base=Object.values(langs)[0]
+
+xml+=`<url>
+<loc>${base}</loc>
+<priority>${priority(base)}</priority>
+<changefreq>${changefreq(base)}</changefreq>
+`
+
+for(let l in langs){
+
+xml+=`<xhtml:link rel="alternate" hreflang="${l}" href="${langs[l]}"/>`
+
+}
+
+xml+=`<xhtml:link rel="alternate" hreflang="x-default" href="${base}"/>`
+
+xml+=`</url>`
+
+}
+
+return xml
+
+}
+
+function wrap(xml){
+
+return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+xmlns:xhtml="http://www.w3.org/1999/xhtml">
+${xml}
+</urlset>`
+
+}
+
+let out=""
+
+let index=[]
+
+if(Object.keys(roots).length){
+
+let map=wrap(buildMap(roots))
+
+out+=`<div class="card"><h3>page-sitemap.xml</h3>
+<button onclick="copy('rootmap')">copy</button>
+<textarea id="rootmap">${map}</textarea></div>`
+
+index.push(`<sitemap><loc>${domain}/page-sitemap.xml</loc></sitemap>`)
+
+report.push(`<span class="good">Root pages:</span> ${Object.keys(roots).length}`)
+
+}
+
+for(let sec in sections){
+
+let map=wrap(buildMap(sections[sec]))
+
+let id="sec"+sec
+
+out+=`<div class="card"><h3>${sec}-sitemap.xml</h3>
+<button onclick="copy('${id}')">copy</button>
+<textarea id="${id}">${map}</textarea></div>`
+
+index.push(`<sitemap><loc>${domain}/${sec}-sitemap.xml</loc></sitemap>`)
+
+report.push(`<span class="good">${sec} pages:</span> ${Object.keys(sections[sec]).length}`)
+
+}
+
+if(images.length){
+
+let imgxml=`<?xml version="1.0" encoding="UTF-8"?>
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+${images.map(i=>`<url><loc>${i}</loc><image:image><image:loc>${i}</image:loc></image:image></url>`).join("")}
+
+</urlset>`
+
+out+=`<div class="card"><h3>image-sitemap.xml</h3>
+<button onclick="copy('imgmap')">copy</button>
+<textarea id="imgmap">${imgxml}</textarea></div>`
+
+index.push(`<sitemap><loc>${domain}/image-sitemap.xml</loc></sitemap>`)
+
+report.push(`<span class="good">Images found:</span> ${images.length}`)
+
+}
+
+if(videos.length){
+
+let vidxml=`<?xml version="1.0" encoding="UTF-8"?>
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+
+${videos.map(v=>`<url><loc>${v}</loc>
+<video:video>
+<video:content_loc>${v}</video:content_loc>
+<video:title>Video</video:title>
+</video:video>
+</url>`).join("")}
+
+</urlset>`
+
+out+=`<div class="card"><h3>video-sitemap.xml</h3>
+<button onclick="copy('vidmap')">copy</button>
+<textarea id="vidmap">${vidxml}</textarea></div>`
+
+index.push(`<sitemap><loc>${domain}/video-sitemap.xml</loc></sitemap>`)
+
+report.push(`<span class="good">Videos found:</span> ${videos.length}`)
+
+}
+
+let sitemapIndex=`<?xml version="1.0" encoding="UTF-8"?>
+
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+${index.join("")}
+
+</sitemapindex>`
+
+out+=`<div class="card"><h3>sitemap.xml</h3>
+<button onclick="copy('mainmap')">copy</button>
+<textarea id="mainmap">${sitemapIndex}</textarea></div>`
+
+document.getElementById("output").innerHTML=out
+
+document.getElementById("report").innerHTML=report.join("<br>")
+
+})
+
+</script>
+
+</body>
+</html>
