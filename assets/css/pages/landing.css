@@ -1,6 +1,12 @@
-/* ----------------------------------------------------------- */
-/* استایل عمومی صفحه                                          */
-/* ----------------------------------------------------------- */
+/*
+  Author: Armin Silatani
+  Date: 2026-04-25
+  Version: 1.0.0
+*/
+
+/* ------------------------------------------------------------------
+   General Page Styles
+   ------------------------------------------------------------------ */
 body.landing {
   margin: 0;
   background: #0d0d0d;
@@ -24,89 +30,96 @@ body.landing {
   color: #aaa;
 }
 
-/* ----------------------------------------------------------- */
-/* سرچ باکس نئونی (اصلاح‌شده و ضدّ ضربه)                      */
-/* ----------------------------------------------------------- */
+/* ------------------------------------------------------------------
+   Floating Logos
+   ------------------------------------------------------------------ */
+.logo-floating {
+  position: fixed;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  animation: gentleFloat 10s infinite ease-in-out;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  will-change: transform, opacity;
+}
 
-/* انیمیشن ورود نرم */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
+@keyframes gentleFloat {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  25% {
+    transform: translateY(-8px) rotate(1deg) scale(1.02);
+  }
+  50% {
+    transform: translateY(-3px) rotate(-0.5deg) scale(0.98);
+  }
+  75% {
+    transform: translateY(-10px) rotate(0.8deg) scale(1.01);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg) scale(1);
   }
 }
 
+/* ------------------------------------------------------------------
+   Search Wrapper & Blur Overlay
+   ------------------------------------------------------------------ */
 .search-wrapper {
   width: 100%;
   display: flex;
   justify-content: center;
   padding-top: 120px;
   position: relative;
-  animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
 }
 
-/* ---------- خود باکس ---------- */
-.search-box {
-  position: relative;
+/* Hidden layer that blurs the floating logos behind the search box */
+.search-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 120px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 480px;
   max-width: 90vw;
-  height: 60px;
-  border-radius: 18px;
-  padding: 0 20px 0 52px;
+  height: 58px;
+  border-radius: 16px;
+  z-index: 0;
+  pointer-events: none;
+  backdrop-filter: blur(60px) grayscale(1) brightness(0.45);
+  -webkit-backdrop-filter: blur(60px) grayscale(1) brightness(0.45);
+  background: transparent;
+}
+
+/* ------------------------------------------------------------------
+   Search Box
+   ------------------------------------------------------------------ */
+.search-box {
+  position: relative;
+  z-index: 1;
+  width: 480px;
+  max-width: 90vw;
+  height: 58px;
+  border-radius: 16px;
+  padding: 0 18px 0 48px;
   display: flex;
   align-items: center;
-  transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1);
+  transition: background 0.35s ease;
   overflow: hidden;
-  z-index: 1;
-
-  /* ------------------------------------------------------- */
-  /* ترفند اصلی برای فعال شدن backdrop-filter                */
-  /* با transform: translateZ(0) مرورگر رو مجبور به         */
-  /* compositing مشترک با لوگوها می‌کنه                      */
-  /* ------------------------------------------------------- */
-  transform: translateZ(0);
-
-  /* پس‌زمینۀ تیره و بلر فوق‌العاده شدید */
-  background: rgba(6, 6, 10, 0.65);
-  backdrop-filter: blur(80px) grayscale(1) contrast(0.7) brightness(0.35);
-  -webkit-backdrop-filter: blur(80px) grayscale(1) contrast(0.7) brightness(0.35);
-
-  /* فول‌بک برای مرورگرهایی که backdrop-filter رو پشتیبانی نمی‌کنن */
-  @supports not (backdrop-filter: blur(1px)) {
-    background: rgba(6, 6, 10, 0.92);
-    /* یه تاریکی مضاعف که لوگوها کاملاً پشتش گم بشن */
-  }
-
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(13, 13, 13, 0.8);
+  border: none;
+  box-shadow: none;
+  animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+  top: 0;
 }
 
-/* ---------- حلقه نئونی چرخشی ---------- */
-@property --gradient-angle {
-  syntax: "<angle>";
-  initial-value: 0deg;
-  inherits: false;
-}
-
-@keyframes neonSpin {
-  0% {
-    --gradient-angle: 0deg;
-  }
-  100% {
-    --gradient-angle: 360deg;
-  }
-}
-
+/* Neon ring – becomes visible on focus */
 .search-box::before {
   content: "";
   position: absolute;
   inset: -3px;
   border-radius: inherit;
   background: conic-gradient(
-    from var(--gradient-angle),
+    from var(--gradient-angle) at 0px 110%,
     #ff00c1,
     #ff8c00,
     #00e5ff,
@@ -121,7 +134,7 @@ body.landing {
   filter: blur(10px);
 }
 
-/* ---------- خط اسکن ---------- */
+/* Scan line effect */
 .search-box::after {
   content: "";
   position: absolute;
@@ -139,7 +152,7 @@ body.landing {
   transition: transform 0.6s ease;
 }
 
-/* ---------- فوکوس: فعال شدن حلقه و اسکن ---------- */
+/* Focus state – reveal ring and scan, no shadow or border change */
 .search-box:focus-within::before {
   opacity: 1;
   animation-play-state: running;
@@ -150,16 +163,15 @@ body.landing {
 }
 
 .search-box:focus-within {
-  border-color: rgba(0, 229, 255, 0.5);
-  box-shadow:
-    0 0 25px rgba(0, 229, 255, 0.25),
-    0 0 60px rgba(255, 0, 193, 0.2),
-    0 0 0 1px rgba(255, 255, 255, 0.2),
-    inset 0 0 20px rgba(0, 229, 255, 0.1);
-  transform: translateY(-2px) translateZ(0); /* translateZ رو حفظ کن */
+  border: none;
+  box-shadow: none;
+  margin-top: 0;
+  background: rgba(13, 13, 13, 0.8);
 }
 
-/* ---------- آیکون ذره‌بین ---------- */
+/* ------------------------------------------------------------------
+   Search Icon & Input
+   ------------------------------------------------------------------ */
 .search-box .icon {
   width: 24px;
   height: 24px;
@@ -177,7 +189,6 @@ body.landing {
   filter: drop-shadow(0 0 6px rgba(0, 229, 255, 0.8));
 }
 
-/* ---------- فیلد ورودی ---------- */
 #search-input {
   width: 100%;
   height: 100%;
@@ -190,7 +201,6 @@ body.landing {
   caret-color: #00e5ff;
   font-weight: 400;
   letter-spacing: 0.3px;
-  transition: color 0.3s;
 }
 
 #search-input::placeholder {
@@ -205,4 +215,63 @@ body.landing {
 
 #search-input:not(:placeholder-shown) {
   text-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+}
+
+/* ------------------------------------------------------------------
+   Animations & Custom Properties
+   ------------------------------------------------------------------ */
+@property --gradient-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes neonSpin {
+  0%   { --gradient-angle: 0deg; }
+  100% { --gradient-angle: 360deg; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; top: 30px; }
+  to   { opacity: 1; top: 0; }
+}
+
+/* ------------------------------------------------------------------
+   Search Results Dropdown
+   ------------------------------------------------------------------ */
+.search-results {
+  position: absolute;
+  top: calc(120px + 64px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 480px;
+  max-width: 90vw;
+  z-index: 10;
+  overflow: hidden;
+  display: none;
+}
+
+.result-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  font-size: 15px;
+  color: #ddd;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.result-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.no-result {
+  padding: 12px 20px;
+  color: #777;
+  font-size: 14px;
+  text-align: center;
 }
