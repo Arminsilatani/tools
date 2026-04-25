@@ -1,0 +1,377 @@
+/*
+  Author: Armin Silatani
+  Date: 2026-04-25
+  Version: 1.0.0
+  Description: Ultra-modern, glassmorphic SaaS tool design — Accent: #00C2FF
+*/
+
+/* ============================== STYLES ============================== */
+
+/* ------------------------------ KALAMEH FONTS ------------------------------ */
+@font-face {
+  font-family: "Kalameh";
+  src: url("../../assets/fonts/KalamehWeb-Regular.woff2") format("woff2"),
+       url("../../assets/fonts/KalamehWeb-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Kalameh";
+  src: url("../../assets/fonts/KalamehWeb-Black.woff2") format("woff2"),
+       url("../../assets/fonts/KalamehWeb-Black.woff") format("woff");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ::::::::::::::::::::::::: GLOBAL RESET & BASE ::::::::::::::::::::::::: */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --accent: #00C2FF;
+  --accent-glow: rgba(0, 194, 255, 0.25);
+  --bg-deep: #0a0a0c;
+  --card-bg: rgba(18, 18, 20, 0.75);
+  --card-border: rgba(255, 255, 255, 0.07);
+  --text-primary: #f0f0f5;
+  --text-secondary: #9ca3af;
+  --radius-xl: 24px;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --shadow-card: 0 25px 45px -12px rgba(0,0,0,0.8), 0 0 0 1px var(--card-border);
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: 'Kalameh', sans-serif;            /* <-- فونت اصلی کل صفحه */
+  background-color: var(--bg-deep);
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(0,194,255,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, rgba(0,194,255,0.04) 0%, transparent 50%);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem 1.5rem;
+  line-height: 1.6;
+}
+
+/* ------------------------------ LAYOUT ------------------------------ */
+.app-wrapper {
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.logo-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: rgba(0,194,255,0.08);
+  border: 1px solid rgba(0,194,255,0.2);
+  border-radius: 18px;
+  margin-bottom: 1rem;
+  backdrop-filter: blur(10px);
+  transition: box-shadow 0.3s ease;
+}
+.logo-icon:hover {
+  box-shadow: 0 0 28px var(--accent-glow);
+}
+
+.logo-icon svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+h1 {
+  font-weight: 700;
+  font-family: 'Kalameh', sans-serif;            /* <-- تأکید بر استفاده از کلمه */
+  font-size: 2.25rem;
+  letter-spacing: -0.5px;
+  background: linear-gradient(to bottom, #ffffff, #b0c4de);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.35rem;
+}
+
+.subtitle {
+  font-family: 'Kalameh', sans-serif;
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+/* ------------------------------ CARDS (GLASSMORPHISM) ------------------------------ */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  padding: 2rem 2.25rem;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: var(--shadow-card);
+  margin-bottom: 2rem;
+  transition: box-shadow 0.25s ease;
+}
+.card:hover {
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8), 0 0 0 1px var(--card-border), 0 0 30px var(--accent-glow);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+.card-header h2,
+.card-header h3 {
+  font-weight: 600;
+  font-family: 'Kalameh', sans-serif;
+  font-size: 1.2rem;
+  color: #cbd5e1;
+  letter-spacing: -0.2px;
+}
+
+.section-title {
+  color: var(--accent);
+  font-size: 1.2rem;
+  font-weight: 600;
+  font-family: 'Kalameh', sans-serif;
+  margin-bottom: 1rem;
+}
+
+/* ------------------------------ FORM INPUTS ------------------------------ */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  font-family: 'Kalameh', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8b949e;
+  margin-bottom: 0.6rem;
+}
+
+.domain-input-wrapper {
+  position: relative;
+}
+.domain-input-wrapper input {
+  padding-right: 3rem;
+}
+
+.domain-icon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent);
+  font-size: 1.2rem;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+input {
+  width: 100%;
+  background: rgba(10,10,12,0.65);
+  border: 1.5px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius-md);
+  padding: 0.95rem 1.2rem;
+  font-family: 'Kalameh', sans-serif;            /* <-- فونت ورودی‌ها */
+  font-size: 0.95rem;
+  color: #f0f0f0;
+  outline: none;
+  transition: all 0.25s ease;
+  caret-color: var(--accent);
+}
+input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 18px var(--accent-glow);
+  background: rgba(10,10,12,0.85);
+}
+input::placeholder {
+  color: rgba(255,255,255,0.3);
+}
+
+/* File upload drop area */
+.file-upload-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 2rem 1.2rem;
+  border: 2px dashed rgba(255,255,255,0.15);
+  border-radius: var(--radius-lg);
+  background: rgba(10,10,12,0.5);
+  cursor: pointer;
+  transition: 0.2s ease;
+  text-align: center;
+  position: relative;
+  margin-top: 0.5rem;
+}
+.file-upload-area:hover,
+.file-upload-area.dragover {
+  border-color: var(--accent);
+  background: rgba(0,194,255,0.04);
+}
+.file-upload-area input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.upload-icon {
+  font-size: 2rem;
+  color: var(--accent);
+  opacity: 0.9;
+}
+.upload-text {
+  color: var(--text-secondary);
+  font-family: 'Kalameh', sans-serif;
+  font-size: 0.9rem;
+}
+.upload-text strong {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ------------------------------ BUTTONS ------------------------------ */
+.copy-btn-minimal,
+button {
+  background: transparent;
+  border: 1px solid rgba(0,194,255,0.4);
+  color: var(--accent);
+  padding: 0.5rem 1.2rem;
+  border-radius: 30px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(4px);
+  font-family: 'Kalameh', sans-serif;            /* <-- فونت دکمه‌ها */
+  letter-spacing: 0.3px;
+}
+.copy-btn-minimal:hover,
+button:hover {
+  background: rgba(0,194,255,0.1);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 15px rgba(0,194,255,0.4);
+}
+
+/* ------------------------------ OUTPUT CODE AREA ------------------------------ */
+.output-section {
+  margin-top: 0.5rem;
+}
+.output-card {
+  margin-bottom: 1.5rem;
+}
+.output-card .card-header {
+  margin-bottom: 0.75rem;
+}
+
+textarea {
+  width: 100%;
+  min-height: 200px;
+  background: rgba(10,10,12,0.8);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; /* monospace برای کدهای XML */
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #c9d1d9;
+  resize: vertical;
+  direction: ltr;
+  text-align: left;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  caret-color: var(--accent);
+}
+textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 24px rgba(0,194,255,0.3);
+}
+
+/* ------------------------------ REPORT ------------------------------ */
+.report {
+  background: transparent;
+  padding: 0.5rem 0;
+  font-family: 'Kalameh', sans-serif;
+  font-size: 0.95rem;
+  line-height: 2;
+}
+
+.good { color: #4ECDC4; }
+.warn { color: #ffcc66; }
+.bad  { color: #ff6b6b; }
+
+/* ------------------------------ FOOTER ------------------------------ */
+.footer {
+  padding: 130px 0 13px;
+  display: flex;
+  justify-content: center;
+}
+
+.footer-signature {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.footer-signature:hover {
+  opacity: 1;
+}
+
+.crafted {
+  font-size: 10px;
+  color: #7a7a7a;
+  letter-spacing: 0.08em;
+}
+
+.signature {
+  height: 20px;
+  transform: translateY(-2px);
+  opacity: 0.85;
+  filter: brightness(0.9) contrast(1.05);
+}
+
+/* ------------------------------ RESPONSIVE ------------------------------ */
+@media (max-width: 600px) {
+  body {
+    padding: 1.5rem 1rem;
+  }
+  .card {
+    padding: 1.5rem;
+  }
+  h1 {
+    font-size: 1.8rem;
+  }
+}

@@ -9,8 +9,8 @@
 /* ------------------------------ KALAMEH FONTS ------------------------------ */
 @font-face {
   font-family: "Kalameh";
-  src: url("../../fonts/KalamehWeb-Regular.woff2") format("woff2"),
-       url("../../fonts/KalamehWeb-Regular.woff") format("woff");
+  src: url("../../assets/fonts/KalamehWeb-Regular.woff2") format("woff2"),
+       url("../../assets/fonts/KalamehWeb-Regular.woff") format("woff");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -288,7 +288,7 @@ select:focus {
 
 /* ------------------------------ FOOTER ------------------------------ */
 .footer {
-  padding: 30px 0 2px;
+  padding: 30px 0 3px;
   display: flex;
   justify-content: center;
 }
@@ -305,17 +305,15 @@ select:focus {
   opacity: 1;
 }
 
-/* Final integrated values for 'crafted' and 'signature' */
 .crafted {
   font-size: 10px;
-  color: #8b949e;
+  color: #7a7a7a;
   letter-spacing: 0.08em;
 }
 
 .signature {
-  height: 24px;
-  width: auto;
-  opacity: 0.8;
-  filter: brightness(0.9) contrast(1.05);
+  height: 20px;
   transform: translateY(-2px);
+  opacity: 0.85;
+  filter: brightness(0.9) contrast(1.05);
 }

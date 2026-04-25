@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>Schema Builder کاملاً آفلاین | با فایل لوکال schema.org</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Tahoma, sans-serif; background: #f4f7fc; color: #222; padding: 20px; }
+    .container { max-width: 1000px; margin: auto; background: white; border-radius: 16px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    h1 { color: #0d6efd; margin-bottom: 5px; font-size: 28px; }
+    .subtitle { color: #555; margin-bottom: 25px; font-size: 14px; }
+    label { font-weight: bold; display: block; margin: 20px 0 6px; }
+    select, input, textarea, button { width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 10px; }
+    textarea { resize: vertical; min-height: 100px; }
+    button { background: #0d6efd; color: white; border: none; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+    button:hover { background: #0b5ed7; }
+    .card { background: #f8faff; padding: 18px; border-radius: 12px; margin: 15px 0; border: 1px solid #e0e5f0; }
+    .field-group { margin-bottom: 18px; }
+    .field-name { color: #0d6efd; font-weight: bold; }
+    .field-desc { font-size: 13px; color: #666; margin-bottom: 4px; }
+    .preview { background: #1e1e1e; color: #dcdcdc; padding: 18px; border-radius: 10px; font-family: monospace; white-space: pre-wrap; direction: ltr; text-align: left; max-height: 300px; overflow-y: auto; }
+    .status { font-size: 14px; color: #888; margin-top: 10px; }
+    .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #ccc; border-top-color: #0d6efd; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-left: 8px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #classSearch { margin-bottom: 15px; }
+    .nested-btn { background: #e7f1ff; color: #0d6efd; border: 1px solid #0d6efd; padding: 6px 14px; cursor: pointer; border-radius: 6px; margin-top: 6px; font-size: 14px; }
+    .file-area { border: 2px dashed #adb5bd; border-radius: 12px; padding: 25px; text-align: center; margin-bottom: 20px; background: #f8f9fa; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>✦ Schema.org Ultimate Builder (آفلاین)</h1>
+  <div class="subtitle">با یک‌بار بارگذاری فایل رسمی، تا ابد بدون اینترنت کار می‌کند — هیچ اسکیمایی جا نمی‌افتد</div>
+
+  <!-- بخش آپلود فایل (فقط در صورت نبود کش) -->
+  <div id="fileUploadSection" class="file-area hidden">
+    <h3>📂 لطفاً فایل <code>schemaorg-all-https.jsonld</code> را انتخاب کنید</h3>
+    <p style="margin:10px 0; color:#555;">این فایل را می‌توانید از <strong>https://schema.org/version/latest/schemaorg-all-https.jsonld</strong> با یک سیستم دیگر دانلود کرده و به این دستگاه منتقل کنید.</p>
+    <input type="file" id="fileInput" accept=".jsonld,.json" style="margin:15px 0;">
+    <p>یا فایل را اینجا بکشید و رها کنید</p>
+  </div>
+
+  <div id="loadingArea">
+    <span id="loadingText">در حال بررسی حافظهٔ محلی...</span> <span class="spinner" id="loadingSpinner"></span>
+  </div>
+
+  <div id="appArea" style="display: none;">
+    <label for="classSearch">🔍 جستجو و انتخاب نوع اسکیما:</label>
+    <input type="text" id="classSearch" placeholder="مثلاً: LocalBusiness, Recipe, Event, Product ..." autocomplete="off">
+    <select id="classSelect" size="8" style="height: auto; max-height: 200px; overflow-y: auto;"></select>
+
+    <div id="propertiesContainer"></div>
+
+    <button id="generateBtn">⚡ تولید JSON-LD</button>
+
+    <div class="card" id="outputCard" style="display: none;">
+      <h3 style="margin-bottom: 10px;">📋 خروجی JSON-LD:</h3>
+      <div class="preview" id="jsonPreview"></div>
+      <button id="copyBtn" style="margin-top: 10px;">📋 کپی در کلیپ‌بورد</button>
+      <button id="downloadBtn" style="margin-top: 10px; margin-right: 10px;">💾 دانلود فایل JSON</button>
+    </div>
+  </div>
+
+  <div class="status" id="statusMsg"></div>
+</div>
+
+<script>
+(async function() {
+  const FILE_UPLOAD_SECTION = document.getElementById('fileUploadSection');
+  const FILE_INPUT = document.getElementById('fileInput');
+  const LOADING_AREA = document.getElementById('loadingArea');
+  const LOADING_TEXT = document.getElementById('loadingText');
+  const LOADING_SPINNER = document.getElementById('loadingSpinner');
+  const APP = document.getElementById('appArea');
+  const STATUS = document.getElementById('statusMsg');
+  const CLASS_SEARCH = document.getElementById('classSearch');
+  const CLASS_SELECT = document.getElementById('classSelect');
+  const PROPS_CONTAINER = document.getElementById('propertiesContainer');
+  const GENERATE_BTN = document.getElementById('generateBtn');
+  const OUTPUT_CARD = document.getElementById('outputCard');
+  const JSON_PREVIEW = document.getElementById('jsonPreview');
+  const COPY_BTN = document.getElementById('copyBtn');
+  const DOWNLOAD_BTN = document.getElementById('downloadBtn');
+
+  let allClasses = [];            // {id, label, comment}
+  let classPropsMap = new Map();  // classId -> Set of {id, label, comment, rangeIncludes}
+  let selectedClass = null;
+
+  const CACHE_KEY = 'SCHEMA_OFFLINE_CACHE_V2';
+
+  // ذخیره‌سازی و بازیابی از localStorage
+  function saveToCache(classes, propsMap) {
+    try {
+      const data = {
+        classes,
+        propsMap: Array.from(propsMap.entries()).map(([k, v]) => [k, Array.from(v)])
+      };
+      localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      console.log('✅ داده‌های اسکیما در مرورگر ذخیره شد.');
+    } catch (e) {
+      console.warn('حافظهٔ محلی پر است، اما ابزار در این جلسه کار می‌کند.');
+    }
+  }
+
+  function loadFromCache() {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    try {
+      const parsed = JSON.parse(raw);
+      const propsMap = new Map();
+      for (const [key, arr] of parsed.propsMap) {
+        propsMap.set(key, new Set(arr));
+      }
+      return { classes: parsed.classes, propsMap };
+    } catch { return null; }
+  }
+
+  // پردازش داده‌های خام از فایل JSON-LD
+  function processGraphData(jsonData) {
+    const graph = jsonData['@graph'] || [];
+    const nodeMap = new Map();
+    for (const node of graph) if (node['@id']) nodeMap.set(node['@id'], node);
+
+    const classNodes = [];
+    const propertyNodes = [];
+    for (const node of graph) {
+      const types = node['@type'] || [];
+      if (types.includes('rdfs:Class')) classNodes.push(node);
+      else if (types.includes('rdf:Property')) propertyNodes.push(node);
+    }
+
+    const classes = [];
+    for (const cls of classNodes) {
+      const id = cls['@id'];
+      const label = cls['rdfs:label'] || id.split('/').pop().split('#').pop();
+      const comment = cls['rdfs:comment'] || '';
+      classes.push({ id, label, comment });
+    }
+    classes.sort((a, b) => a.label.localeCompare(b.label));
+
+    const propsMap = new Map();
+    for (const prop of propertyNodes) {
+      const propId = prop['@id'];
+      const domains = prop['schema:domainIncludes'] || prop['http://schema.org/domainIncludes'] || [];
+      const domainIds = (Array.isArray(domains) ? domains : [domains]).map(d => d['@id'] || d);
+      const rangeIncludes = prop['schema:rangeIncludes'] || prop['http://schema.org/rangeIncludes'] || [];
+      const propLabel = prop['rdfs:label'] || propId.split('/').pop();
+      const propComment = prop['rdfs:comment'] || '';
+
+      for (const domainId of domainIds) {
+        if (!propsMap.has(domainId)) propsMap.set(domainId, new Set());
+        propsMap.get(domainId).add({
+          id: propId,
+          label: propLabel,
+          comment: propComment,
+          rangeIncludes: (Array.isArray(rangeIncludes) ? rangeIncludes : [rangeIncludes]).map(r => r['@id'] || r)
+        });
+      }
+    }
+    return { classes, propsMap };
+  }
+
+  function initUI() {
+    LOADING_AREA.style.display = 'none';
+    FILE_UPLOAD_SECTION.classList.add('hidden');
+    APP.style.display = 'block';
+    STATUS.textContent = `✅ ${allClasses.length} نوع اسکیما بارگذاری شد. آفلاین و آماده.`;
+    renderClassList();
+  }
+
+  function renderClassList(filter = '') {
+    CLASS_SELECT.innerHTML = '';
+    const term = filter.trim().toLowerCase();
+    const filtered = term
+      ? allClasses.filter(c => c.label.toLowerCase().includes(term) || (c.comment && c.comment.toLowerCase().includes(term)))
+      : allClasses;
+    if (filtered.length === 0) {
+      CLASS_SELECT.innerHTML = '<option disabled>هیچ اسکیمایی پیدا نشد</option>';
+      return;
+    }
+    const toShow = filtered.slice(0, 200);
+    for (const cls of toShow) {
+      const opt = document.createElement('option');
+      opt.value = cls.id;
+      opt.textContent = cls.label + (cls.comment ? ' - ' + cls.comment.slice(0, 80) : '');
+      CLASS_SELECT.appendChild(opt);
+    }
+    if (filtered.length > 200) {
+      const opt = document.createElement('option');
+      opt.disabled = true;
+      opt.textContent = `(نمایش ۲۰۰ از ${filtered.length} — جستجو را دقیق‌تر کنید)`;
+      CLASS_SELECT.appendChild(opt);
+    }
+  }
+
+  CLASS_SEARCH.addEventListener('input', e => renderClassList(e.target.value));
+
+  CLASS_SELECT.addEventListener('change', () => {
+    const clsId = CLASS_SELECT.value;
+    if (!clsId) return;
+    selectedClass = allClasses.find(c => c.id === clsId);
+    if (!selectedClass) return;
+    OUTPUT_CARD.style.display = 'none';
+    renderPropertiesForm(selectedClass);
+  });
+
+  function renderPropertiesForm(cls) {
+    PROPS_CONTAINER.innerHTML = '';
+    const propsSet = classPropsMap.get(cls.id) || new Set();
+    if (propsSet.size === 0) {
+      PROPS_CONTAINER.innerHTML = '<p>این اسکیما پراپرتی ثبت‌شده‌ای ندارد (می‌توانید از پراپرتی‌های والد استفاده کنید).</p>';
+      return;
+    }
+    const propsArr = Array.from(propsSet).sort((a, b) => a.label.localeCompare(b.label));
+    PROPS_CONTAINER.innerHTML = `<h3 style="margin-top:20px;">📝 ویژگی‌های "${cls.label}":</h3>`;
+    for (const prop of propsArr) {
+      const expectedTypes = prop.rangeIncludes.map(r => r.split('/').pop()).join(', ') || 'Text';
+      const div = document.createElement('div');
+      div.className = 'field-group card';
+      div.innerHTML = `
+        <div class="field-name">${prop.label}</div>
+        <div class="field-desc">${prop.comment || ''}</div>
+        <div class="field-desc" style="color:#888;">نوع: ${expectedTypes}</div>
+        <input type="text" class="prop-input" data-property="${prop.label}" data-expected="${expectedTypes}" placeholder="مقدار...">
+        ${expectedTypes.split(',').some(t => ['Thing','Intangible','StructuredValue','Place','Organization','Person','PostalAddress','GeoCoordinates','Offer','AggregateRating','Review'].includes(t.trim())) ? 
+          '<button class="nested-btn">+ شیء تودرتو</button>' : ''}
+      `;
+      PROPS_CONTAINER.appendChild(div);
+    }
+    document.querySelectorAll('.nested-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const input = e.target.closest('.field-group').querySelector('input');
+        const firstType = input.dataset.expected.split(',')[0].trim();
+        const nestedType = allClasses.find(c => c.label === firstType || c.id.endsWith(firstType));
+        const msg = nestedType
+          ? `مقادیر "${firstType}" را به‌صورت JSON وارد کنید (مثال: {"name":"مثال"})`
+          : `نوع "${firstType}" در لیست نیست. JSON دستی وارد کنید:`;
+        const val = prompt(msg);
+        if (val) {
+          try { JSON.parse(val); input.value = val; } catch { alert('JSON نامعتبر'); }
+        }
+      });
+    });
+  }
+
+  GENERATE_BTN.onclick = () => {
+    if (!selectedClass) return alert('ابتدا یک اسکیما انتخاب کنید.');
+    const data = { '@context': 'https://schema.org', '@type': selectedClass.label };
+    document.querySelectorAll('.prop-input').forEach(inp => {
+      let v = inp.value.trim();
+      if (!v) return;
+      try { v = JSON.parse(v); } catch {}
+      data[inp.dataset.property] = v;
+    });
+    const jsonStr = JSON.stringify(data, null, 2);
+    JSON_PREVIEW.textContent = jsonStr;
+    OUTPUT_CARD.style.display = 'block';
+  };
+
+  COPY_BTN.onclick = () => navigator.clipboard.writeText(JSON_PREVIEW.textContent)
+    .then(() => STATUS.textContent = '✅ JSON-LD کپی شد.');
+  DOWNLOAD_BTN.onclick = () => {
+    const blob = new Blob([JSON_PREVIEW.textContent], {type: 'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (selectedClass?.label || 'schema') + '.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
+  // ===== بارگذاری اصلی =====
+  // ۱. بررسی کش
+  const cached = loadFromCache();
+  if (cached) {
+    allClasses = cached.classes;
+    classPropsMap = cached.propsMap;
+    LOADING_TEXT.textContent = 'بارگذاری از حافظهٔ محلی (کاملاً آفلاین)';
+    LOADING_SPINNER.style.display = 'none';
+    initUI();
+    return;
+  }
+
+  // ۲. اگر کش نبود، درخواست فایل از کاربر
+  LOADING_AREA.style.display = 'none';
+  FILE_UPLOAD_SECTION.classList.remove('hidden');
+  STATUS.textContent = '⚠️ برای اولین استفاده، فایل schemaorg-all-https.jsonld را بارگذاری کنید.';
+
+  function handleFile(file) {
+    if (!file) return;
+    LOADING_SPINNER.style.display = 'inline-block';
+    STATUS.textContent = 'در حال پردازش فایل اسکیماها...';
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const json = JSON.parse(e.target.result);
+        const { classes, propsMap } = processGraphData(json);
+        allClasses = classes;
+        classPropsMap = propsMap;
+        saveToCache(classes, propsMap);
+        initUI();
+      } catch (err) {
+        STATUS.textContent = '❌ فایل معتبر نیست. لطفاً فایل رسمی schemaorg-all-https.jsonld را انتخاب کنید.';
+        LOADING_SPINNER.style.display = 'none';
+        FILE_UPLOAD_SECTION.classList.remove('hidden');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  FILE_INPUT.addEventListener('change', e => {
+    if (e.target.files[0]) handleFile(e.target.files[0]);
+  });
+
+  // درگ اند دراپ
+  document.addEventListener('dragover', e => e.preventDefault());
+  document.addEventListener('drop', e => {
+    e.preventDefault();
+    if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+  });
+
+})();
+</script>
+</body>
+</html>

@@ -12,10 +12,10 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ------------------------- TOOLS DATA ------------------------- */
   const tools = [
     { name: "Service Generator", icon: "assets/images/logos/Sg.svg", url: "Service-Item-Generator" },
-    { name: "Sitemap Builder", icon: "assets/images/logos/Sm.svg", url: "#" },
-    { name: "Image Converter", icon: "assets/images/logos/Ic.svg", url: "#" },
+    { name: "Sitemap Builder", icon: "assets/images/logos/Sm.svg", url: "Sitemap-Builder" },
+    { name: "Image Converter", icon: "assets/images/logos/Ic.svg", url: "Image-Converter" },
     { name: "CRM & Accounting", icon: "assets/images/logos/Ca.svg", url: "#" },
-    { name: "Schema Generator", icon: "assets/images/logos/Sc.svg", url: "#" },
+    { name: "Schema Generator", icon: "assets/images/logos/Sc.svg", url: "Schema-Generator" },
     { name: "TOC Builder", icon: "assets/images/logos/Tb.svg", url: "#" },
     { name: "Text Editor", icon: "assets/images/logos/Te.svg", url: "#" },
     { name: "Bot Builder", icon: "assets/images/logos/Rb.svg", url: "#" },
