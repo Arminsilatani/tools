@@ -1,476 +1,132 @@
-<!---------------------------------------------------------------------
-  Author: Armin Silatani
-  Date: 2026-04-21
-  Version: 1.0.2
------------------------------------------------------------------------>
-
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Service Item Generator</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
 
-    <link rel="icon" type="image/png" href="Se.webp">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-    <style>
-        * {
-            margin: 0;
-            box-sizing: border-box;
-        }
+<title>Service Item Generator</title>
 
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: #0a0c0f;
-            color: #e6edf3;
-            padding: 24px;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+<link rel="stylesheet" href="../assets/css/main.css">
+<link rel="stylesheet" href="../assets/css/pages/service-generator.css">
 
-        .app-wrapper {
-            max-width: 1440px;
-            width: 100%;
-            margin: 0 auto;
-        }
+<link rel="icon" href="../assets/images/tools/service-generator.webp">
 
-        .title-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid #2d333b;
-        }
-
-        .logo-img {
-            height: 48px;
-            width: auto;
-            display: block;
-        }
-
-        h1 {
-            font-weight: 500;
-            font-size: 2rem;
-            letter-spacing: -0.02em;
-            color: #ffffff;
-            margin: 0;
-            line-height: 1.2;
-        }
-
-        .main-grid {
-            display: grid;
-            grid-template-columns: 380px 1fr;
-            gap: 24px;
-        }
-
-        .card {
-            background: #12161c;
-            border: 1px solid #2d333b;
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 20px 35px -8px rgba(0,0,0,0.6);
-            backdrop-filter: blur(2px);
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .card-header h2 {
-            font-weight: 500;
-            font-size: 1.3rem;
-            color: #b7bdc6;
-            letter-spacing: -0.01em;
-        }
-
-        .copy-btn-minimal {
-            background: transparent;
-            border: 1px solid #3a434e;
-            color: #b7bdc6;
-            padding: 6px 14px;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.15s;
-            backdrop-filter: blur(4px);
-            line-height: 1;
-        }
-
-        .copy-btn-minimal:hover {
-            background: #2d3743;
-            border-color: #4A90E2;
-            color: white;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-            color: #8b949e;
-            margin-bottom: 8px;
-        }
-
-        input, select {
-            width: 100%;
-            background: #0d1117;
-            border: 1.5px solid #2d333b;
-            border-radius: 12px;
-            padding: 12px 16px;
-            font-family: 'Inter', monospace;
-            font-size: 0.95rem;
-            color: #e6edf3;
-            transition: all 0.15s ease;
-            outline: none;
-        }
-
-        input:focus, select:focus {
-            border-color: #4A90E2;
-            box-shadow: 0 0 0 3px rgba(92, 158, 255, 0.15);
-        }
-
-        input::placeholder {
-            color: #525a63;
-            font-weight: 400;
-        }
-
-        .code-editor-wrapper {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            min-height: 580px;
-        }
-
-        #output-code {
-            flex: 1;
-            width: 100%;
-            min-height: 520px;
-            background: #0c1016;
-            border: 1px solid #2d333b;
-            border-radius: 14px;
-            padding: 16px;
-            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
-            font-size: 0.85rem;
-            line-height: 1.6;
-            color: #c9d1d9;
-            resize: vertical;
-            white-space: pre;
-            overflow: auto;
-            margin: 0;
-            direction: ltr;
-            text-align: left;
-            transition: border-color 0.2s;
-            caret-color: #4A90E2;
-        }
-
-        .typewriter-active {
-            caret-color: #4A90E2 !important;
-            animation: terminal-blink 0.9s infinite alternate !important;
-        }
-
-        @keyframes terminal-blink {
-            0% { border-color: #2d333b; }
-            100% { border-color: #4A90E2; }
-        }
-
-        #output-code:focus {
-            border-color: #4A90E2;
-            outline: none;
-        }
-
-        .inline-hint {
-            color: #6e7681;
-            font-size: 0.8rem;
-            margin-top: 4px;
-        }
-
-        .app-footer {
-            margin-top: 40px;
-            padding-top: 20px;
-            text-align: center;
-            border-top: 1px solid #2d333b;
-            font-size: 0.85rem;
-            color: #8b949e;
-        }
-
-        .app-footer a {
-            color: #b7bdc6;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .app-footer a:hover {
-            color: #ffffff;
-            text-decoration: underline;
-        }
-    </style>
 </head>
+
 <body>
-<div class="app-wrapper">
-    <div class="title-wrapper">
-        <img src="Se.webp" alt="Logo" class="logo-img">
-        <h1>Service Item Generator</h1>
-    </div>
 
-    <div class="main-grid">
-        <div class="card">
-            <div class="card-header">
-                <h2>Configuration</h2>
-            </div>
+<main class="tool-wrapper">
 
-            <form id="generator-form">
-                <div class="form-group">
-                    <label>Title</label>
-                    <input id="title" placeholder="e.g., Cluster Keyword Research" value="">
-                </div>
+<header class="tool-header">
 
-                <div class="form-group">
-                    <label>data-tab</label>
-                    <input id="tab" placeholder="general / specialist" value="">
-                </div>
+<img src="../assets/images/tools/service-generator.webp" class="tool-logo">
 
-                <div class="form-group">
-                    <label>data-package</label>
-                    <input id="pkg" placeholder="simple / premium" value="">
-                </div>
+<h1 class="tool-title">Service Item Generator</h1>
 
-                <div class="form-group">
-                    <label>data-category</label>
-                    <input id="category" placeholder="SEO / DESIGN" value="">
-                </div>
+</header>
 
-                <div class="form-group">
-                    <label>data-plan</label>
-                    <input id="plan" placeholder="STD_BAS_AUD" value="">
-                </div>
 
-                <div class="form-group">
-                    <label>data-group</label>
-                    <input id="data-group" placeholder="SEO-STD-SMP" value="">
-                </div>
+<section class="tool-grid">
 
-                <div class="form-group">
-                    <label>Checkbox variant</label>
-                    <select id="finalCheckboxClass">
-                        <option value="white-checkbox">white-checkbox</option>
-                        <option value="green-checkbox">green-checkbox</option>
-                        <option value="green-checkbox-checked" selected>green-checkbox-checked</option>
-                        <option value="yellow-checkbox">yellow-checkbox</option>
-                        <option value="yellow-checkbox-checked">yellow-checkbox-checked</option>
-                        <option value="red-checkbox">red-checkbox</option>
-                    </select>
-                    <div class="inline-hint">Checked variants appear pre-selected.</div>
-                </div>
+<div class="tool-card">
 
-                <div class="form-group">
-                    <label>Quantity control</label>
-                    <select id="hasQty">
-                        <option value="no" selected>No</option>
-                        <option value="yes">Yes (with +/-)</option>
-                    </select>
-                </div>
-            </form>
-        </div>
-
-        <div class="card" style="display: flex; flex-direction: column;">
-            <div class="card-header">
-                <h2>Generated HTML</h2>
-                <button id="copy-button" class="copy-btn-minimal">Copy to Clipboard</button>
-            </div>
-
-            <div class="code-editor-wrapper">
-                <textarea id="output-code" readonly placeholder="Your code will appear here..."></textarea>
-            </div>
-        </div>
-    </div>
-
-    <footer class="app-footer">
-        crafted by <a href="https://arminsilatani.com" target="_blank" rel="noopener">Armin Silatani</a>
-    </footer>
+<div class="tool-card-header">
+<h2>Configuration</h2>
 </div>
 
-<script>
-    (function() {
-        "use strict";
+<form id="generator-form">
 
-        let typewriterTimer = null;
-        const outputEl = document.getElementById('output-code');
+<div class="form-group">
+<label>Title</label>
+<input id="title" placeholder="Cluster Keyword Research">
+</div>
 
-        function prettyPrintHtml(html) {
-            let indent = 0;
-            const tab = '  ';
-            let formatted = html
-                .replace(/>\s*</g, '>\n<')
-                .replace(/(<[^/][^>]*>)/g, '\n$1')
-                .replace(/(<\/[^>]+>)/g, '$1\n')
-                .replace(/\n\s*\n/g, '\n')
-                .trim();
+<div class="form-group">
+<label>data-tab</label>
+<input id="tab">
+</div>
 
-            let lines = formatted.split('\n');
-            let result = [];
+<div class="form-group">
+<label>data-package</label>
+<input id="pkg">
+</div>
 
-            for (let line of lines) {
-                line = line.trim();
-                if (!line) continue;
-                if (line.match(/^<\/\w/)) indent = Math.max(0, indent - 1);
-                result.push(tab.repeat(indent) + line);
-                if (line.match(/^<\w[^>]*[^/]>$/) && !line.match(/\/>$/)) indent++;
-            }
-            return result.join('\n');
-        }
+<div class="form-group">
+<label>data-category</label>
+<input id="category">
+</div>
 
-        function generateServiceItem(cfg) {
-            const { tab, pkg, category, plan, title, finalClass, group, hasQty } = cfg;
+<div class="form-group">
+<label>data-plan</label>
+<input id="plan">
+</div>
 
-            const baseClass = finalClass;
-            const containerClass = `${finalClass}-container`;
-            const labelClass = "yellow-checkbox-checked-label";  // ⚠️ همیشه ثابت
-            const qtyAttr = hasQty === "yes" ? ' data-qty="1"' : '';
+<div class="form-group">
+<label>data-group</label>
+<input id="data-group">
+</div>
 
-            let titleHTML = "";
-            let qtyControls = "";
+<div class="form-group">
+<label>Checkbox Variant</label>
+<select id="finalCheckboxClass">
+<option value="white-checkbox">white-checkbox</option>
+<option value="green-checkbox">green-checkbox</option>
+<option value="green-checkbox-checked" selected>green-checkbox-checked</option>
+<option value="yellow-checkbox">yellow-checkbox</option>
+<option value="yellow-checkbox-checked">yellow-checkbox-checked</option>
+<option value="red-checkbox">red-checkbox</option>
+</select>
+</div>
 
-            if (hasQty === "yes") {
-                titleHTML = `<span class="qty-text">1</span>
-    <span class="sliding-text-container">
-        <span class="scrolling-text-inner sliding-text">${title || 'Untitled'}</span>
-    </span>`;
-                qtyControls = `<div class="qty-control-minimal">
-        <button type="button" class="qty-btn qty-plus">+</button>
-        <button type="button" class="qty-btn qty-minus">-</button>
-    </div>`;
-            } else {
-                titleHTML = title || 'Service name';
-            }
+<div class="form-group">
+<label>Quantity Control</label>
+<select id="hasQty">
+<option value="no">No</option>
+<option value="yes">Yes</option>
+</select>
+</div>
 
-            const qtySection = qtyControls ? `\n    ${qtyControls}` : '';
+</form>
 
-            return `
-<div class="sub-item" data-tab="${tab || ''}" data-package="${pkg || ''}"${qtyAttr}>
-    <span class="price-display">Calculating...</span>
+</div>
 
-    <label class="${containerClass}">
-        <input
-            type="checkbox"
-            class="${baseClass} service-checkbox"
-            data-category="${category || ''}"
-            data-plan="${plan || ''}"
-            data-group="${group || ''}"
-        >
-        <span class="${labelClass}">
-            ${titleHTML}
-        </span>
-    </label>${qtySection}
-</div>`;
-        }
 
-        function typewriterEffect(fullText) {
-            if (typewriterTimer) {
-                clearTimeout(typewriterTimer);
-                typewriterTimer = null;
-            }
+<div class="tool-card">
 
-            outputEl.classList.add('typewriter-active');
-            
-            let i = 0;
-            const baseSpeed = 12;
-            outputEl.value = '';
+<div class="tool-card-header">
 
-            function typeNext() {
-                if (i < fullText.length) {
-                    outputEl.value += fullText.charAt(i);
-                    i++;
-                    outputEl.scrollTop = outputEl.scrollHeight;
-                    
-                    const variance = Math.random() * 8 - 4;
-                    const speed = Math.max(5, baseSpeed + variance);
-                    
-                    typewriterTimer = setTimeout(typeNext, speed);
-                } else {
-                    outputEl.classList.remove('typewriter-active');
-                    typewriterTimer = null;
-                }
-            }
+<h2>Generated HTML</h2>
 
-            typeNext();
-        }
+<button id="copy-button" class="copy-btn">
+Copy
+</button>
 
-        const form = document.getElementById('generator-form');
-        const copyBtn = document.getElementById('copy-button');
+</div>
 
-        function getVal(id) {
-            return document.getElementById(id).value;
-        }
+<textarea id="output-code" class="code-editor" readonly></textarea>
 
-        function updateOutput() {
-            const cfg = {
-                tab: getVal('tab'),
-                pkg: getVal('pkg'),
-                category: getVal('category'),
-                plan: getVal('plan'),
-                group: getVal('data-group'),
-                title: getVal('title'),
-                finalClass: getVal('finalCheckboxClass'),
-                hasQty: getVal('hasQty')
-            };
+</div>
 
-            const rawHtml = generateServiceItem(cfg);
-            const prettyHtml = prettyPrintHtml(rawHtml);
+</section>
 
-            typewriterEffect(prettyHtml);
-        }
 
-        function fallbackCopy(text) {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
-        }
+<footer class="footer">
 
-        copyBtn.addEventListener('click', () => {
-            const text = outputEl.value;
-            if (!text) return;
+<div class="footer-signature">
 
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
-            } else {
-                fallbackCopy(text);
-            }
-            copyBtn.textContent = 'Copied';
-            setTimeout(() => { copyBtn.textContent = 'Copy to Clipboard'; }, 1500);
-        });
+<span class="crafted">crafted by</span>
 
-        form.addEventListener('input', updateOutput);
+<img src="../assets/images/signature.svg" class="signature">
 
-        document.addEventListener('DOMContentLoaded', () => {
-            updateOutput();
-        });
+</div>
 
-        window.addEventListener('beforeunload', () => {
-            if (typewriterTimer) {
-                clearTimeout(typewriterTimer);
-                outputEl.classList.remove('typewriter-active');
-            }
-        });
-    })();
-</script>
+</footer>
+
+</main>
+
+<script src="../assets/js/service-generator.js"></script>
+
 </body>
 </html>
