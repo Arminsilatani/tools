@@ -1,11 +1,15 @@
-document.addEventListener("DOMContentLoaded", () => {
-  /* =========================================
-     MAIN PAGE SCRIPTS
-     ========================================= */
+/*
+  ****************************************************
+  *  Author: Armin Silatani
+  *  Date: 2026-04-25
+  *  Version: 1.0.0
+  ****************************************************
+*/
 
-  /* ------------------------------------------------------------------
-     TOOLS DATA
-     ------------------------------------------------------------------ */
+/* =========================== MAIN PAGE SCRIPTS ============================ */
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ------------------------- TOOLS DATA ------------------------- */
   const tools = [
     { name: "Service Generator", icon: "assets/images/logos/Sg.svg", url: "Service-Item-Generator" },
     { name: "Sitemap Builder", icon: "assets/images/logos/Sm.svg", url: "#" },
@@ -21,9 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "Checklist Tool", icon: "assets/images/logos/Cl.svg", url: "#" }
   ];
 
-  /* ------------------------------------------------------------------
-     FLOATING LOGOS CLOUD
-     ------------------------------------------------------------------ */
+  /* ------------------------- FLOATING LOGOS CLOUD ------------------------- */
   const cloud = document.getElementById("logo-cloud");
   const MAX_LOGOS = 7;
   const SPAWN_INTERVAL = 3600;
@@ -42,21 +44,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const img = document.createElement("img");
     img.src = t.icon;
     img.className = "logo-floating";
-    const x = 10 + Math.random() * 80;
-    const y = 20 + Math.random() * 60;
-    img.style.left = x + "vw";
-    img.style.top = y + "vh";
+    img.style.left = (10 + Math.random() * 80) + "vw";
+    img.style.top = (20 + Math.random() * 60) + "vh";
     const size = 28 + Math.floor(Math.random() * 16);
     img.style.width = size + "px";
     img.style.height = size + "px";
-    const baseOpacity = 0.12 + Math.random() * 0.18;
-    img.style.opacity = baseOpacity;
+    img.style.opacity = 0.12 + Math.random() * 0.18;
     cloud.appendChild(img);
 
     setTimeout(() => {
       img.style.transition = "opacity 2s ease, transform 2s ease";
       img.style.opacity = "0";
-      img.style.transform = `translateY(-20px) scale(0.8)`;
+      img.style.transform = "translateY(-20px) scale(0.8)";
       setTimeout(() => img.remove(), 2000);
     }, LOGO_LIFETIME - 2000);
   }
@@ -66,58 +65,50 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(spawnLogo, i * 400);
   }
 
-  /* ------------------------------------------------------------------
-     SEARCH ENGINE
-     ------------------------------------------------------------------ */
+  /* ------------------------- SEARCH ENGINE ------------------------- */
   const searchWrapper = document.querySelector('.search-wrapper');
   const input = document.getElementById('search-input');
 
-  // Create and attach results container
+  // Results container
   const resultsDiv = document.createElement('div');
   resultsDiv.className = 'search-results';
   resultsDiv.style.display = 'none';
   searchWrapper.appendChild(resultsDiv);
 
-  // Handle search input
+  // Delegate clicks on result items
+  resultsDiv.addEventListener('click', (e) => {
+    const item = e.target.closest('.result-item');
+    if (!item) return;
+    const url = item.dataset.url;
+    if (url && url !== '#') {
+      window.open(url, '_blank');
+    } else {
+      alert('Coming Soon!!');
+    }
+  });
+
   input.addEventListener('input', () => {
     const query = input.value.trim().toLowerCase();
-    
+
     if (query === '') {
       resultsDiv.style.display = 'none';
       resultsDiv.innerHTML = '';
       return;
     }
 
-    // Filter tools, keep only the first match
-    let matches = tools.filter(tool => tool.name.toLowerCase().includes(query));
-    if (matches.length > 0) {
-      matches = matches.slice(0, 1);
-    }
+    const match = tools.find(tool => tool.name.toLowerCase().includes(query));
 
-    if (matches.length === 0) {
+    if (!match) {
       resultsDiv.innerHTML = '<div class="no-result">No result found</div>';
     } else {
-      resultsDiv.innerHTML = matches.map(tool => 
-        `<div class="result-item" data-url="${tool.url}">
-          <img src="${tool.icon}" alt="${tool.name}" class="result-icon">
-          <span>${tool.name}</span>
-        </div>`
-      ).join('');
+      resultsDiv.innerHTML = `
+        <div class="result-item" data-url="${match.url}">
+          <img src="${match.icon}" alt="${match.name}" class="result-icon">
+          <span>${match.name}</span>
+        </div>`;
     }
 
     resultsDiv.style.display = 'block';
-
-    // Attach click handlers to result items
-    document.querySelectorAll('.result-item').forEach(item => {
-      item.addEventListener('click', function() {
-        const url = this.dataset.url;
-        if (url && url !== '#') {
-          window.open(url, '_blank');
-        } else {
-          alert('No page defined for this tool. Please set the URL in the tools array.');
-        }
-      });
-    });
   });
 
   // Hide results on outside click
@@ -134,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Show results again when input is focused and has text
+  // Re‑show results if input is focused and has text
   input.addEventListener('focus', () => {
     if (input.value.trim() !== '') {
       resultsDiv.style.display = 'block';

@@ -3,10 +3,57 @@
   Date: 2026-04-25
   Version: 1.0.0
 */
+/* =========================
+   Kalameh Font Faces
+========================= */
 
-/* ------------------------------------------------------------------
-   General Page Styles
-   ------------------------------------------------------------------ */
+@font-face {
+  font-family: "Kalameh";
+  src: url("../../fonts/KalamehWeb-Regular.woff2") format("woff2"),
+       url("../../fonts/KalamehWeb-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Kalameh";
+  src: url("../../fonts/KalamehWeb-Black.woff2") format("woff2"),
+       url("../../fonts/KalamehWeb-Black.woff") format("woff");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* =========================
+   Base & Reset
+========================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  font-family: "Kalameh", system-ui, -apple-system, sans-serif;
+}
+
+main {
+  flex: 1;
+  display: flex;
+}
+
+/* =========================
+   Landing Page Overrides
+========================= */
+
 body.landing {
   margin: 0;
   background: #0d0d0d;
@@ -24,15 +71,45 @@ body.landing {
   align-items: center;
 }
 
+/* =========================
+   Footer & Signature
+========================= */
+
 .footer {
-  padding: 40px 20px;
-  text-align: center;
-  color: #aaa;
+  padding: 30px 0;
+  display: flex;
+  justify-content: center;
 }
 
-/* ------------------------------------------------------------------
+.footer-signature {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.footer-signature:hover {
+  opacity: 1;
+}
+
+.crafted {
+  font-size: 10px;
+  color: #7a7a7a;
+  letter-spacing: 0.08em;
+}
+
+.signature {
+  height: 20px;
+  transform: translateY(-2px);
+  opacity: 0.85;
+  filter: brightness(0.9) contrast(1.05);
+}
+
+/* =========================
    Floating Logos
-   ------------------------------------------------------------------ */
+========================= */
+
 .logo-floating {
   position: fixed;
   pointer-events: none;
@@ -61,12 +138,13 @@ body.landing {
   }
 }
 
-/* ------------------------------------------------------------------
-   Search Wrapper & Blur Overlay
-   ------------------------------------------------------------------ */
+/* =========================
+   Search Area
+========================= */
+
 .search-wrapper {
   width: 100%;
-  display: flex;
+  display: flex;                /* ← این خط رو اضافه کردم */
   justify-content: center;
   padding-top: 120px;
   position: relative;
@@ -90,9 +168,10 @@ body.landing {
   background: transparent;
 }
 
-/* ------------------------------------------------------------------
+/* =========================
    Search Box
-   ------------------------------------------------------------------ */
+========================= */
+
 .search-box {
   position: relative;
   z-index: 1;
@@ -112,7 +191,7 @@ body.landing {
   top: 0;
 }
 
-/* Neon ring – becomes visible on focus */
+/* Neon ring – visible on focus */
 .search-box::before {
   content: "";
   position: absolute;
@@ -152,7 +231,6 @@ body.landing {
   transition: transform 0.6s ease;
 }
 
-/* Focus state – reveal ring and scan, no shadow or border change */
 .search-box:focus-within::before {
   opacity: 1;
   animation-play-state: running;
@@ -169,9 +247,7 @@ body.landing {
   background: rgba(13, 13, 13, 0.8);
 }
 
-/* ------------------------------------------------------------------
-   Search Icon & Input
-   ------------------------------------------------------------------ */
+/* Search icon & input field */
 .search-box .icon {
   width: 24px;
   height: 24px;
@@ -217,9 +293,10 @@ body.landing {
   text-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
 }
 
-/* ------------------------------------------------------------------
-   Animations & Custom Properties
-   ------------------------------------------------------------------ */
+/* =========================
+   Custom Properties & Animations
+========================= */
+
 @property --gradient-angle {
   syntax: "<angle>";
   initial-value: 0deg;
@@ -236,9 +313,10 @@ body.landing {
   to   { opacity: 1; top: 0; }
 }
 
-/* ------------------------------------------------------------------
+/* =========================
    Search Results Dropdown
-   ------------------------------------------------------------------ */
+========================= */
+
 .search-results {
   position: absolute;
   top: calc(120px + 64px);
@@ -274,4 +352,24 @@ body.landing {
   color: #777;
   font-size: 14px;
   text-align: center;
+}
+
+/* =========================
+   Categories Links
+========================= */
+
+.categories {
+  display: flex;
+  gap: 30px;
+}
+
+.categories a {
+  color: var(--text-muted, #888);
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.categories a:hover {
+  color: var(--text, #fff);
 }

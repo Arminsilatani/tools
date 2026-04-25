@@ -1,0 +1,321 @@
+/*
+  Author: Armin Silatani
+  Date: 2026-04-25
+  Version: 1.0.0
+*/
+
+/* ============================== STYLES ============================== */
+
+/* ------------------------------ KALAMEH FONTS ------------------------------ */
+@font-face {
+  font-family: "Kalameh";
+  src: url("../../fonts/KalamehWeb-Regular.woff2") format("woff2"),
+       url("../../fonts/KalamehWeb-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Kalameh";
+  src: url("../../fonts/KalamehWeb-Black.woff2") format("woff2"),
+       url("../../fonts/KalamehWeb-Black.woff") format("woff");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ::::::::::::::::::::::::: GLOBAL RESET & BASE ::::::::::::::::::::::::: */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Kalameh', sans-serif;
+  background-color: #0d0d0d;
+  color: #F5F5F5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ------------------------------ LAYOUT ------------------------------ */
+.app-wrapper {
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo-img {
+  height: 40px;
+  width: auto;
+  display: block;
+}
+
+h1 {
+  font-weight: 500;
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+  color: #F5F5F5;
+  line-height: 1.2;
+}
+
+.main-grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 24px;
+}
+
+/* ------------------------------ CARDS (GLASSMORPHISM) ------------------------------ */
+.card {
+  background: rgba(13, 13, 13, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.card-header h2 {
+  font-weight: 500;
+  font-size: 1.3rem;
+  color: #b7bdc6;
+  letter-spacing: -0.01em;
+}
+
+/* ------------------------------ BUTTONS ------------------------------ */
+.copy-btn-minimal {
+  background: transparent;
+  border: 1px solid rgba(255, 107, 53, 0.4);
+  color: #FF6B35;
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  line-height: 1;
+}
+
+.copy-btn-minimal:hover {
+  background: rgba(255, 107, 53, 0.1);
+  border-color: #FF6B35;
+  color: #F5F5F5;
+  box-shadow: 0 0 15px rgba(255, 107, 53, 0.4);
+}
+
+/* ------------------------------ FORM ELEMENTS ------------------------------ */
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #8b949e;
+  margin-bottom: 8px;
+}
+
+input,
+select {
+  width: 100%;
+  background: rgba(13, 13, 13, 0.6);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-family: 'Kalameh', sans-serif;
+  font-size: 0.95rem;
+  color: #F5F5F5;
+  transition: all 0.3s ease;
+  outline: none;
+  caret-color: #FF6B35;
+}
+
+input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 400;
+}
+
+input:focus,
+select:focus {
+  border-color: #FF6B35;
+  box-shadow: 0 0 18px rgba(255, 107, 53, 0.3);
+  background: rgba(13, 13, 13, 0.8);
+}
+
+.inline-hint {
+  color: #6e7681;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+/* Custom Select Wrapper */
+.custom-select {
+  position: relative;
+  width: 100%;
+  user-select: none;
+}
+
+.custom-select .selected {
+  background: rgba(20, 20, 20, 0.55);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 14px 18px;
+  color: #F5F5F5;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: 0.25s ease;
+  backdrop-filter: blur(8px);
+}
+
+.custom-select .selected:hover {
+  border-color: rgba(255, 107, 53, 0.4);
+}
+
+.custom-select .options {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  background: rgba(15, 15, 15, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  list-style: none;
+  padding: 6px 0;
+  max-height: 260px;
+  overflow-y: auto;
+  display: none;
+  z-index: 999;
+  box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.7);
+  animation: fadeSlide 0.25s ease;
+}
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.custom-select .options li {
+  padding: 12px 18px;
+  color: #cfcfcf;
+  cursor: pointer;
+  transition: 0.2s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.custom-select .options li:hover {
+  background: rgba(255, 107, 53, 0.12);
+  color: #fff;
+}
+
+.custom-select .options::-webkit-scrollbar { width: 6px; }
+.custom-select .options::-webkit-scrollbar-thumb {
+  background: rgba(255, 107, 53, 0.4);
+  border-radius: 10px;
+}
+
+/* ------------------------------ CODE OUTPUT AREA ------------------------------ */
+.code-editor-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 580px;
+}
+
+#output-code {
+  flex: 1;
+  width: 100%;
+  min-height: 520px;
+  background: rgba(13, 13, 13, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 16px;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #c9d1d9;
+  resize: vertical;
+  white-space: pre;
+  overflow: auto;
+  margin: 0;
+  direction: ltr;
+  text-align: left;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  caret-color: #FF6B35;
+}
+
+.typewriter-active {
+  animation: terminal-blink 0.9s infinite alternate;
+}
+
+@keyframes terminal-blink {
+  0%   { border-color: rgba(255, 107, 53, 0.2); }
+  100% { border-color: #FF6B35; }
+}
+
+#output-code:focus {
+  border-color: #FF6B35;
+  box-shadow: 0 0 24px rgba(255, 107, 53, 0.3);
+  outline: none;
+}
+
+/* ------------------------------ FOOTER ------------------------------ */
+.footer {
+  padding: 30px 0 2px;
+  display: flex;
+  justify-content: center;
+}
+
+.footer-signature {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.footer-signature:hover {
+  opacity: 1;
+}
+
+/* Final integrated values for 'crafted' and 'signature' */
+.crafted {
+  font-size: 10px;
+  color: #8b949e;
+  letter-spacing: 0.08em;
+}
+
+.signature {
+  height: 24px;
+  width: auto;
+  opacity: 0.8;
+  filter: brightness(0.9) contrast(1.05);
+  transform: translateY(-2px);
+}

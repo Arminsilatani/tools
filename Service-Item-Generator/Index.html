@@ -1,132 +1,115 @@
+<!--
+  ===========================
+  Author: Armin Silatani
+  Date: 2026-04-25
+  Version: 1.0.0
+  ===========================
+-->
+<!-- =========================== SERVICE ITEM GENERATOR PAGE ============================ -->
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" dir="ltr">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Item Generator</title>
+    <meta name="robots" content="noindex, nofollow">
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>Service Item Generator</title>
-
-<link rel="stylesheet" href="../assets/css/main.css">
-<link rel="stylesheet" href="../assets/css/pages/service-generator.css">
-
-<link rel="icon" href="../assets/images/tools/service-generator.webp">
-
+    <!-- :::::::::::::::::::::::::: FAVICON & STYLES :::::::::::::::::::::::::: -->
+    <link rel="icon" type="image/png" href="../assets/images/logos/Sg.svg">
+    <link rel="stylesheet" href="../assets/css/ServiceItemGenerator.css">
 </head>
-
 <body>
+    <!-- =========================== MAIN WRAPPER ============================ -->
+    <div class="app-wrapper">
+        <!-- ------------------------- TITLE SECTION ------------------------- -->
+        <div class="title-wrapper">
+            <img src="../assets/images/logos/Sg.svg" alt="Logo" class="logo-img">
+            <h1>Service Item Generator</h1>
+        </div>
 
-<main class="tool-wrapper">
+        <!-- ------------------------- CONFIGURATION & OUTPUT ------------------------- -->
+        <div class="main-grid">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Configuration</h2>
+                </div>
 
-<header class="tool-header">
+                <form id="generator-form">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input id="title" placeholder="e.g., Cluster Keyword Research" value="">
+                    </div>
 
-<img src="../assets/images/tools/service-generator.webp" class="tool-logo">
+                    <div class="form-group">
+                        <label>data-tab</label>
+                        <input id="tab" placeholder="general / specialist" value="">
+                    </div>
 
-<h1 class="tool-title">Service Item Generator</h1>
+                    <div class="form-group">
+                        <label>data-package</label>
+                        <input id="pkg" placeholder="simple / premium" value="">
+                    </div>
 
-</header>
+                    <div class="form-group">
+                        <label>data-category</label>
+                        <input id="category" placeholder="SEO / DESIGN" value="">
+                    </div>
 
+                    <div class="form-group">
+                        <label>data-plan</label>
+                        <input id="plan" placeholder="STD_BAS_AUD" value="">
+                    </div>
 
-<section class="tool-grid">
+                    <div class="form-group">
+                        <label>data-group</label>
+                        <input id="data-group" placeholder="SEO-STD-SMP" value="">
+                    </div>
 
-<div class="tool-card">
+                    <div class="form-group">
+                        <label>Checkbox variant</label>
+                        <select id="finalCheckboxClass">
+                            <option value="white-checkbox">white-checkbox</option>
+                            <option value="green-checkbox">green-checkbox</option>
+                            <option value="green-checkbox-checked" selected>green-checkbox-checked</option>
+                            <option value="yellow-checkbox">yellow-checkbox</option>
+                            <option value="yellow-checkbox-checked">yellow-checkbox-checked</option>
+                            <option value="red-checkbox">red-checkbox</option>
+                        </select>
+                        <div class="inline-hint">Checked variants appear pre-selected.</div>
+                    </div>
 
-<div class="tool-card-header">
-<h2>Configuration</h2>
-</div>
+                    <div class="form-group">
+                        <label>Quantity control</label>
+                        <select id="hasQty">
+                            <option value="no" selected>No</option>
+                            <option value="yes">Yes (with +/-)</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
 
-<form id="generator-form">
+            <div class="card" style="display: flex; flex-direction: column;">
+                <div class="card-header">
+                    <h2>Generated HTML</h2>
+                    <button id="copy-button" class="copy-btn-minimal">Copy to Clipboard</button>
+                </div>
 
-<div class="form-group">
-<label>Title</label>
-<input id="title" placeholder="Cluster Keyword Research">
-</div>
+                <div class="code-editor-wrapper">
+                    <textarea id="output-code" readonly placeholder="Your code will appear here..."></textarea>
+                </div>
+            </div>
+        </div>
 
-<div class="form-group">
-<label>data-tab</label>
-<input id="tab">
-</div>
+        <!-- ------------------------- FOOTER ------------------------- -->
+        <footer class="footer">
+            <div class="footer-signature">
+                <span class="crafted">crafted by</span>
+                <img src="../assets/images/signature.svg" alt="Armin Silatani" class="signature">
+            </div>
+        </footer>
+    </div>
 
-<div class="form-group">
-<label>data-package</label>
-<input id="pkg">
-</div>
-
-<div class="form-group">
-<label>data-category</label>
-<input id="category">
-</div>
-
-<div class="form-group">
-<label>data-plan</label>
-<input id="plan">
-</div>
-
-<div class="form-group">
-<label>data-group</label>
-<input id="data-group">
-</div>
-
-<div class="form-group">
-<label>Checkbox Variant</label>
-<select id="finalCheckboxClass">
-<option value="white-checkbox">white-checkbox</option>
-<option value="green-checkbox">green-checkbox</option>
-<option value="green-checkbox-checked" selected>green-checkbox-checked</option>
-<option value="yellow-checkbox">yellow-checkbox</option>
-<option value="yellow-checkbox-checked">yellow-checkbox-checked</option>
-<option value="red-checkbox">red-checkbox</option>
-</select>
-</div>
-
-<div class="form-group">
-<label>Quantity Control</label>
-<select id="hasQty">
-<option value="no">No</option>
-<option value="yes">Yes</option>
-</select>
-</div>
-
-</form>
-
-</div>
-
-
-<div class="tool-card">
-
-<div class="tool-card-header">
-
-<h2>Generated HTML</h2>
-
-<button id="copy-button" class="copy-btn">
-Copy
-</button>
-
-</div>
-
-<textarea id="output-code" class="code-editor" readonly></textarea>
-
-</div>
-
-</section>
-
-
-<footer class="footer">
-
-<div class="footer-signature">
-
-<span class="crafted">crafted by</span>
-
-<img src="../assets/images/signature.svg" class="signature">
-
-</div>
-
-</footer>
-
-</main>
-
-<script src="../assets/js/service-generator.js"></script>
-
+    <!-- =========================== SCRIPTS ============================ -->
+    <script src="../assets/js/ServiceItemGenerator.js" defer></script>
 </body>
 </html>
