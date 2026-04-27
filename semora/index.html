@@ -1,364 +1,57 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ساختاردهی هوشمند اسکیما (Schema.org) - خودکار</title>
-    <style>
-        *{box-sizing:border-box}body{font-family:system-ui,'Segoe UI',Tahoma,sans-serif;background:#f5f7fb;margin:0;padding:24px 20px;color:#1e293b}.container{max-width:1400px;margin:0 auto}h1{font-size:1.9rem;font-weight:600;background:linear-gradient(135deg,#1e3c72,#2b4e7a);-webkit-background-clip:text;background-clip:text;color:transparent;margin:0 0 0.3rem 0}.sub{color:#475569;border-right:3px solid #3b82f6;padding-right:12px;margin-bottom:2rem}.card{background:#fff;border-radius:24px;box-shadow:0 8px 20px rgba(0,0,0,0.05);padding:1.5rem;margin-bottom:2rem;border:1px solid #e2e8f0}.card-header{font-weight:600;font-size:1.3rem;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;color:#0f172a;border-bottom:2px solid #eef2ff;padding-bottom:.5rem}input,select,textarea{width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:16px;font-size:.9rem;background:#fff;transition:.2s;font-family:monospace}input:focus,select:focus,textarea:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,0.2)}button{background:#3b82f6;border:none;color:#fff;padding:10px 20px;border-radius:40px;font-weight:500;cursor:pointer;transition:.2s;font-size:.9rem;margin:0 5px 5px 0}button:hover{background:#2563eb;transform:scale(0.98)}button.secondary{background:#64748b}button.secondary:hover{background:#475569}.search-select{position:relative}.class-list-dropdown{max-height:300px;overflow-y:auto;border:1px solid #e2e8f0;border-radius:20px;background:#fff;position:absolute;width:100%;z-index:10;box-shadow:0 10px 25px -5px rgba(0,0,0,0.1)}.class-item{padding:8px 12px;cursor:pointer;border-bottom:1px solid #f1f5f9}.class-item:hover{background:#eef2ff}.properties-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem;margin-top:1rem}.prop-card{background:#f8fafc;border-radius:20px;padding:.9rem;border:1px solid #e2e8f0}.prop-label{font-weight:600;font-size:.8rem;display:flex;justify-content:space-between;margin-bottom:6px}.badge{font-size:.7rem;background:#e6f0ff;padding:2px 8px;border-radius:30px;color:#1e40af}pre{background:#0f172a;color:#e2e8f0;padding:1rem;border-radius:20px;overflow-x:auto;font-size:.85rem;font-family:'Courier New',monospace}.flex-btns{display:flex;gap:10px;margin:1rem 0;flex-wrap:wrap}.alert{background:#fee2e2;border-radius:20px;padding:12px;color:#991b1b;margin:10px 0}.success{background:#dcfce7;color:#166534}.status-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:15px}.hidden{display:none}footer{text-align:center;font-size:.75rem;color:#62748c;margin-top:2rem}
-    </style>
+    <title>Semora – Complete Schema Composer</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/images/logos/Se.svg">
+    <link rel="stylesheet" href="../assets/css/Semora.css">
 </head>
 <body>
 <div class="container">
-    <h1>🧠 ساختاردهی هوشمند اسکیما (Schema.org)</h1>
-    <div class="sub">ابزار کاملاً خودکار · بدون نیاز به آپلود فایل · بارگذاری خودکار از اینترنت (فقط یک بار)</div>
+    <div class="header">
+        <img src="../assets/images/logos/Se.svg" alt="Semora logo" class="logo" width="40" height="40">
+        <h1>Semora</h1>
+    </div>
+    <div class="sub">Pick multiple schemas · Build a rich graph · FAQ & Multi‑language ready</div>
 
-    <div class="card">
-        <div class="card-header">📡 وضعیت بارگذاری دیتابیس</div>
+    <!-- Database status -->
+    <div class="card" id="dbCard">
+        <div class="card-header">Vocabulary Status</div>
         <div id="dbStatus" class="status-bar">
-            <span id="statusText">در حال بارگذاری خودکار فایل از سرور...</span>
+            <span id="statusText">Loading schema vocabulary…</span>
         </div>
         <div id="loadingStatus" class="alert hidden"></div>
-        <div id="statsInfo" style="margin-top: 10px; font-size:0.85rem; color:#475569;"></div>
-        <button id="manualRetryBtn" class="secondary hidden">🔄 تلاش مجدد برای بارگیری خودکار</button>
+        <div id="statsInfo" class="stats-info"></div>
+        <button id="manualRetryBtn" class="secondary hidden">Retry Loading</button>
     </div>
 
-    <div class="card hidden" id="selectionCard">
-        <div class="card-header">🏷️ 2. انتخاب نوع (Type)</div>
-        <div class="search-select">
-            <input type="text" id="classSearchInput" placeholder="جستجوی کلاس... مثلاً Person, Product, Movie" autocomplete="off">
-            <div id="classDropdown" class="class-list-dropdown hidden"></div>
-        </div>
-        <div id="selectedClassInfo" style="margin-top: 10px; font-style:italic;"></div>
-    </div>
-
-    <div class="card hidden" id="formCard">
-        <div class="card-header">✍️ 3. ویژگی‌های مربوط به <span id="currentTypeName"></span></div>
-        <div id="propertiesContainer" class="properties-grid"></div>
-        <div class="flex-btns">
-            <button id="generateBtn">🔮 تولید JSON-LD</button>
-            <button id="clearFormBtn" class="secondary">🧹 پاک کردن فرم</button>
+    <!-- Editor container (wizard) -->
+    <div class="card hidden" id="wizardCard">
+        <div class="wizard">
+            <div class="step-indicator" id="stepIndicator"></div>
+            <div class="step-content" id="stepContent"></div>
+            <div class="step-actions">
+                <button id="prevBtn" class="secondary" disabled>Previous</button>
+                <button id="nextBtn">Next</button>
+                <button id="finishBtn" class="hidden">Generate JSON‑LD</button>
+            </div>
         </div>
     </div>
 
+    <!-- Output -->
     <div class="card hidden" id="outputCard">
-        <div class="card-header">📄 خروجی JSON-LD</div>
-        <pre id="jsonOutput" style="white-space: pre-wrap;"></pre>
-        <button id="copyBtn" style="margin-top: 10px; background:#2c3e66;">📋 کپی در کلیپ‌بورد</button>
+        <div class="card-header">JSON‑LD Output</div>
+        <pre id="jsonOutput"></pre>
+        <div class="flex-btns">
+            <button id="copyBtn" class="primary">Copy to Clipboard</button>
+            <button id="restartBtn" class="secondary">Start Over</button>
+        </div>
     </div>
-    <footer>⚡ بدون نیاز به آپلود فایل · خودکار از مخزن رسمی schema.org نسخه 30.0 · ذخیره در حافظه مرورگر برای همیشه</footer>
+
+    <footer>Schema.org v30.0 · All classes & properties available · Works offline after first load</footer>
 </div>
 
-<script>
-    // ----- ابزار کمکی برای استخراج متن از rdfs:label (چندزبانه) -----
-    function extractStringValue(field) {
-        if (!field) return '';
-        if (typeof field === 'string') return field;
-        if (typeof field === 'object') {
-            if (field['@value']) return String(field['@value']);
-            if (field['@language'] && field['@value']) return String(field['@value']);
-            if (Array.isArray(field) && field.length) return extractStringValue(field[0]);
-        }
-        return String(field);
-    }
-
-    // ----- IndexedDB -----
-    const DB_NAME = 'SchemaOrgDB';
-    const STORE_NAME = 'schemaStore';
-    const KEY_NAME = 'mainSchema';
-
-    function openDB() {
-        return new Promise((resolve, reject) => {
-            const req = indexedDB.open(DB_NAME, 1);
-            req.onupgradeneeded = (e) => {
-                const db = e.target.result;
-                if (!db.objectStoreNames.contains(STORE_NAME)) db.createObjectStore(STORE_NAME);
-            };
-            req.onsuccess = () => resolve(req.result);
-            req.onerror = () => reject(req.error);
-        });
-    }
-
-    async function saveSchemaToDB(schemaData) {
-        const db = await openDB();
-        return new Promise((resolve, reject) => {
-            const tx = db.transaction(STORE_NAME, 'readwrite');
-            const store = tx.objectStore(STORE_NAME);
-            const req = store.put(schemaData, KEY_NAME);
-            req.onsuccess = () => resolve();
-            req.onerror = () => reject(req.error);
-            tx.oncomplete = () => db.close();
-        });
-    }
-
-    async function loadSchemaFromDB() {
-        const db = await openDB();
-        return new Promise((resolve, reject) => {
-            const tx = db.transaction(STORE_NAME, 'readonly');
-            const store = tx.objectStore(STORE_NAME);
-            const req = store.get(KEY_NAME);
-            req.onsuccess = () => resolve(req.result || null);
-            req.onerror = () => reject(req.error);
-            tx.oncomplete = () => db.close();
-        });
-    }
-
-    // ----- پردازش داده Schema (همان کد قبل، بدون تغییر) -----
-    let classesMap = new Map();
-    let propertiesMap = new Map();
-    let classList = [];
-    let currentClassId = null;
-    let currentFormValues = {};
-
-    const selectionCard = document.getElementById('selectionCard');
-    const formCard = document.getElementById('formCard');
-    const outputCard = document.getElementById('outputCard');
-    const classSearch = document.getElementById('classSearchInput');
-    const classDropdown = document.getElementById('classDropdown');
-    const selectedClassInfoSpan = document.getElementById('selectedClassInfo');
-    const currentTypeNameSpan = document.getElementById('currentTypeName');
-    const propertiesContainer = document.getElementById('propertiesContainer');
-    const generateBtn = document.getElementById('generateBtn');
-    const clearFormBtn = document.getElementById('clearFormBtn');
-    const jsonOutputPre = document.getElementById('jsonOutput');
-    const copyBtn = document.getElementById('copyBtn');
-    const statusTextSpan = document.getElementById('statusText');
-    const loadingDiv = document.getElementById('loadingStatus');
-    const statsSpan = document.getElementById('statsInfo');
-    const manualRetryBtn = document.getElementById('manualRetryBtn');
-
-    function showLoading(msg, isError = false) {
-        loadingDiv.textContent = msg;
-        loadingDiv.className = isError ? 'alert' : 'alert success';
-        loadingDiv.classList.remove('hidden');
-    }
-    function hideLoading() { loadingDiv.classList.add('hidden'); }
-
-    function processSchemaData(data) {
-        if (!data || !data['@graph']) throw new Error('ساختار فایل نامعتبر: @graph یافت نشد.');
-        const graph = data['@graph'];
-        classesMap.clear(); propertiesMap.clear(); classList = [];
-        // کلاس‌ها
-        for (const item of graph) {
-            const type = item['@type'];
-            const id = item['@id'];
-            if (!id) continue;
-            if (type === 'rdfs:Class' || (Array.isArray(type) && type.includes('rdfs:Class'))) {
-                const label = extractStringValue(item['rdfs:label']) || id.split(':')[1] || id;
-                const comment = extractStringValue(item['rdfs:comment']);
-                let subClassOf = null;
-                if (item['rdfs:subClassOf']) {
-                    const sc = item['rdfs:subClassOf'];
-                    if (sc['@id']) subClassOf = sc['@id'];
-                    else if (typeof sc === 'string') subClassOf = sc;
-                    else if (Array.isArray(sc) && sc[0]?.['@id']) subClassOf = sc[0]['@id'];
-                }
-                classesMap.set(id, { id, label, comment, subClassOf, directProps: [] });
-                classList.push({ id, label });
-            }
-            else if (type === 'rdf:Property' || (Array.isArray(type) && type.includes('rdf:Property'))) {
-                const label = extractStringValue(item['rdfs:label']) || id.split(':')[1] || id;
-                let domainIncludes = [];
-                const di = item['schema:domainIncludes'];
-                if (di) {
-                    const arr = Array.isArray(di) ? di : [di];
-                    domainIncludes = arr.map(d => d['@id']).filter(Boolean);
-                }
-                let rangeIncludes = [];
-                const ri = item['schema:rangeIncludes'];
-                if (ri) {
-                    const arr = Array.isArray(ri) ? ri : [ri];
-                    rangeIncludes = arr.map(r => r['@id']).filter(Boolean);
-                }
-                propertiesMap.set(id, { id, label, domainIncludesIds: domainIncludes, rangeIncludesIds: rangeIncludes });
-            }
-        }
-        // نسبت‌دهی مستقیم پراپرتی‌ها
-        for (const [propId, prop] of propertiesMap.entries()) {
-            for (const domainId of prop.domainIncludesIds) {
-                if (classesMap.has(domainId)) classesMap.get(domainId).directProps.push(propId);
-            }
-        }
-        // محاسبه ارث‌بری
-        const allPropsCache = new Map();
-        function getAllProps(classId, visited = new Set()) {
-            if (allPropsCache.has(classId)) return allPropsCache.get(classId);
-            if (visited.has(classId)) return [];
-            visited.add(classId);
-            const cls = classesMap.get(classId);
-            if (!cls) return [];
-            let inherited = [];
-            if (cls.subClassOf) {
-                const supers = Array.isArray(cls.subClassOf) ? cls.subClassOf : [cls.subClassOf];
-                for (const sup of supers) if (sup && classesMap.has(sup)) inherited.push(...getAllProps(sup, visited));
-            }
-            const all = [...new Set([...cls.directProps, ...inherited])];
-            allPropsCache.set(classId, all);
-            return all;
-        }
-        for (const classId of classesMap.keys()) classesMap.get(classId).allProps = getAllProps(classId);
-        classList.sort((a,b) => String(a.label).localeCompare(String(b.label)));
-        statsSpan.innerHTML = `✅ بارگذاری شد: <strong>${classesMap.size}</strong> کلاس و <strong>${propertiesMap.size}</strong> ویژگی.`;
-        selectionCard.classList.remove('hidden');
-        setupClassSearch();
-    }
-
-    // جستجو و انتخاب کلاس
-    let filteredClasses = [];
-    function setupClassSearch() {
-        classSearch.addEventListener('input', (e) => {
-            const term = e.target.value.trim().toLowerCase();
-            if (!term) { classDropdown.classList.add('hidden'); return; }
-            filteredClasses = classList.filter(c => String(c.label).toLowerCase().includes(term) || c.id.toLowerCase().includes(term));
-            if (filteredClasses.length) renderDropdown(filteredClasses);
-            else classDropdown.classList.add('hidden');
-        });
-        document.addEventListener('click', (e) => {
-            if (!classDropdown.contains(e.target) && e.target !== classSearch) classDropdown.classList.add('hidden');
-        });
-    }
-    function renderDropdown(items) {
-        classDropdown.innerHTML = '';
-        for (const item of items.slice(0, 100)) {
-            const div = document.createElement('div');
-            div.className = 'class-item';
-            div.textContent = `${item.label} (${item.id})`;
-            div.onclick = () => { selectClass(item.id); classDropdown.classList.add('hidden'); classSearch.value = item.label; };
-            classDropdown.appendChild(div);
-        }
-        if (items.length > 100) {
-            const more = document.createElement('div');
-            more.className = 'class-item';
-            more.textContent = `... و ${items.length-100} کلاس دیگر`;
-            classDropdown.appendChild(more);
-        }
-        classDropdown.classList.remove('hidden');
-    }
-    function selectClass(classId) {
-        if (!classesMap.has(classId)) return;
-        currentClassId = classId;
-        const cls = classesMap.get(classId);
-        selectedClassInfoSpan.innerHTML = `📌 ${cls.label} — ${cls.comment ? cls.comment.substring(0,120)+'…' : 'بدون توضیح'}`;
-        currentTypeNameSpan.innerText = cls.label;
-        buildFormForClass(classId);
-        formCard.classList.remove('hidden');
-        outputCard.classList.add('hidden');
-        currentFormValues = {};
-    }
-    function buildFormForClass(classId) {
-        propertiesContainer.innerHTML = '';
-        const cls = classesMap.get(classId);
-        if (!cls || !cls.allProps) return;
-        for (const propId of [...cls.allProps].sort()) {
-            const prop = propertiesMap.get(propId);
-            if (!prop) continue;
-            const div = document.createElement('div'); div.className = 'prop-card';
-            const labelSpan = document.createElement('div'); labelSpan.className = 'prop-label';
-            labelSpan.innerHTML = `<span>🔹 ${prop.label}</span> <span class="badge">${propId.replace('schema:', '')}</span>`;
-            let input;
-            const rangeTypes = (prop.rangeIncludesIds || []).map(r => r.replace('schema:', '')).join(', ');
-            const hasSimple = rangeTypes.split(',').some(t => ['Text','Number','Integer','Float','Date','DateTime','Time','Boolean','URL','Duration'].includes(t.trim()));
-            if (rangeTypes) {
-                const hint = document.createElement('div'); hint.style.fontSize='0.7rem'; hint.style.color='#4b5563'; hint.innerText = `ⓘ نوع: ${rangeTypes.substring(0,80)}`;
-                if (rangeTypes.includes('Boolean')) {
-                    const select = document.createElement('select');
-                    select.innerHTML = `<option value="">-- انتخاب --</option><option value="true">true</option><option value="false">false</option>`;
-                    input = select;
-                } else if (hasSimple) {
-                    input = document.createElement('input'); input.type = 'text'; input.placeholder = `مقدار (${rangeTypes.split(',')[0]})`;
-                } else {
-                    input = document.createElement('textarea'); input.rows = 2; input.placeholder = 'مقدار (object/array) — می‌توانید JSON وارد کنید';
-                }
-                div.appendChild(hint);
-            } else {
-                input = document.createElement('input'); input.type = 'text'; input.placeholder = 'مقدار دلخواه';
-            }
-            input.className = 'prop-input';
-            input.dataset.propid = propId;
-            if (currentFormValues[propId]) input.value = currentFormValues[propId];
-            div.appendChild(labelSpan);
-            div.appendChild(input);
-            propertiesContainer.appendChild(div);
-        }
-        attachInputListeners();
-    }
-    function attachInputListeners() {
-        document.querySelectorAll('.prop-input').forEach(inp => {
-            inp.removeEventListener('input', handleInputChange);
-            inp.addEventListener('input', handleInputChange);
-        });
-    }
-    function handleInputChange(e) { if (e.target.dataset.propid) currentFormValues[e.target.dataset.propid] = e.target.value; }
-    generateBtn.onclick = () => {
-        if (!currentClassId) { alert('لطفاً یک کلاس انتخاب کنید.'); return; }
-        const cls = classesMap.get(currentClassId);
-        const out = { "@context": "https://schema.org", "@type": cls.id.replace('schema:', '') };
-        for (const [propId, raw] of Object.entries(currentFormValues)) {
-            if (!raw || raw.trim() === '') continue;
-            let val = raw.trim();
-            if ((val.startsWith('{') && val.endsWith('}')) || (val.startsWith('[') && val.endsWith(']'))) try { val = JSON.parse(val); } catch(e) {}
-            else if (val === 'true') val = true;
-            else if (val === 'false') val = false;
-            else if (!isNaN(Number(val)) && val !== '') { let n = Number(val); if (isFinite(n)) val = n; }
-            out[propId.replace('schema:', '')] = val;
-        }
-        jsonOutputPre.textContent = JSON.stringify(out, null, 2);
-        outputCard.classList.remove('hidden');
-        outputCard.scrollIntoView({ behavior: 'smooth' });
-    };
-    clearFormBtn.onclick = () => { if (currentClassId) { currentFormValues = {}; buildFormForClass(currentClassId); } };
-    copyBtn.onclick = () => { const t = jsonOutputPre.textContent; if(t) navigator.clipboard.writeText(t).then(()=>alert('✅ کپی شد')).catch(()=>alert('خطا')); };
-
-    // ---------- بارگذاری خودکار از لینک مستقیم گیت‌هاب (CORS مجاز) ----------
-    const SCHEMA_URL = 'https://raw.githubusercontent.com/schemaorg/schemaorg/main/data/releases/30.0/schemaorg-all-https.jsonld';
-
-    async function fetchAndCacheSchema() {
-        showLoading('در حال دریافت فایل schema.org از اینترنت (حدود 1.5 مگابایت)... این کار فقط یک بار انجام می‌شود.');
-        try {
-            const response = await fetch(SCHEMA_URL);
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
-            await saveSchemaToDB(data);
-            hideLoading();
-            statusTextSpan.innerHTML = '✅ فایل با موفقیت از اینترنت دریافت و در حافظه ذخیره شد.';
-            manualRetryBtn.classList.add('hidden');
-            return data;
-        } catch (err) {
-            console.error(err);
-            showLoading(`خطا در دریافت خودکار: ${err.message}. لطفاً اتصال اینترنت خود را بررسی کنید یا بعداً دکمه تلاش مجدد را بزنید.`, true);
-            manualRetryBtn.classList.remove('hidden');
-            return null;
-        }
-    }
-
-    async function initialize() {
-        // 1. ابتدا از حافظه داخلی بخوان
-        let cached = await loadSchemaFromDB();
-        if (cached) {
-            processSchemaData(cached);
-            statusTextSpan.innerHTML = '✅ فایل از حافظه داخلی مرورگر بارگذاری شد. (آفلاین)';
-            hideLoading();
-            manualRetryBtn.classList.add('hidden');
-            return;
-        }
-        // 2. اگر در حافظه نبود، از اینترنت دریافت کن
-        const fresh = await fetchAndCacheSchema();
-        if (fresh) {
-            processSchemaData(fresh);
-            hideLoading();
-        } else {
-            // خطا: هیچ داده‌ای در دسترس نیست
-            statusTextSpan.innerHTML = '⚠️ فایل در حافظه موجود نیست و اتصال به اینترنت برقرار نشد. لطفاً بعداً دکمه تلاش مجدد را بزنید.';
-        }
-    }
-
-    manualRetryBtn.onclick = () => {
-        manualRetryBtn.classList.add('hidden');
-        initialize();
-    };
-
-    // اجرای اولیه
-    initialize();
-</script>
+<script src="../assets/js/Semora.js"></script>
 </body>
 </html>
