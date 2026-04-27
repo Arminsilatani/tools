@@ -332,7 +332,7 @@ textarea:focus {
 
 /* ------------------------------ FOOTER ------------------------------ */
 .footer {
-  padding: 130px 0 13px;
+  padding: 30px 0 3px;
   display: flex;
   justify-content: center;
 }

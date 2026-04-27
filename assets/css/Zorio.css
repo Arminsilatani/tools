@@ -478,46 +478,37 @@ hr {
             margin-bottom: 1rem;
         }
 
-        /* ------------------------- FOOTER ------------------------- */
-        .footer {
-            padding: 30px 0 3px;
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            margin-top: auto;
-        }
+/* ------------------------------ FOOTER ------------------------------ */
+.footer {
+  padding: 15px 0 3px;
+  display: flex;
+  justify-content: center;
+}
 
-        .footer-signature {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            opacity: 0.7;
-            transition: opacity 0.3s ease;
-            background: none;
-            border: none;
-            backdrop-filter: none;
-            padding: 0;
-            border-radius: 0;
-        }
+.footer-signature {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
 
-        .footer-signature:hover {
-            opacity: 1;
-        }
+.footer-signature:hover {
+  opacity: 1;
+}
 
-        .crafted {
-            font-size: 10px;
-            color: #7a7a7a;
-            letter-spacing: 0.08em;
-            font-weight: 400;
-        }
+.crafted {
+  font-size: 10px;
+  color: #7a7a7a;
+  letter-spacing: 0.08em;
+}
 
-        .signature {
-            height: 20px;
-            transform: translateY(-2px);
-            opacity: 0.85;
-            filter: brightness(0.9) contrast(1.05);
-            transition: none;
-        }
+.signature {
+  height: 20px;
+  transform: translateY(-2px);
+  opacity: 0.85;
+  filter: brightness(0.9) contrast(1.05);
+}
 
         /* ------------------------- RESPONSIVE ------------------------- */
         @media (max-width: 640px) {

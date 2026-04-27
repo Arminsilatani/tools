@@ -265,11 +265,36 @@ pre {
   display: none !important;
 }
 
-footer {
-  text-align: center;
-  font-size: 0.75rem;
-  color: #808080;
-  margin-top: 2.5rem;
+/* ------------------------------ FOOTER ------------------------------ */
+.footer {
+  padding: 30px 0 3px;
+  display: flex;
+  justify-content: center;
+}
+
+.footer-signature {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.footer-signature:hover {
+  opacity: 1;
+}
+
+.crafted {
+  font-size: 10px;
+  color: #7a7a7a;
+  letter-spacing: 0.08em;
+}
+
+.signature {
+  height: 20px;
+  transform: translateY(-2px);
+  opacity: 0.85;
+  filter: brightness(0.9) contrast(1.05);
 }
 
 /* اسکرول‌بار برای تم دارک */
