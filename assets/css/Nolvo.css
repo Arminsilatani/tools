@@ -2,7 +2,6 @@
   Author: Armin Silatani
   Date: 2026-04-25
   Version: 1.0.0
-  Description: Ultra-modern, glassmorphic SaaS tool design — Accent: #00C2FF
 */
 
 /* ============================== STYLES ============================== */
@@ -34,8 +33,8 @@
 }
 
 :root {
-  --accent: #00C2FF;
-  --accent-glow: rgba(0, 194, 255, 0.25);
+  --accent: #3FA9F5;
+  --accent-glow: rgba(63, 169, 245, 0.25);
   --bg-deep: #0a0a0c;
   --card-bg: rgba(18, 18, 20, 0.75);
   --card-border: rgba(255, 255, 255, 0.07);
@@ -55,8 +54,8 @@ body {
   font-family: 'Kalameh', sans-serif;            /* <-- فونت اصلی کل صفحه */
   background-color: var(--bg-deep);
   background-image:
-    radial-gradient(ellipse at 50% 0%, rgba(0,194,255,0.08) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 100%, rgba(0,194,255,0.04) 0%, transparent 50%);
+    radial-gradient(ellipse at 50% 0%, rgba(63,169,245,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, rgba(63,169,245,0.04) 0%, transparent 50%);
   color: var(--text-primary);
   min-height: 100vh;
   display: flex;
@@ -84,8 +83,8 @@ body {
   justify-content: center;
   width: 56px;
   height: 56px;
-  background: rgba(0,194,255,0.08);
-  border: 1px solid rgba(0,194,255,0.2);
+  background: rgba(63,169,245,0.08);
+  border: 1px solid rgba(63,169,245,0.2);
   border-radius: 18px;
   margin-bottom: 1rem;
   backdrop-filter: blur(10px);
@@ -237,7 +236,7 @@ input::placeholder {
 .file-upload-area:hover,
 .file-upload-area.dragover {
   border-color: var(--accent);
-  background: rgba(0,194,255,0.04);
+  background: rgba(63,169,245,0.04);
 }
 .file-upload-area input[type="file"] {
   position: absolute;
@@ -264,7 +263,7 @@ input::placeholder {
 .copy-btn-minimal,
 button {
   background: transparent;
-  border: 1px solid rgba(0,194,255,0.4);
+  border: 1px solid rgba(63,169,245,0.4);
   color: var(--accent);
   padding: 0.5rem 1.2rem;
   border-radius: 30px;
@@ -278,10 +277,10 @@ button {
 }
 .copy-btn-minimal:hover,
 button:hover {
-  background: rgba(0,194,255,0.1);
+  background: rgba(63,169,245,0.1);
   border-color: var(--accent);
   color: #fff;
-  box-shadow: 0 0 15px rgba(0,194,255,0.4);
+  box-shadow: 0 0 15px rgba(63,169,245,0.4);
 }
 
 /* ------------------------------ OUTPUT CODE AREA ------------------------------ */
@@ -315,7 +314,7 @@ textarea {
 }
 textarea:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 24px rgba(0,194,255,0.3);
+  box-shadow: 0 0 24px rgba(63,169,245,0.3);
 }
 
 /* ------------------------------ REPORT ------------------------------ */

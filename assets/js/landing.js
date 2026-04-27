@@ -32,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "Rinvo Accounting", icon: "assets/images/logos/Ri.svg", url: "#" },
     { name: "Yelmo Brand Namer", icon: "assets/images/logos/Ye.svg", url: "#" },
     { name: "Cedro Flashcards", icon: "assets/images/logos/ce.svg", url: "#" },
+    { name: "Fresca Colors Tool", icon: "assets/images/logos/Fr.svg", url: "#" },
     { name: "Ubiro Beer Cost", icon: "assets/images/logos/Ub.svg", url: "#" }
   ];
 

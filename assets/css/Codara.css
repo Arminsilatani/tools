@@ -108,8 +108,8 @@ h1 {
 /* ------------------------------ BUTTONS ------------------------------ */
 .copy-btn-minimal {
   background: transparent;
-  border: 1px solid rgba(255, 107, 53, 0.4);
-  color: #FF6B35;
+  border: 1px solid rgba(240, 78, 152, 0.4);
+  color: #F04E98;
   padding: 6px 14px;
   border-radius: 30px;
   font-size: 0.8rem;
@@ -122,10 +122,10 @@ h1 {
 }
 
 .copy-btn-minimal:hover {
-  background: rgba(255, 107, 53, 0.1);
-  border-color: #FF6B35;
+  background: rgba(240, 78, 152, 0.1);
+  border-color: #F04E98;
   color: #F5F5F5;
-  box-shadow: 0 0 15px rgba(255, 107, 53, 0.4);
+  box-shadow: 0 0 15px rgba(240, 78, 152, 0.4);
 }
 
 /* ------------------------------ FORM ELEMENTS ------------------------------ */
@@ -155,7 +155,7 @@ select {
   color: #F5F5F5;
   transition: all 0.3s ease;
   outline: none;
-  caret-color: #FF6B35;
+  caret-color: #F04E98;
 }
 
 input::placeholder {
@@ -165,8 +165,8 @@ input::placeholder {
 
 input:focus,
 select:focus {
-  border-color: #FF6B35;
-  box-shadow: 0 0 18px rgba(255, 107, 53, 0.3);
+  border-color: #F04E98;
+  box-shadow: 0 0 18px rgba(240, 78, 152, 0.3);
   background: rgba(13, 13, 13, 0.8);
 }
 
@@ -196,7 +196,7 @@ select:focus {
 }
 
 .custom-select .selected:hover {
-  border-color: rgba(255, 107, 53, 0.4);
+  border-color: rgba(240, 78, 152, 0.4);
 }
 
 .custom-select .options {
@@ -231,13 +231,13 @@ select:focus {
 }
 
 .custom-select .options li:hover {
-  background: rgba(255, 107, 53, 0.12);
+  background: rgba(240, 78, 152, 0.12);
   color: #fff;
 }
 
 .custom-select .options::-webkit-scrollbar { width: 6px; }
 .custom-select .options::-webkit-scrollbar-thumb {
-  background: rgba(255, 107, 53, 0.4);
+  background: rgba(240, 78, 152, 0.4);
   border-radius: 10px;
 }
 
@@ -268,7 +268,7 @@ select:focus {
   direction: ltr;
   text-align: left;
   transition: border-color 0.3s, box-shadow 0.3s;
-  caret-color: #FF6B35;
+  caret-color: #F04E98;
 }
 
 .typewriter-active {
@@ -276,13 +276,13 @@ select:focus {
 }
 
 @keyframes terminal-blink {
-  0%   { border-color: rgba(255, 107, 53, 0.2); }
-  100% { border-color: #FF6B35; }
+  0%   { border-color: rgba(240, 78, 152, 0.2); }
+  100% { border-color: #F04E98; }
 }
 
 #output-code:focus {
-  border-color: #FF6B35;
-  box-shadow: 0 0 24px rgba(255, 107, 53, 0.3);
+  border-color: #F04E98;
+  box-shadow: 0 0 24px rgba(240, 78, 152, 0.3);
   outline: none;
 }
 
