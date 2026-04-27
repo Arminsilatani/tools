@@ -11,18 +11,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ------------------------- TOOLS DATA ------------------------- */
   const tools = [
-    { name: "Service Generator", icon: "assets/images/logos/Sg.svg", url: "Service-Item-Generator" },
-    { name: "Sitemap Builder", icon: "assets/images/logos/Sm.svg", url: "Sitemap-Builder" },
-    { name: "Image Converter", icon: "assets/images/logos/Ic.svg", url: "Image-Converter" },
-    { name: "CRM & Accounting", icon: "assets/images/logos/Ca.svg", url: "#" },
-    { name: "Schema Generator", icon: "assets/images/logos/Sc.svg", url: "Schema-Generator" },
-    { name: "TOC Builder", icon: "assets/images/logos/Tb.svg", url: "#" },
-    { name: "Text Editor", icon: "assets/images/logos/Te.svg", url: "#" },
-    { name: "Bot Builder", icon: "assets/images/logos/Rb.svg", url: "#" },
-    { name: "Redirect Tool", icon: "assets/images/logos/Rm.svg", url: "#" },
-    { name: "Keyword Density Checker", icon: "assets/images/logos/Kd.svg", url: "#" },
-    { name: "Keyword Research", icon: "assets/images/logos/Kr.svg", url: "#" },
-    { name: "Checklist Tool", icon: "assets/images/logos/Cl.svg", url: "#" }
+    { name: "Codara Service Generator", icon: "assets/images/logos/Co.svg", url: "codara" },
+    { name: "Nolvo Sitemap Builder", icon: "assets/images/logos/No.svg", url: "nolvo" },
+    { name: "Qerlo Shortener", icon: "assets/images/logos/Qe.svg", url: "#" },
+    { name: "Tivra Minify", icon: "assets/images/logos/Ti.svg", url: "#" },
+    { name: "Semora Schema Generator", icon: "assets/images/logos/Se.svg", url: "semora" },
+    { name: "Brilo Speed Check", icon: "assets/images/logos/Br.svg", url: "#" },
+    { name: "Sorbi Robots Builder", icon: "assets/images/logos/So.svg", url: "#" },
+    { name: "Velto Meta Inspector", icon: "assets/images/logos/Ve.svg", url: "#" },
+    { name: "Zorio Image Converter", icon: "assets/images/logos/Zo.svg", url: "zorio" },
+    { name: "Galvo Video Converter", icon: "assets/images/logos/Ga.svg", url: "#" },
+    { name: "Xelpo Pass Generator", icon: "assets/images/logos/Xe.svg", url: "#" },
+    { name: "Dirmo DNS Checker", icon: "assets/images/logos/Di.svg", url: "#" },
+    { name: "Pavro Checklist", icon: "assets/images/logos/Pa.svg", url: "#" },
+    { name: "Lemro Keyword Research", icon: "assets/images/logos/Le.svg", url: "#" },
+    { name: "Hirvo Density", icon: "assets/images/logos/Hi.svg", url: "#" },
+    { name: "Jorvi Redirect", icon: "assets/images/logos/Jo.svg", url: "#" },
+    { name: "Mirto CRM", icon: "assets/images/logos/Mi.svg", url: "#" },
+    { name: "Ravlo Calendar", icon: "assets/images/logos/Ra.svg", url: "#" },
+    { name: "Rinvo Accounting", icon: "assets/images/logos/Ri.svg", url: "#" },
+    { name: "Yelmo Brand Namer", icon: "assets/images/logos/Ye.svg", url: "#" },
+    { name: "Cedro Flashcards", icon: "assets/images/logos/ce.svg", url: "#" },
+    { name: "Ubiro Beer Cost", icon: "assets/images/logos/Ub.svg", url: "#" }
   ];
 
   /* ------------------------- FLOATING LOGOS CLOUD ------------------------- */
