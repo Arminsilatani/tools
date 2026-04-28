@@ -1,392 +1,119 @@
-/* =============================================
-   Semora – Minimal SaaS Dark Theme
-   Colors: BG #0d0d0d, Text #f5f5f5, Accent #F6C700
-   LEFT‑TO‑RIGHT VERSION
-   ============================================= */
+:root {
+    --primary: #F6C700;
+    --primary-dark: #d4ab00;
+    --secondary: #F6C700;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --bg: #0d0d0d;
+    --bg-card: #1a1a1a;
+    --bg-hover: #252525;
+    --text: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border: #2a2a2a;
+    --radius: 12px;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+}
 
 * {
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: #0d0d0d;
-  margin: 0;
-  padding: 24px 20px;
-  color: #f5f5f5;
-  /* direction: rtl;  ← این خط حذف شده */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0d0d0d;
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 2rem 1rem;
 }
 
 .container {
-  max-width: 1400px;
-  margin: 0 auto;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-/* هدر و لوگو */
 .header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
 }
+
 .logo {
-  width: 40px;
-  height: 40px;
+    filter: drop-shadow(0 0 8px rgba(246, 199, 0, 0.5));
 }
-h1 {
-  font-size: 1.9rem;
-  font-weight: 700;
-  color: #f5f5f5;
-  margin: 0;
-  letter-spacing: -0.5px;
+
+.header-text h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary), #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.tagline {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin-top: -0.25rem;
 }
 
 .sub {
-  color: #b0b0b0;
-  border-left: 3px solid #F6C700;   /* به جای border-right برای هماهنگی بصری در LTR */
-  padding-left: 14px;               /* به جای padding-right */
-  margin-bottom: 2rem;
-  font-size: 0.95rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    padding-left: 3.5rem;
 }
 
-/* کارت‌ها */
 .card {
-  background: #141414;
-  border-radius: 16px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  border: 1px solid #2a2a2a;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
 }
 
 .card-header {
-  font-weight: 600;
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #f5f5f5;
-  border-bottom: 2px solid #2a2a2a;
-  padding-bottom: 0.5rem;
-}
-
-/* فیلدهای ورودی */
-input,
-select,
-textarea {
-  width: 100%;
-  padding: 10px 14px;
-  border: 1px solid #333;
-  border-radius: 12px;
-  font-size: 0.9rem;
-  background: #1a1a1a;
-  color: #f5f5f5;
-  transition: 0.2s;
-  font-family: 'Fira Code', 'Courier New', monospace;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  outline: none;
-  border-color: #F6C700;
-  box-shadow: 0 0 0 3px rgba(246, 199, 0, 0.15);
-}
-
-/* دکمه‌ها */
-button {
-  background: #F6C700;
-  border: none;
-  color: #0d0d0d;
-  padding: 10px 20px;
-  border-radius: 40px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
-  font-size: 0.9rem;
-  margin: 0 5px 5px 0;
-}
-
-button:hover {
-  background: #e0b800;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(246, 199, 0, 0.3);
-}
-
-button.secondary {
-  background: #2a2a2a;
-  color: #f5f5f5;
-  border: 1px solid #444;
-}
-
-button.secondary:hover {
-  background: #3a3a3a;
-  border-color: #666;
-}
-
-.primary {
-  background: #F6C700;
-  color: #0d0d0d;
-  margin-top: 10px;
-}
-.primary:hover {
-  background: #e0b800;
-  box-shadow: 0 4px 10px rgba(246, 199, 0, 0.3);
-}
-
-/* جستجوی انتخاب کلاس */
-.search-select {
-  position: relative;
-}
-
-.class-list-dropdown {
-  max-height: 300px;
-  overflow-y: auto;
-  border: 1px solid #333;
-  border-radius: 16px;
-  background: #1a1a1a;
-  position: absolute;
-  width: 100%;
-  z-index: 10;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
-  margin-top: 4px;
-}
-
-.class-item {
-  padding: 10px 14px;
-  cursor: pointer;
-  border-bottom: 1px solid #2a2a2a;
-  color: #f5f5f5;
-  transition: 0.15s;
-}
-
-.class-item:hover {
-  background: #272727;
-  color: #F6C700;
-}
-
-/* شبکه ویژگی‌ها */
-.properties-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.prop-card {
-  background: #1a1a1a;
-  border-radius: 14px;
-  padding: 1rem;
-  border: 1px solid #2a2a2a;
-}
-
-.prop-label {
-  font-weight: 600;
-  font-size: 0.8rem;
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  color: #e0e0e0;
-}
-
-.badge {
-  font-size: 0.7rem;
-  background: rgba(246, 199, 0, 0.12);
-  padding: 2px 8px;
-  border-radius: 30px;
-  color: #F6C700;
-  border: 1px solid rgba(246, 199, 0, 0.25);
-}
-
-.prop-hint {
-  font-size: 0.7rem;
-  color: #b0b0b0;
-  margin-bottom: 4px;
-}
-
-/* خروجی JSON */
-pre {
-  background: #0a0a0a;
-  color: #e2e8f0;
-  padding: 1.2rem;
-  border-radius: 14px;
-  overflow-x: auto;
-  font-size: 0.85rem;
-  font-family: 'Fira Code', monospace;
-  border: 1px solid #2a2a2a;
-}
-
-.flex-btns {
-  display: flex;
-  gap: 10px;
-  margin: 1.2rem 0 0.5rem;
-  flex-wrap: wrap;
-}
-
-/* پیام‌ها */
-.alert {
-  background: rgba(255, 70, 70, 0.15);
-  border-radius: 12px;
-  padding: 12px 16px;
-  color: #ff6b6b;
-  margin: 10px 0;
-  border: 1px solid rgba(255, 70, 70, 0.3);
-}
-
-.alert.success {
-  background: rgba(246, 199, 0, 0.1);
-  color: #F6C700;
-  border-color: rgba(246, 199, 0, 0.3);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .status-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 15px;
+    padding: 1rem;
+    background: rgba(246, 199, 0, 0.1);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary);
+    margin-bottom: 1rem;
+}
+
+.alert {
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    background: rgba(239, 68, 68, 0.1);
+    border-left: 4px solid var(--danger);
+    color: var(--text);
 }
 
 .stats-info {
-  margin-top: 10px;
-  font-size: 0.85rem;
-  color: #b0b0b0;
-}
-
-.selected-info {
-  margin-top: 10px;
-  font-style: italic;
-  color: #e0e0e0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
 }
 
 .hidden {
-  display: none !important;
+    display: none !important;
 }
 
-/* ------------------------------ FOOTER ------------------------------ */
-.footer {
-  padding: 30px 0 3px;
-  display: flex;
-  justify-content: center;
-}
-
-.footer-signature {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  opacity: 0.7;
-  transition: opacity 0.3s ease;
-}
-
-.footer-signature:hover {
-  opacity: 1;
-}
-
-.crafted {
-  font-size: 10px;
-  color: #7a7a7a;
-  letter-spacing: 0.08em;
-}
-
-.signature {
-  height: 20px;
-  transform: translateY(-2px);
-  opacity: 0.85;
-  filter: brightness(0.9) contrast(1.05);
-}
-
-/* اسکرول‌بار برای تم دارک */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #1a1a1a;
-}
-::-webkit-scrollbar-thumb {
-  background: #444;
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #666;
-}
-
-/* ============ WIZARD (add to your existing Semora.css) ============ */
-.wizard {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.step-indicator {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-}
-
-.step-dot {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #2a2a2a;
-  color: #888;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 0.85rem;
-  transition: 0.2s;
-  border: 2px solid transparent;
-}
-
-.step-dot.active {
-  background: #F6C700;
-  color: #0d0d0d;
-  border-color: #F6C700;
-}
-
-.step-dot.completed {
-  background: #1a3a1a;
-  color: #F6C700;
-  border-color: #F6C700;
-}
-
-.step-content {
-  min-height: 300px;
-}
-
-.step-content h3 {
-  font-size: 1.2rem;
-  margin-top: 0;
-  margin-bottom: 1rem;
-  color: #F6C700;
-}
-
-.step-content label {
-  display: block;
-  margin-bottom: 0.3rem;
-  font-size: 0.85rem;
-  color: #ccc;
-}
-
-.step-content .form-group {
-  margin-bottom: 1rem;
-}
-
-.step-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  margin-top: 1rem;
-}
-
-.hidden {
-  display: none !important;
-}
-/* ---------- WIZARD & CLASS GRID ---------- */
+/* Wizard */
 .wizard {
     display: flex;
     flex-direction: column;
@@ -396,174 +123,377 @@ pre {
 .step-indicator {
     display: flex;
     justify-content: space-between;
-    gap: 12px;
     margin-bottom: 1rem;
-    flex-wrap: wrap;
 }
 
-.step-dot {
+.step {
+    text-align: center;
+    flex: 1;
+    opacity: 0.6;
+    transition: 0.3s ease;
+}
+
+.step.active {
+    opacity: 1;
+}
+
+.step.completed {
+    opacity: 1;
+}
+
+.step-number {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #2a2a2a;
-    color: #888;
+    background: var(--primary);
+    color: #0d0d0d;
+    font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 0 auto 0.5rem auto;
+}
+
+.step-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Step Content */
+.step-title {
+    font-size: 1.3rem;
     font-weight: 600;
-    font-size: 0.85rem;
-    transition: 0.2s;
-    border: 2px solid transparent;
+    margin-bottom: 0.5rem;
 }
 
-.step-dot.active {
-    background: #F6C700;
-    color: #0d0d0d;
-    border-color: #F6C700;
+.step-desc {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
 }
 
-.step-dot.completed {
-    background: #1a3a1a;
-    color: #F6C700;
-    border-color: #F6C700;
+.suggestion-box {
+    background: rgba(246, 199, 0, 0.1);
+    border-left: 4px solid var(--primary);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
 }
 
-.step-content {
-    min-height: 300px;
+.search-box input {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 0.95rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: #0d0d0d;
+    color: var(--text);
+    margin-bottom: 1.2rem;
 }
 
-.step-content h3 {
-    font-size: 1.2rem;
-    margin-top: 0;
+.search-box input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* تب‌ها با فلش‌های اسلایدی */
+.tabs-scroll-container {
+    position: relative;
+    display: flex;
+    align-items: center;
     margin-bottom: 1rem;
-    color: #F6C700;
 }
 
-/* Class selection grid */
+.category-tabs {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    flex: 1;
+    padding: 0 0.25rem;
+}
+
+.category-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.tab-arrow {
+    background: var(--bg-hover);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 1.5rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s ease;
+    flex-shrink: 0;
+    z-index: 2;
+    padding: 0;
+    line-height: 1;
+}
+
+.tab-arrow:hover:not(:disabled) {
+    background: var(--primary);
+    color: #0d0d0d;
+    border-color: var(--primary);
+}
+
+.tab-arrow:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+.cat-tab {
+    padding: 0.5rem 1rem;
+    background: var(--bg-hover);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    color: var(--text);
+    transition: 0.2s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.cat-tab:hover {
+    background: rgba(246, 199, 0, 0.1);
+    border-color: var(--primary);
+}
+
+.cat-tab.active {
+    background: var(--primary);
+    color: #0d0d0d;
+    font-weight: 600;
+    border-color: var(--primary);
+}
+
 .class-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 0.8rem;
-    max-height: 400px;
-    overflow-y: auto;
-    margin-bottom: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
 }
 
 .class-card {
-    background: #1a1a1a;
-    border: 1px solid #2a2a2a;
-    border-radius: 12px;
-    padding: 12px;
+    background: var(--bg-hover);
+    border: 1px solid var(--border);
+    padding: 1rem;
+    border-radius: var(--radius);
     cursor: pointer;
-    transition: 0.2s;
-    color: #f5f5f5;
-    font-size: 0.85rem;
-    position: relative;
+    transition: 0.25s ease;
+    
+    /* اضافه کردن این سه خط */
+    display: flex;
+    flex-direction: column;
+    height: 100%;               /* همه کارت‌های یک ردیف ارتفاع برابر می‌گیرند */
 }
 
 .class-card:hover {
-    border-color: #F6C700;
+    background: rgba(246, 199, 0, 0.15);
+    border-color: var(--primary);
 }
 
 .class-card.selected {
-    border-color: #F6C700;
-    background: rgba(246, 199, 0, 0.15);
+    background: rgba(246, 199, 0, 0.2);
+    border-color: var(--primary);
+    border-width: 2px;
 }
 
-.class-card input[type="checkbox"] {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: auto;
-    transform: scale(1.2);
+.class-name {
+    font-weight: 600;
+    margin-bottom: 0.3rem;
 }
 
-.class-card label {
-    margin-left: 24px;
-    display: block;
-    cursor: pointer;
+.class-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    
+    /* اضافه کردن این دو خط */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;           /* حداکثر ۲ خط نشان داده شود */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
 }
 
-/* Property form grid (reused) */
-.properties-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
+/* Properties */
+.props-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
 }
 
-.prop-card {
-    background: #1a1a1a;
-    border-radius: 14px;
+.prop-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
     padding: 1rem;
-    border: 1px solid #2a2a2a;
+    background: var(--bg-hover);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.prop-row.core-prop {
+    border-left: 4px solid var(--primary);
 }
 
 .prop-label {
     font-weight: 600;
-    font-size: 0.8rem;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    color: #e0e0e0;
 }
 
 .badge {
-    font-size: 0.7rem;
-    background: rgba(246, 199, 0, 0.12);
-    padding: 2px 8px;
-    border-radius: 30px;
-    color: #F6C700;
-    border: 1px solid rgba(246, 199, 0, 0.25);
+    background: var(--primary);
+    color: #0d0d0d;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 6px;
+    margin-left: 0.5rem;
 }
 
 .prop-hint {
-    font-size: 0.7rem;
-    color: #b0b0b0;
-    margin-bottom: 4px;
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
 }
 
-/* Multi‑language switch */
-.lang-tabs {
+.prop-input {
+    padding: 0.7rem;
+    background: #0d0d0d;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+}
+
+.prop-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* Review */
+.review-summary {
+    padding: 1rem;
+    background: var(--bg-hover);
+    border-radius: var(--radius);
+    margin-bottom: 1.5rem;
+}
+
+.review-item {
+    margin-bottom: 0.5rem;
+}
+
+.review-props {
     display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
+    flex-direction: column;
+    gap: 0.8rem;
 }
 
-.lang-tab {
-    background: #2a2a2a;
-    color: #ccc;
-    border: none;
-    padding: 6px 16px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 0.8rem;
-}
-
-.lang-tab.active {
-    background: #F6C700;
-    color: #0d0d0d;
-}
-
-/* Entity list in step 2 */
-.entity-list-item {
-    background: #1a1a1a;
-    border: 1px solid #2a2a2a;
-    border-radius: 10px;
-    padding: 10px;
-    margin-bottom: 8px;
+.review-prop {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    padding: 0.8rem;
+    background: var(--bg-hover);
+    border-radius: var(--radius);
 }
 
-.entity-list-item .remove-entity {
-    background: none;
+.review-prop-name {
+    font-weight: 600;
+}
+
+/* Output */
+pre {
+    background: #0d0d0d;
+    color: #c9d1d9;
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow-x: auto;
+}
+
+.flex-btns {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+/* Buttons */
+button {
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius);
     border: none;
-    color: #ff6b6b;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 0.95rem;
+    transition: 0.2s ease;
+    font-weight: 500;
 }
 
-/* ====== Keep all your previous dark‑theme rules here ====== */
-/* (All the body, card, input, etc. rules from the earlier minimal dark CSS.) */
+button.primary {
+    background: var(--primary);
+    color: #0d0d0d;
+    font-weight: 600;
+}
+
+button.primary:hover {
+    background: var(--primary-dark);
+}
+
+button.secondary {
+    background: var(--bg-hover);
+    border: 1px solid var(--border);
+    color: var(--text);
+}
+
+button.secondary:hover {
+    background: rgba(246, 199, 0, 0.1);
+    border-color: var(--primary);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Footer */
+.footer {
+    margin-top: 2rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.footer-signature {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.signature {
+    width: 80px;
+    opacity: 0.85;
+}
+
+/* Scrollbar (global) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bg-hover);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}

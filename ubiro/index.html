@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ubiro Beer Cost — محاسبه‌گر هزینه آبجو خونگی</title>
+
+    <!-- Favicon (Ub Logo) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' fill='none'%3E%3Ccircle cx='32' cy='32' r='30' stroke='%23E0A414' stroke-width='2.5' fill='none' opacity='0.8'/%3E%3Ccircle cx='32' cy='32' r='24' stroke='%23E0A414' stroke-width='0.8' fill='none' opacity='0.35'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-family=''Kalameh','Vazirmatn',sans-serif' font-weight='900' font-size='22' fill='%23E0A414' letter-spacing='1'%3EUb%3C/text%3E%3Cpath d='M20 20 Q32 8 44 20' stroke='%23E0A414' stroke-width='1.2' fill='none' opacity='0.5' stroke-linecap='round'/%3E%3Ccircle cx='18' cy='18' r='2.5' fill='%23E0A414' opacity='0.5'/%3E%3Ccircle cx='46' cy='18' r='2.5' fill='%23E0A414' opacity='0.5'/%3E%3C/svg%3E">
+
+    <!-- Fallback Persian Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* ========== FONT FACES ========== */
+        @font-face {
+            font-family: "Kalameh";
+            src: url("../../assets/fonts/KalamehWeb-Regular.woff2") format("woff2"),
+                 url("../../assets/fonts/KalamehWeb-Regular.woff") format("woff");
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: "Kalameh";
+            src: url("../../fonts/KalamehWeb-Black.woff2") format("woff2"),
+                 url("../../fonts/KalamehWeb-Black.woff") format("woff");
+            font-weight: 900;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* ========== CSS VARIABLES ========== */
+        :root {
+            --bg: #0d0d0d;
+            --bg-card: #141414;
+            --bg-card-hover: #1a1a1a;
+            --gold: #E0A414;
+            --gold-light: #f0c040;
+            --gold-dark: #b8860b;
+            --gold-glow: rgba(224, 164, 20, 0.25);
+            --gold-glow-strong: rgba(224, 164, 20, 0.5);
+            --text: #f5f5f5;
+            --text-muted: #b0b0b0;
+            --text-dim: #7a7a7a;
+            --border: #2a2a2a;
+            --border-focus: #E0A414;
+            --danger: #e05555;
+            --success: #4caf84;
+            --radius-sm: 10px;
+            --radius: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(255, 255, 255, 0.03);
+            --shadow-gold: 0 0 40px rgba(224, 164, 20, 0.15), 0 0 80px rgba(224, 164, 20, 0.05);
+            --shadow-gold-strong: 0 0 60px rgba(224, 164, 20, 0.3), 0 0 120px rgba(224, 164, 20, 0.1);
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-spring: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        *,
+        *::before,
+        *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Kalameh', 'Vazirmatn', system-ui, -apple-system, sans-serif;
+            font-weight: 400;
+            line-height: 1.7;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(ellipse at 50% 0%, rgba(224, 164, 20, 0.04) 0%, transparent 70%),
+                radial-gradient(ellipse at 80% 20%, rgba(224, 164, 20, 0.03) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, rgba(224, 164, 20, 0.02) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 100%, rgba(240, 192, 64, 0.03) 0%, transparent 50%);
+        }
+        body::before {
+            content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)' opacity='0.5'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 200px 200px;
+        }
+
+        .app-wrapper { position: relative; z-index: 1; width: 100%; max-width: 680px; display: flex; flex-direction: column; gap: 0; }
+
+        .logo-container { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 8px; animation: logoEntrance 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+        @keyframes logoEntrance { from { opacity: 0; transform: translateY(-30px) scale(0.8); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .logo-svg { width: 52px; height: 52px; flex-shrink: 0; filter: drop-shadow(0 0 14px var(--gold-glow)); transition: filter var(--transition); }
+        .logo-svg:hover { filter: drop-shadow(0 0 24px var(--gold-glow-strong)); }
+        .logo-text { font-family: 'Kalameh', 'Vazirmatn', sans-serif; font-weight: 900; font-size: 1.8rem; color: var(--text); letter-spacing: 0.02em; line-height: 1; }
+        .logo-text .gold { color: var(--gold); }
+        .logo-subtitle { font-size: 0.7rem; color: var(--text-dim); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 400; display: block; margin-top: -2px; }
+
+        .main-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 36px 32px 32px;
+            box-shadow: var(--shadow-card); position: relative; overflow: hidden; animation: cardEntrance 0.7s 0.15s cubic-bezier(0.34, 1.56, 0.64, 1) both; transition: all var(--transition);
+        }
+        @keyframes cardEntrance { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        .main-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent); opacity: 0.6;
+        }
+        .main-card::after {
+            content: ''; position: absolute; top: 20px; right: 20px; width: 40px; height: 40px;
+            border-top: 1px solid rgba(224, 164, 20, 0.2); border-right: 1px solid rgba(224, 164, 20, 0.2);
+            border-radius: 0 var(--radius-sm) 0 0; pointer-events: none;
+        }
+
+        .volume-section { text-align: center; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+        .volume-label { font-size: 1rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .volume-label .icon { font-size: 1.4rem; }
+        .volume-input-group { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .volume-input {
+            width: 100px; height: 56px; background: var(--bg); border: 2px solid var(--border); border-radius: var(--radius);
+            color: var(--text); font-family: 'Kalameh', 'Vazirmatn', sans-serif; font-weight: 900; font-size: 1.6rem;
+            text-align: center; transition: all var(--transition); outline: none; caret-color: var(--gold);
+        }
+        .volume-input:focus { border-color: var(--gold); box-shadow: 0 0 20px var(--gold-glow); background: #111; }
+        .volume-input:hover { border-color: #444; }
+        .volume-unit { font-size: 1.1rem; font-weight: 700; color: var(--text); white-space: nowrap; }
+        .volume-preset-btns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+        .preset-btn {
+            padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg); color: var(--text-muted);
+            cursor: pointer; font-family: 'Kalameh', 'Vazirmatn', sans-serif; font-weight: 500; font-size: 0.85rem;
+            transition: all var(--transition); white-space: nowrap;
+        }
+        .preset-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(224, 164, 20, 0.05); }
+        .preset-btn.active { background: var(--gold); color: #0d0d0d; border-color: var(--gold); font-weight: 700; box-shadow: 0 0 16px var(--gold-glow); }
+
+        .ingredients-title { font-size: 0.9rem; font-weight: 700; color: var(--text-muted); margin-bottom: 16px; text-align: center; letter-spacing: 0.04em; text-transform: uppercase; }
+        .ingredients-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        @media (max-width: 520px) { .ingredients-grid { grid-template-columns: 1fr; } .main-card { padding: 24px 16px 20px; border-radius: var(--radius-lg); } .volume-input { width: 80px; height: 48px; font-size: 1.3rem; } .logo-svg { width: 40px; height: 40px; } .logo-text { font-size: 1.4rem; } .result-value { font-size: 3rem !important; } }
+        .ingredient-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 14px; transition: all var(--transition); animation: cardSlideUp 0.5s both; }
+        .ingredient-card:nth-child(1) { animation-delay: 0.05s; }
+        .ingredient-card:nth-child(2) { animation-delay: 0.1s; }
+        .ingredient-card:nth-child(3) { animation-delay: 0.15s; }
+        .ingredient-card:nth-child(4) { animation-delay: 0.2s; }
+        .ingredient-card:nth-child(5) { animation-delay: 0.25s; }
+        .ingredient-card:nth-child(6) { animation-delay: 0.3s; }
+        .ingredient-card:nth-child(7) { animation-delay: 0.35s; }
+        .ingredient-card:nth-child(8) { animation-delay: 0.4s; }
+        @keyframes cardSlideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .ingredient-card:hover { border-color: #3a3a3a; background: var(--bg-card-hover); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+        .ingredient-card.filled { border-color: rgba(224, 164, 20, 0.35); box-shadow: 0 0 12px rgba(224, 164, 20, 0.06); }
+        .ingredient-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+        .ingredient-emoji { font-size: 1.4rem; }
+        .ingredient-name { font-weight: 700; font-size: 0.9rem; color: var(--text); flex: 1; }
+        .ingredient-needed { font-size: 0.75rem; color: var(--gold); font-weight: 500; background: rgba(224, 164, 20, 0.08); padding: 3px 10px; border-radius: 12px; white-space: nowrap; }
+        .ingredient-inputs { display: flex; flex-direction: column; gap: 6px; }
+        .input-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .input-row label { font-size: 0.7rem; color: var(--text-dim); white-space: nowrap; min-width: 55px; }
+        .input-row input { flex: 1; min-width: 60px; height: 36px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-family: 'Kalameh', 'Vazirmatn', sans-serif; font-weight: 500; font-size: 0.85rem; padding: 0 10px; text-align: center; transition: all var(--transition); outline: none; caret-color: var(--gold); }
+        .input-row input:focus { border-color: var(--gold); box-shadow: 0 0 10px var(--gold-glow); }
+        .input-row .unit-label { font-size: 0.7rem; color: var(--text-dim); white-space: nowrap; min-width: 30px; }
+        .ingredient-cost-preview { font-size: 0.75rem; color: var(--gold-light); font-weight: 700; text-align: left; direction: ltr; margin-top: 4px; opacity: 0; transition: opacity var(--transition); min-height: 18px; }
+        .ingredient-cost-preview.visible { opacity: 1; }
+
+        .results-section { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px 24px; text-align: center; transition: all var(--transition); position: relative; }
+        .results-section.has-results { border-color: rgba(224, 164, 20, 0.4); box-shadow: var(--shadow-gold); }
+        .results-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(224, 164, 20, 0.05) 0%, transparent 70%); pointer-events: none; opacity: 0; transition: opacity var(--transition); }
+        .results-section.has-results::before { opacity: 1; }
+        .result-label { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px; }
+        .result-value { font-family: 'Kalameh', 'Vazirmatn', sans-serif; font-weight: 900; font-size: 3.8rem; color: var(--gold); line-height: 1; letter-spacing: -0.02em; text-shadow: 0 0 30px var(--gold-glow); position: relative; z-index: 1; }
+        .result-unit { font-size: 1rem; color: var(--text-muted); margin-top: 2px; }
+        .result-total { font-size: 0.8rem; color: var(--text-dim); margin-top: 6px; }
+
+        .breakdown-toggle { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; padding: 8px 18px; background: transparent; border: 1px solid var(--border); border-radius: 20px; color: var(--text-muted); cursor: pointer; font-family: 'Kalameh', 'Vazirmatn', sans-serif; font-weight: 500; font-size: 0.8rem; transition: all var(--transition); z-index: 1; }
+        .breakdown-toggle:hover { border-color: var(--gold); color: var(--gold); background: rgba(224, 164, 20, 0.04); }
+        .breakdown-toggle .arrow { transition: transform var(--transition); display: inline-block; }
+        .breakdown-toggle.open .arrow { transform: rotate(180deg); }
+        .breakdown-list { display: grid; gap: 6px; margin-top: 14px; text-align: right; max-height: 0; overflow: hidden; transition: max-height 0.5s ease, margin-top 0.4s; z-index: 1; }
+        .breakdown-list.open { max-height: 500px; margin-top: 14px; }
+        .breakdown-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(255,255,255,0.015); border-radius: var(--radius-sm); font-size: 0.78rem; gap: 8px; flex-wrap: wrap; }
+        .breakdown-item .bd-name { color: var(--text-muted); flex: 1; }
+        .breakdown-item .bd-cost { color: var(--text); font-weight: 700; white-space: nowrap; }
+        .breakdown-item .bd-percent { color: var(--text-dim); font-size: 0.7rem; white-space: nowrap; direction: ltr; }
+
+        .btn-gold { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; background: var(--gold); color: #0d0d0d; border: none; border-radius: 28px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all var(--transition); box-shadow: 0 4px 18px rgba(224,164,20,0.25); }
+        .btn-gold:hover { background: #f0b828; box-shadow: 0 6px 28px rgba(224,164,20,0.4); transform: translateY(-2px); }
+        .btn-outline { display: inline-flex; align-items: center; gap: 6px; padding: 10px 22px; background: transparent; color: var(--text-muted); border: 1px solid var(--border); border-radius: 28px; font-weight: 500; font-size: 0.85rem; cursor: pointer; transition: all var(--transition); }
+        .btn-outline:hover { border-color: var(--gold); color: var(--gold); background: rgba(224,164,20,0.04); }
+        .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+
+        .smart-hint { font-size: 0.7rem; color: var(--text-dim); text-align: center; margin-top: 4px; opacity: 0.8; }
+
+        @keyframes goldPulse { 0%,100% { box-shadow: 0 0 20px var(--gold-glow); } 50% { box-shadow: 0 0 40px var(--gold-glow-strong), 0 0 60px rgba(224,164,20,0.15); } }
+        .pulse-gold { animation: goldPulse 2.5s infinite; }
+
+        input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; }
+        .footer-note { text-align: center; font-size: 0.7rem; color: var(--text-dim); margin-top: 16px; opacity: 0.6; letter-spacing: 0.03em; }
+    </style>
+</head>
+<body>
+<div class="app-wrapper">
+    <div class="logo-container">
+        <svg class="logo-svg" viewBox="0 0 64 64" fill="none">
+            <circle cx="32" cy="32" r="30" stroke="#E0A414" stroke-width="2.5" fill="none" opacity="0.8"/>
+            <circle cx="32" cy="32" r="24" stroke="#E0A414" stroke-width="0.8" fill="none" opacity="0.35"/>
+            <text x="32" y="40" text-anchor="middle" font-family="'Kalameh','Vazirmatn',sans-serif" font-weight="900" font-size="22" fill="#E0A414" letter-spacing="1">Ub</text>
+            <path d="M20 20 Q32 8 44 20" stroke="#E0A414" stroke-width="1.2" fill="none" opacity="0.5"/>
+            <circle cx="18" cy="18" r="2.5" fill="#E0A414" opacity="0.5"/>
+            <circle cx="46" cy="18" r="2.5" fill="#E0A414" opacity="0.5"/>
+        </svg>
+        <div>
+            <div class="logo-text">Ubiro <span class="gold">Beer</span></div>
+            <span class="logo-subtitle">Cost Calculator</span>
+        </div>
+    </div>
+
+    <div class="main-card" id="mainCard">
+        <div class="volume-section">
+            <div class="volume-label">
+                <span class="icon">🍺</span> چند لیتر آب شنگولی میخوای درست کنی؟
+            </div>
+            <div class="volume-input-group">
+                <input type="number" class="volume-input" id="volumeInput" value="12" min="1" max="500" step="1">
+                <span class="volume-unit">لیتر</span>
+            </div>
+            <div class="volume-preset-btns">
+                <button class="preset-btn" data-volume="6">۶ لیتر</button>
+                <button class="preset-btn active" data-volume="12">۱۲ لیتر</button>
+                <button class="preset-btn" data-volume="18">۱۸ لیتر</button>
+                <button class="preset-btn" data-volume="24">۲۴ لیتر</button>
+                <button class="preset-btn" data-volume="30">۳۰ لیتر</button>
+            </div>
+            <p class="smart-hint">📐 مقدار مواد بر اساس حجم انتخابی هوشمند مقیاس می‌شود (پایه ۱۲ لیتر)</p>
+        </div>
+
+        <div class="ingredients-title">🧾 مواد اولیه — مقدار نیاز + اطلاعات خرید</div>
+        <div class="ingredients-grid" id="ingredientsGrid"></div>
+
+        <div class="results-section" id="resultsSection">
+            <div class="result-label">💰 هزینه هر لیتر آبجو</div>
+            <div class="result-value" id="costPerLiter">—</div>
+            <div class="result-unit">تومان / لیتر</div>
+            <div class="result-total" id="totalCostInfo"></div>
+            <button class="breakdown-toggle" id="breakdownToggle">مشاهده جزئیات <span class="arrow">▾</span></button>
+            <div class="breakdown-list" id="breakdownList"></div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn-outline" id="resetBtn">🔄 بازنشانی همه</button>
+        </div>
+    </div>
+    <p class="footer-note">Ubiro Beer Cost — محاسبه‌گر هزینه آبجو خونگی 🍻</p>
+</div>
+
+<script>
+    (function() {
+        const ingredients = [
+            { id: 'beerBase', name: 'ماءالشعیر', emoji: '🍺', baseAmount: 12, baseUnit: 'لیتر', purchaseUnit: 'لیتر', purchaseUnitShort: 'L', conversionFactor: 1, hint: 'حجم ماءالشعیر خریداری شده' },
+            { id: 'sugar', name: 'شکر', emoji: '🍬', baseAmount: 1200, baseUnit: 'گرم', purchaseUnit: 'کیلوگرم', purchaseUnitShort: 'kg', conversionFactor: 1000, hint: 'معمولاً کیسه‌ای ۱ یا ۲ کیلویی' },
+            { id: 'honey', name: 'عسل', emoji: '🍯', baseAmount: 200, baseUnit: 'گرم', purchaseUnit: 'گرم', purchaseUnitShort: 'g', conversionFactor: 1, hint: 'ظرف شیشه‌ای معمولی' },
+            { id: 'coffee', name: 'قهوه', emoji: '☕', baseAmount: 6, baseUnit: 'گرم', purchaseUnit: 'کیلوگرم', purchaseUnitShort: 'kg', conversionFactor: 1000, hint: 'پودر قهوه — قیمت کیلویی' },
+            { id: 'cocoa', name: 'کاکائو', emoji: '🍫', baseAmount: 12, baseUnit: 'گرم', purchaseUnit: 'گرم', purchaseUnitShort: 'g', conversionFactor: 1, hint: 'پودر کاکائو' },
+            { id: 'yeast', name: 'مخمر', emoji: '🧫', baseAmount: 10, baseUnit: 'گرم', purchaseUnit: 'گرم', purchaseUnitShort: 'g', conversionFactor: 1, hint: 'ساشه یا پاکت مخمر' },
+            { id: 'labels', name: 'لیبل', emoji: '🏷️', baseAmount: 12, baseUnit: 'عدد', purchaseUnit: 'عدد', purchaseUnitShort: 'عدد', conversionFactor: 1, hint: 'بسته لیبل' },
+            { id: 'vinegar', name: 'سرکه خوراکی', emoji: '🍶', baseAmount: 1.5, baseUnit: 'لیتر', purchaseUnit: 'لیتر', purchaseUnitShort: 'L', conversionFactor: 1, hint: 'بطری سرکه' }
+        ];
+
+        const volumeInput = document.getElementById('volumeInput');
+        const presetBtns = document.querySelectorAll('.preset-btn');
+        const ingredientsGrid = document.getElementById('ingredientsGrid');
+        const resultsSection = document.getElementById('resultsSection');
+        const costPerLiterEl = document.getElementById('costPerLiter');
+        const totalCostInfoEl = document.getElementById('totalCostInfo');
+        const breakdownToggle = document.getElementById('breakdownToggle');
+        const breakdownList = document.getElementById('breakdownList');
+        const resetBtn = document.getElementById('resetBtn');
+
+        let currentVolume = 12;
+        let ingredientData = {};
+
+        function init() {
+            currentVolume = parseInt(volumeInput.value) || 12;
+            volumeInput.value = currentVolume;
+            updatePresetActive();
+            renderIngredientCards();
+            updateAllCosts();
+        }
+
+        function renderIngredientCards() {
+            ingredientsGrid.innerHTML = '';
+            ingredients.forEach(ing => {
+                const neededAmount = (ing.baseAmount * currentVolume) / 12;
+                let neededDisplay;
+                if (ing.baseUnit === 'عدد') neededDisplay = Math.round(neededAmount);
+                else if (neededAmount < 1) neededDisplay = neededAmount.toFixed(2);
+                else if (neededAmount < 10) neededDisplay = neededAmount.toFixed(1);
+                else neededDisplay = Math.round(neededAmount * 10) / 10;
+                if (typeof neededDisplay === 'string') neededDisplay = neededDisplay.replace(/\.?0+$/, '');
+
+                const card = document.createElement('div');
+                card.className = 'ingredient-card';
+                card.setAttribute('data-ingredient-id', ing.id);
+                card.innerHTML = `
+                    <div class="ingredient-header">
+                        <span class="ingredient-emoji">${ing.emoji}</span>
+                        <span class="ingredient-name">${ing.name}</span>
+                        <span class="ingredient-needed">نیاز: ${neededDisplay} ${ing.baseUnit}</span>
+                    </div>
+                    <div class="ingredient-inputs">
+                        <div class="input-row">
+                            <label>مقدار خرید:</label>
+                            <input type="number" class="purchase-qty" placeholder="${ing.purchaseUnit === 'کیلوگرم' ? '۱' : ing.purchaseUnit === 'گرم' ? '۵۰۰' : '۲'}" step="any" min="0.001">
+                            <span class="unit-label">${ing.purchaseUnit}</span>
+                        </div>
+                        <div class="input-row">
+                            <label>قیمت خرید:</label>
+                            <input type="number" class="purchase-price" placeholder="تومان" step="any" min="0">
+                            <span class="unit-label">تومان</span>
+                        </div>
+                    </div>
+                    <div class="ingredient-cost-preview" data-cost-preview="${ing.id}"></div>
+                    <div style="font-size:0.65rem;color:var(--text-dim);margin-top:2px;opacity:0.6;">${ing.hint}</div>
+                `;
+                ingredientsGrid.appendChild(card);
+
+                const qtyInput = card.querySelector('.purchase-qty');
+                const priceInput = card.querySelector('.purchase-price');
+                const update = () => {
+                    updateIngredientData(ing.id, qtyInput, priceInput);
+                    updateSingleCostPreview(ing);
+                    updateAllCosts();
+                    updateCardFilledState(card, ing.id);
+                };
+                qtyInput.addEventListener('input', update);
+                priceInput.addEventListener('input', update);
+
+                if (ingredientData[ing.id]) {
+                    qtyInput.value = ingredientData[ing.id].purchaseQty || '';
+                    priceInput.value = ingredientData[ing.id].purchasePrice || '';
+                    updateSingleCostPreview(ing);
+                    updateCardFilledState(card, ing.id);
+                }
+            });
+        }
+
+        function updateCardFilledState(card, ingId) {
+            const data = ingredientData[ingId];
+            card.classList.toggle('filled', data && data.purchaseQty > 0 && data.purchasePrice > 0);
+        }
+
+        function updateIngredientData(ingId, qtyInput, priceInput) {
+            const qty = parseFloat(qtyInput.value);
+            const price = parseFloat(priceInput.value);
+            if (!ingredientData[ingId]) ingredientData[ingId] = {};
+            ingredientData[ingId].purchaseQty = isNaN(qty) ? 0 : qty;
+            ingredientData[ingId].purchasePrice = isNaN(price) ? 0 : price;
+        }
+
+        function updateSingleCostPreview(ing) {
+            const previewEl = document.querySelector(`[data-cost-preview="${ing.id}"]`);
+            if (!previewEl) return;
+            const data = ingredientData[ing.id];
+            if (!data || !data.purchaseQty || !data.purchasePrice || data.purchaseQty <= 0) {
+                previewEl.textContent = '';
+                previewEl.classList.remove('visible');
+                return;
+            }
+            const neededAmount = (ing.baseAmount * currentVolume) / 12;
+            const neededInPurchaseUnit = neededAmount / ing.conversionFactor;
+            const cost = (neededInPurchaseUnit / data.purchaseQty) * data.purchasePrice;
+            if (isNaN(cost) || cost < 0) { previewEl.textContent = ''; previewEl.classList.remove('visible'); return; }
+            previewEl.textContent = `💡 سهم این ماده: ${Math.round(cost).toLocaleString('fa-IR')} تومان`;
+            previewEl.classList.add('visible');
+        }
+
+        function updateAllCosts() {
+            let totalCost = 0;
+            const breakdownItems = [];
+            ingredients.forEach(ing => {
+                const data = ingredientData[ing.id];
+                const neededAmount = (ing.baseAmount * currentVolume) / 12;
+                const neededInPurchaseUnit = neededAmount / ing.conversionFactor;
+                let cost = 0, hasData = false;
+                if (data && data.purchaseQty > 0 && data.purchasePrice > 0) {
+                    cost = (neededInPurchaseUnit / data.purchaseQty) * data.purchasePrice;
+                    if (!isNaN(cost) && cost >= 0) { hasData = true; totalCost += cost; }
+                }
+                breakdownItems.push({ name: ing.name, emoji: ing.emoji, neededDisplay: formatNeeded(neededAmount, ing.baseUnit), cost, hasData });
+            });
+
+            const costPerLiter = currentVolume > 0 ? totalCost / currentVolume : 0;
+            if (totalCost > 0 && currentVolume > 0) {
+                costPerLiterEl.textContent = Math.round(costPerLiter).toLocaleString('fa-IR');
+                totalCostInfoEl.textContent = `💵 هزینه کل: ${Math.round(totalCost).toLocaleString('fa-IR')} تومان برای ${currentVolume} لیتر`;
+                resultsSection.classList.add('has-results');
+                costPerLiterEl.classList.add('pulse-gold');
+            } else {
+                costPerLiterEl.textContent = '—';
+                totalCostInfoEl.textContent = 'اطلاعات خرید رو وارد کن تا هزینه محاسبه بشه ✨';
+                resultsSection.classList.remove('has-results');
+                costPerLiterEl.classList.remove('pulse-gold');
+            }
+            updateBreakdownList(breakdownItems, totalCost);
+        }
+
+        function formatNeeded(amount, unit) {
+            if (unit === 'عدد') return Math.round(amount) + ' ' + unit;
+            if (amount < 1) return amount.toFixed(2).replace(/\.?0+$/, '') + ' ' + unit;
+            if (amount < 10) return amount.toFixed(1).replace(/\.?0+$/, '') + ' ' + unit;
+            return (Math.round(amount * 10) / 10).toString().replace(/\.?0+$/, '') + ' ' + unit;
+        }
+
+        function updateBreakdownList(items, totalCost) {
+            breakdownList.innerHTML = '';
+            if (totalCost <= 0) {
+                breakdownList.innerHTML = '<p style="text-align:center;color:var(--text-dim);font-size:0.75rem;">هنوز اطلاعاتی وارد نشده</p>';
+                return;
+            }
+            items.forEach(item => {
+                if (!item.hasData) return;
+                const percent = totalCost > 0 ? ((item.cost / totalCost) * 100) : 0;
+                const div = document.createElement('div');
+                div.className = 'breakdown-item';
+                div.innerHTML = `<span class="bd-name">${item.emoji} ${item.name} (${item.neededDisplay})</span><span class="bd-cost">${Math.round(item.cost).toLocaleString('fa-IR')} تومان</span><span class="bd-percent">${percent.toFixed(1)}%</span>`;
+                breakdownList.appendChild(div);
+            });
+            const totalDiv = document.createElement('div');
+            totalDiv.className = 'breakdown-item';
+            totalDiv.style.borderTop = '1px solid var(--border)';
+            totalDiv.style.paddingTop = '10px';
+            totalDiv.style.fontWeight = '900';
+            totalDiv.innerHTML = `<span class="bd-name" style="color:var(--gold);">📦 جمع کل</span><span class="bd-cost" style="color:var(--gold);">${Math.round(totalCost).toLocaleString('fa-IR')} تومان</span><span class="bd-percent">۱۰۰٪</span>`;
+            breakdownList.appendChild(totalDiv);
+        }
+
+        breakdownToggle.addEventListener('click', () => {
+            breakdownList.classList.toggle('open');
+            breakdownToggle.classList.toggle('open');
+        });
+
+        volumeInput.addEventListener('input', () => {
+            let val = parseInt(volumeInput.value);
+            if (isNaN(val) || val < 1) val = 12;
+            if (val > 500) val = 500;
+            currentVolume = val;
+            volumeInput.value = val;
+            updatePresetActive();
+            renderIngredientCards();
+            updateAllCosts();
+        });
+
+        presetBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const vol = parseInt(btn.getAttribute('data-volume'));
+                if (!isNaN(vol) && vol > 0) {
+                    currentVolume = vol;
+                    volumeInput.value = vol;
+                    updatePresetActive();
+                    renderIngredientCards();
+                    updateAllCosts();
+                }
+            });
+        });
+
+        function updatePresetActive() {
+            presetBtns.forEach(btn => {
+                const vol = parseInt(btn.getAttribute('data-volume'));
+                btn.classList.toggle('active', vol === currentVolume);
+            });
+        }
+
+        resetBtn.addEventListener('click', () => {
+            ingredientData = {};
+            currentVolume = 12;
+            volumeInput.value = 12;
+            updatePresetActive();
+            renderIngredientCards();
+            updateAllCosts();
+            breakdownList.classList.remove('open');
+            breakdownToggle.classList.remove('open');
+            resultsSection.classList.remove('has-results');
+            costPerLiterEl.classList.remove('pulse-gold');
+        });
+
+        init();
+    })();
+</script>
+</body>
+</html>

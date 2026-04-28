@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semora – Complete Schema Composer</title>
+    <title>Semora – Schema Composer</title>
     <link rel="icon" type="image/svg+xml" href="../assets/images/logos/Se.svg">
     <link rel="stylesheet" href="../assets/css/Semora.css">
 </head>
@@ -11,13 +11,18 @@
 <div class="container">
     <div class="header">
         <img src="../assets/images/logos/Se.svg" alt="Semora logo" class="logo" width="40" height="40">
-        <h1>Semora</h1>
+        <div class="header-text">
+            <h1>Semora</h1>
+            <p class="tagline">AI-Powered Schema.org Composer</p>
+        </div>
     </div>
-    <div class="sub">Pick multiple schemas · Build a rich graph · FAQ & Multi‑language ready</div>
+    <div class="sub">Smart recommendations · Multi-schema support · SEO-optimized JSON-LD</div>
 
     <!-- Database status -->
     <div class="card" id="dbCard">
-        <div class="card-header">Vocabulary Status</div>
+        <div class="card-header">
+            <span>📚 Vocabulary Status</span>
+        </div>
         <div id="dbStatus" class="status-bar">
             <span id="statusText">Loading schema vocabulary…</span>
         </div>
@@ -32,29 +37,32 @@
             <div class="step-indicator" id="stepIndicator"></div>
             <div class="step-content" id="stepContent"></div>
             <div class="step-actions">
-                <button id="prevBtn" class="secondary" disabled>Previous</button>
-                <button id="nextBtn">Next</button>
-                <button id="finishBtn" class="hidden">Generate JSON‑LD</button>
+                <button id="prevBtn" class="secondary" disabled>← Previous</button>
+                <button id="nextBtn">Next →</button>
+                <button id="finishBtn" class="hidden">✨ Generate JSON-LD</button>
             </div>
         </div>
     </div>
 
     <!-- Output -->
     <div class="card hidden" id="outputCard">
-        <div class="card-header">JSON‑LD Output</div>
+        <div class="card-header">
+            <span>🎯 JSON-LD Output</span>
+        </div>
         <pre id="jsonOutput"></pre>
         <div class="flex-btns">
-            <button id="copyBtn" class="primary">Copy to Clipboard</button>
-            <button id="restartBtn" class="secondary">Start Over</button>
+            <button id="copyBtn" class="primary">📋 Copy to Clipboard</button>
+            <button id="downloadBtn" class="secondary">💾 Download</button>
+            <button id="restartBtn" class="secondary">🔄 Start Over</button>
         </div>
     </div>
-        <!-- ------------------------- PRIVACY NOTE ------------------------- -->
-        <footer class="footer">
-            <div class="footer-signature">
-                <span class="crafted">crafted by</span>
-                <img src="../assets/images/signature.svg" alt="Armin Silatani" class="signature">
-            </div>
-        </footer>
+
+    <footer class="footer">
+        <div class="footer-signature">
+            <span class="crafted">crafted by</span>
+            <img src="../assets/images/signature.svg" alt="Armin Silatani" class="signature">
+        </div>
+    </footer>
 </div>
 
 <script src="../assets/js/Semora.js"></script>
