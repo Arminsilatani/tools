@@ -497,3 +497,33 @@ button:disabled {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--primary);
 }
+
+/* Minimal buttons */
+.minimal-btn {
+    background: none;
+    border: none;
+    color: #b0b0b0;
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 6px 12px;
+    font-family: inherit;
+    transition: color 0.2s;
+}
+.minimal-btn:hover {
+    color: #E0A414;
+}
+
+/* Selected card highlight (without checkbox) */
+.class-card.selected {
+    border-color: rgba(224,164,20,0.5);
+    background: rgba(224,164,20,0.05);
+}
+.class-card.selected .class-name {
+    font-weight: 600;
+}
+
+/* Ensure class-card has transition for smooth hover */
+.class-card {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
