@@ -26,7 +26,20 @@ function debounce(func, wait) {
         timeout = setTimeout(() => func.apply(this, args), wait);
     };
 }
-
+/**
+ * Converts a camelCase or PascalCase string into a space-separated label.
+ * "VideoObject"   -> "Video Object"
+ * "BedAndBreakfast" -> "Bed And Breakfast"
+ * "Organization"  -> "Organization" (unchanged)
+ */
+function humanizeLabel(str) {
+    if (!str) return '';
+    // Only transform if string has no spaces and contains at least one uppercase letter
+    if (str.includes(' ')) return str;
+    return str
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
+        .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');
+}
 /* ------------------------- INDEXEDDB STORAGE ------------------------- */
 const DB_NAME = 'SchemaOrgDB';
 const STORE_NAME = 'schemaStore';
@@ -145,8 +158,9 @@ function buildClassesFromLocalDefinitions() {
         const type = Array.isArray(def['@type']) ? def['@type'] : [def['@type']];
         if (!type.includes('rdfs:Class')) continue;
 
-        const id = def['@id'];
-        const label = extractStringValue(def['rdfs:label']) || id.split(':')[1] || id;
+const id = def['@id'];
+const rawLabel = extractStringValue(def['rdfs:label']) || id.split(':')[1] || id;
+const label = humanizeLabel(rawLabel);
         const comment = extractStringValue(def['rdfs:comment']) || '';
         const subClassOf = def['rdfs:subClassOf']?.['@id'] || null;
         const priority = def.priority || 'medium';
@@ -1657,22 +1671,234 @@ const PAGE_TYPE_MAP = {
 
 
     'DiscussionForumPosting': [
-        'schema:DiscussionForumPosting'
+        'schema:Person',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:LocalBusiness',
+        'schema:ProfessionalService',
+        'schema:FinancialService',
+        'schema:MedicalOrganization',
+        'schema:Dentist',
+        'schema:LegalService',
+        'schema:AccountingService',
+        'schema:AutoRepair',
+        'schema:AutomotiveBusiness',
+        'schema:BeautySalon',
+        'schema:Store',
+        'schema:ComputerStore',
+        'schema:ElectronicsStore',
+        'schema:FurnitureStore',
+        'schema:GroceryStore',
+        'schema:HardwareStore',
+        'schema:HealthClub',
+        'schema:HomeAndConstructionBusiness',
+        'schema:InternetCafe',
+        'schema:Locksmith',
+        'schema:NailSalon',
+        'schema:RealEstateAgent',
+        'schema:Restaurant',
+        'schema:CafeOrCoffeeShop',
+        'schema:Bakery',
+        'schema:TravelAgency',
+        'schema:LodgingBusiness',
+        'schema:Hotel',
+        'schema:BedAndBreakfast',
+        'schema:EducationalOrganization',
+        'schema:Comment',
+        'schema:ImageObject',
+        'schema:VideoObject',
+        'schema:AudioObject',
+        'schema:AggregateRating',
+        'schema:InteractionCounter',
+        'schema:WebPageElement'
     ],
 
 
     'MedicalWebPage, HealthTopicContent': [
-        'schema:MedicalWebPage'
+        'schema:WebSite',
+        'schema:WebPage',
+        'schema:MedicalWebPage',
+        'schema:HealthTopicContent',
+        'schema:Organization',
+        'schema:MedicalOrganization',
+        'schema:Hospital',
+        'schema:Dentist',
+        'schema:Person',
+        'schema:Article',
+        'schema:MedicalScholarlyArticle',
+        'schema:Review',
+        'schema:CreativeWork',
+        'schema:VideoObject',
+        'schema:ImageObject',
+        'schema:AudioObject',
+        'schema:MedicalCondition',
+        'schema:MedicalCause',
+        'schema:MedicalProcedure',
+        'schema:MedicalTest',
+        'schema:Diet',
+        'schema:Drug',
+        'schema:DoseSchedule',
+        'schema:OccupationalTherapy',
+        'schema:PhysicalTherapy',
+        'schema:BreadcrumbList',
+        'schema:HowTo',
+        'schema:SpeakableSpecification',
+        'schema:ItemList',
+        'schema:WebPageElement',
+        'schema:InteractionCounter'
     ],
 
 
     'SearchResultsPage': [
-        'schema:SearchResultsPage'
+        'schema:WebSite',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:LocalBusiness',
+        'schema:ProfessionalService',
+        'schema:Service',
+        'schema:FinancialService',
+        'schema:MedicalOrganization',
+        'schema:Dentist',
+        'schema:LegalService',
+        'schema:AccountingService',
+        'schema:AutoRepair',
+        'schema:AutomotiveBusiness',
+        'schema:BeautySalon',
+        'schema:Store',
+        'schema:ComputerStore',
+        'schema:ElectronicsStore',
+        'schema:FurnitureStore',
+        'schema:GroceryStore',
+        'schema:HardwareStore',
+        'schema:HealthClub',
+        'schema:HomeAndConstructionBusiness',
+        'schema:InternetCafe',
+        'schema:Locksmith',
+        'schema:NailSalon',
+        'schema:RealEstateAgent',
+        'schema:Restaurant',
+        'schema:CafeOrCoffeeShop',
+        'schema:Bakery',
+        'schema:TravelAgency',
+        'schema:LodgingBusiness',
+        'schema:Hotel',
+        'schema:BedAndBreakfast',
+        'schema:Person',
+        'schema:Article',
+        'schema:NewsArticle',
+        'schema:Blog',
+        'schema:BlogPosting',
+        'schema:AnalysisNewsArticle',
+        'schema:BackgroundNewsArticle',
+        'schema:Report',
+        'schema:Review',
+        'schema:CriticReview',
+        'schema:CreativeWork',
+        'schema:CreativeWorkSeries',
+        'schema:VideoObject',
+        'schema:Movie',
+        'schema:TVSeries',
+        'schema:Episode',
+        'schema:ImageObject',
+        'schema:Product',
+        'schema:Brand',
+        'schema:JobPosting',
+        'schema:ItemList',
+        'schema:BreadcrumbList',
+        'schema:Recipe',
+        'schema:Event',
+        'schema:BusinessEvent',
+        'schema:EducationEvent',
+        'schema:MusicEvent',
+        'schema:SportsEvent',
+        'schema:SaleEvent',
+        'schema:Festival',
+        'schema:TheaterEvent',
+        'schema:CourseInstance',
+        'schema:EventSeries',
+        'schema:EducationalOrganization',
+        'schema:LearningResource',
+        'schema:Book',
+        'schema:Place',
+        'schema:CivicStructure',
+        'schema:TouristAttraction',
+        'schema:TouristDestination',
+        'schema:LandmarksOrHistoricalBuildings',
+        'schema:Airport',
+        'schema:Park',
+        'schema:Museum',
+        'schema:StadiumOrArena',
+        'schema:Dataset',
+        'schema:DataCatalog',
+        'schema:SoftwareApplication',
+        'schema:MobileApplication',
+        'schema:WebApplication',
+        'schema:Trip',
+        'schema:Flight',
+        'schema:HotelRoom',
+        'schema:TrainTrip',
+        'schema:BusTrip',
+        'schema:TouristTrip',
+        'schema:Car',
+        'schema:Game',
+        'schema:VideoGame',
+        'schema:MusicRecording',
+        'schema:MusicAlbum',
+        'schema:MusicGroup',
+        'schema:Vehicle',
+        'schema:BoatTrip',
+        'schema:Menu'
     ],
 
 
     'Job Posting': [
-        'schema:JobPosting'
+        'schema:JobPosting',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:LocalBusiness',
+        'schema:ProfessionalService',
+        'schema:FinancialService',
+        'schema:MedicalOrganization',
+        'schema:Dentist',
+        'schema:LegalService',
+        'schema:AccountingService',
+        'schema:AutoRepair',
+        'schema:AutomotiveBusiness',
+        'schema:BeautySalon',
+        'schema:Store',
+        'schema:ComputerStore',
+        'schema:ElectronicsStore',
+        'schema:FurnitureStore',
+        'schema:GroceryStore',
+        'schema:HardwareStore',
+        'schema:HealthClub',
+        'schema:HomeAndConstructionBusiness',
+        'schema:InternetCafe',
+        'schema:Locksmith',
+        'schema:NailSalon',
+        'schema:RealEstateAgent',
+        'schema:Restaurant',
+        'schema:CafeOrCoffeeShop',
+        'schema:Bakery',
+        'schema:TravelAgency',
+        'schema:LodgingBusiness',
+        'schema:Hotel',
+        'schema:BedAndBreakfast',
+        'schema:EducationalOrganization',
+        'schema:Place',
+        'schema:CivicStructure',
+        'schema:TouristAttraction',
+        'schema:TouristDestination',
+        'schema:LandmarksOrHistoricalBuildings',
+        'schema:Airport',
+        'schema:Park',
+        'schema:Museum',
+        'schema:StadiumOrArena',
+        'schema:Hospital',
+        'schema:PropertyValue',
+        'schema:MonetaryAmount',
+        'schema:QuantitativeValue',
+        'schema:Occupation'
     ]
 
 
@@ -1800,18 +2026,23 @@ function renderClassGrid(pageType, query = null) {
     const hasMore = total > currentDisplayLimit;
     const visibleClasses = filtered.slice(0, currentDisplayLimit);
 
-    grid.innerHTML = visibleClasses.map(cls => {
-        const isSelected = wizardState.selectedClasses.includes(cls.id);
-        const selectedClass = isSelected ? 'selected' : '';
-        return `
-        <div class="class-card ${selectedClass}" data-id="${cls.id}">
-            <div class="class-name" style="display: flex; justify-content: space-between; align-items: center;">
-                <span>${cls.label}</span>
-                ${getPriorityBadge(cls.priority, cls.id)}
-            </div>
-            <div class="class-desc">${cls.comment ? cls.comment.substring(0, 80) + '...' : ''}</div>
-        </div>`;
-    }).join('');
+grid.innerHTML = visibleClasses.map(cls => {
+    const isSelected = wizardState.selectedClasses.includes(cls.id);
+    const selectedClass = isSelected ? 'selected' : '';
+
+    // تمیز کردن توضیحات
+    const cleanComment = cls.comment ? cls.comment.replace(/<[^>]*>/g, '') : '';
+    const shortComment = cleanComment.length > 80 ? cleanComment.substring(0, 80) + '...' : cleanComment;
+
+    return `
+    <div class="class-card ${selectedClass}" data-id="${cls.id}">
+        <div class="class-name" style="display: flex; justify-content: space-between; align-items: center;">
+            <span>${cls.label}</span>
+            ${getPriorityBadge(cls.priority, cls.id)}
+        </div>
+        <div class="class-desc">${shortComment}</div>
+    </div>`;
+}).join('');
 
     attachClassCardEvents(grid);
 
@@ -1965,7 +2196,7 @@ function generateJSONLD() {
     const graph = [];
     for (const clsId of wizardState.selectedClasses) {
         const cls = classesMap.get(clsId);
-        const typeName = cls ? cls.label : 'Thing';
+        const typeName = cls ? (cls.rawLabel || cls.label) : 'Thing';
         const item = { "@type": typeName };
         const props = wizardState.multiProperties[clsId] || {};
         for (const [propId, value] of Object.entries(props)) {
