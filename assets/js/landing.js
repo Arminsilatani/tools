@@ -33,7 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "Yelmo Brand Namer", icon: "assets/images/logos/Ye.svg", url: "#" },
     { name: "Cedro Flashcards", icon: "assets/images/logos/ce.svg", url: "#" },
     { name: "Fresca Colors Tool", icon: "assets/images/logos/Fr.svg", url: "#" },
-    { name: "Ubiro Beer Cost", icon: "assets/images/logos/Ub.svg", url: "ubiro" }
+    { name: "Ubiro Beer Cost", icon: "assets/images/logos/Ub.svg", url: "ubiro" },
+    { name: "Refacto Code Optimizer", icon: "assets/images/logos/Re.svg", url: "refacto" }
   ];
 
   /* ------------------------- FLOATING LOGOS CLOUD ------------------------- */

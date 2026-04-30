@@ -1,4 +1,14 @@
-// ==================== UTILS ====================
+/*
+  ****************************************************
+  *  Author: Armin Silatani
+  *  Date: 2026-04-30
+  *  Version: 1.0.0
+  ****************************************************
+*/
+
+/* =========================== SCHEMA GENERATOR APP ============================ */
+
+/* ------------------------- UTILITIES ------------------------- */
 function extractStringValue(field) {
     if (!field) return '';
     if (typeof field === 'string') return field;
@@ -11,13 +21,13 @@ function extractStringValue(field) {
 
 function debounce(func, wait) {
     let timeout;
-    return function(...args) {
+    return function (...args) {
         clearTimeout(timeout);
         timeout = setTimeout(() => func.apply(this, args), wait);
     };
 }
 
-// ==================== IndexedDB (only for properties) ====================
+/* ------------------------- INDEXEDDB STORAGE ------------------------- */
 const DB_NAME = 'SchemaOrgDB';
 const STORE_NAME = 'schemaStore';
 const KEY_NAME = 'mainSchema';
@@ -27,8 +37,9 @@ function openDB() {
         const req = indexedDB.open(DB_NAME, 1);
         req.onupgradeneeded = (e) => {
             const db = e.target.result;
-            if (!db.objectStoreNames.contains(STORE_NAME))
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
                 db.createObjectStore(STORE_NAME);
+            }
         };
         req.onsuccess = () => resolve(req.result);
         req.onerror = () => reject(req.error);
@@ -59,14 +70,13 @@ async function loadSchemaFromDB() {
     });
 }
 
-// ==================== CLASSES FROM LOCAL Semora300.js ====================
+/* ------------------------- CLASS LOADING & TRENDING ------------------------- */
 let classesMap = new Map();
 let classList = [];
 
 /**
- * Try to get definitions from:
- * 1) window.schemaDefinitions (if already set)
- * 2) window.schemaAllData?.['@graph'] (if semora300.js exports that)
+ * Retrieve schema class definitions from the global scope.
+ * Priority: window.schemaDefinitions > window.schemaAllData['@graph'].
  */
 function getSchemaDefinitions() {
     if (window.schemaDefinitions && Array.isArray(window.schemaDefinitions) && window.schemaDefinitions.length) {
@@ -78,81 +88,63 @@ function getSchemaDefinitions() {
     return null;
 }
 
-// Built‑in list of important schema types that should always show the "Trending" badge
+// Built-in list of important schema types that always show the "Trending" badge
 const TRENDING_CLASS_IDS = new Set([
-    'schema:Organization',
-    'schema:LocalBusiness',
     'schema:WebSite',
     'schema:WebPage',
-    'schema:BreadcrumbList',
-    'schema:SearchAction',
-    'schema:PostalAddress',
-    'schema:ContactPoint',
-    'schema:Brand',
-    'schema:Product',
-    'schema:Service',
-    'schema:Offer',
-    'schema:AggregateRating',
-    'schema:Review',
-    'schema:FAQPage',
+    'schema:Organization',
+    'schema:LocalBusiness',
+    'schema:Person',
     'schema:Article',
-    'schema:BlogPosting',
+    'schema:Product',
+    'schema:Offer',
+    'schema:Review',
+    'schema:AggregateRating',
+    'schema:BreadcrumbList',
+    'schema:FAQPage',
     'schema:ImageObject',
     'schema:VideoObject',
-    'schema:Place',
-    'schema:Person',
     'schema:Event',
-    'schema:Comment',
-    'schema:Rating',
+    'schema:AboutPage',
+    'schema:ContactPage',
+    'schema:BlogPosting',
     'schema:NewsArticle',
-    'schema:ScholarlyArticle',
-    'schema:TechArticle',
-    'schema:UserComments',
-    'schema:AudioObject',
-    'schema:HowTo',
     'schema:Recipe',
-    'schema:Question',
-    'schema:Answer',
+    'schema:HowTo',
+    'schema:JobPosting',
+    'schema:Restaurant',
+    'schema:Hotel',
+    'schema:Store',
+    'schema:Service',
+    'schema:Brand',
     'schema:ItemList',
-    'schema:DateTime',
-    'schema:Date',
-    'schema:Duration',
-    'schema:PropertyValue',
+    'schema:SoftwareApplication',
+    'schema:MobileApplication',
+    'schema:WebApplication',
     'schema:Book',
-    'schema:Movie',
-    'schema:CreativeWorkSeries',
-    'schema:BookSeries',
-    'schema:MovieSeries',
-    'schema:TVSeries',
-    'schema:Collection',
     'schema:Course',
-    'schema:Dataset',
-    'schema:Catalog',
-    'schema:HowToStep',
-    'schema:HowToSection',
-    'schema:HowToDirection',
-    'schema:HowToTip',
-    'schema:HowToTool',
-    'schema:HowToSupply',
-    'schema:HowToItem',
-    'schema:QuantitativeValue',
-    'schema:Text',
-    'schema:TextObject',
+    'schema:Place',
+    'schema:SearchResultsPage',
+    'schema:QAPage',
+    'schema:AudioObject',
+    'schema:Movie',
+    'schema:MusicRecording',
+    'schema:Dataset'
 ]);
 
 function buildClassesFromLocalDefinitions() {
     const definitions = getSchemaDefinitions();
     if (!definitions || definitions.length === 0) {
-        console.error('schemaDefinitions not loaded. Please add `window.schemaDefinitions = schemaAllData["@graph"];` at the end of Semora300.js');
+        console.error('schemaDefinitions not loaded. Please add window.schemaDefinitions = schemaAllData["@graph"]; at the end of Semora300.js');
         return;
     }
     classesMap.clear();
     classList = [];
     for (const def of definitions) {
-        // ---------- رفع مشکل آمیختگی: فقط کلاس‌ها (rdfs:Class) را استخراج کن ----------
+        // Filter: only rdfs:Class entries
         const type = Array.isArray(def['@type']) ? def['@type'] : [def['@type']];
         if (!type.includes('rdfs:Class')) continue;
-        // --------------------------------------------------------------------------
+
         const id = def['@id'];
         const label = extractStringValue(def['rdfs:label']) || id.split(':')[1] || id;
         const comment = extractStringValue(def['rdfs:comment']) || '';
@@ -162,7 +154,10 @@ function buildClassesFromLocalDefinitions() {
         classList.push({ id, label, comment, subClassOf, priority });
     }
 }
+
+/* ------------------------- PROPERTY PROCESSING ------------------------- */
 let propertiesMap = new Map();
+
 function processPropertiesOnly(data) {
     if (!data || !data['@graph']) throw new Error('Invalid schema file: @graph not found.');
     const graph = data['@graph'];
@@ -189,7 +184,7 @@ function processPropertiesOnly(data) {
     }
 }
 
-// ==================== SCORING SYSTEM ====================
+/* ------------------------- SCORING & RECOMMENDATION ------------------------- */
 function scoreProperty(prop, selectedClass, userContext = {}) {
     let score = 0;
     const propLabel = prop.label.toLowerCase();
@@ -216,16 +211,15 @@ function getRecommendedProperties(selectedClass, limit = 20) {
     return props.slice(0, limit);
 }
 
-// ==================== DOM DETECTION ====================
+/* ------------------------- PAGE CONTEXT DETECTION ------------------------- */
 function detectPageContext() {
-    const context = {
+    return {
         hasImages: document.querySelectorAll('img').length > 0,
         hasAddress: !!document.querySelector('[itemprop="address"]') || document.body.innerText.match(/\d{5}/) !== null,
         hasPrice: document.body.innerText.match(/\$\d+|\€\d+/) !== null,
         hasArticle: !!document.querySelector('article') || !!document.querySelector('[itemtype*="Article"]'),
         hasProduct: !!document.querySelector('[itemtype*="Product"]')
     };
-    return context;
 }
 
 function suggestSchemaType() {
@@ -236,735 +230,1452 @@ function suggestSchemaType() {
     return 'schema:WebPage';
 }
 
-// ==================== PAGE TYPE MAPPING ====================
+/* ------------------------- PAGE TYPE MAPPING ------------------------- */
 const PAGE_TYPE_MAP = {
-    'All': () => classList.map(c => c.id),                     // 🔹 همهٔ اسکیماها
-    'Homepage': [                                                // صفحهٔ اصلی
-        'schema:Organization',
-        'schema:LocalBusiness',
+    'All': () => classList.map(c => c.id),
+    
+    
+    'Homepage': [
         'schema:WebSite',
         'schema:WebPage',
+        'schema:Organization',
+        'schema:LocalBusiness',
         'schema:BreadcrumbList',
-        'schema:SearchAction',
-        'schema:PostalAddress',
-        'schema:ContactPoint',
-        'schema:Brand',
+        'schema:SpeakableSpecification',
+        'schema:Corporation',
+        'schema:ProfessionalService',
+        'schema:FinancialService',
+        'schema:MedicalOrganization',
+        'schema:Dentist',
+        'schema:LegalService',
+        'schema:AccountingService',
+        'schema:AutoRepair',
+        'schema:AutomotiveBusiness',
+        'schema:BeautySalon',
+        'schema:HealthClub',
+        'schema:HomeAndConstructionBusiness',
+        'schema:InternetCafe',
+        'schema:Locksmith',
+        'schema:NailSalon',
+        'schema:RealEstateAgent',
+        'schema:Restaurant',
+        'schema:CafeOrCoffeeShop',
+        'schema:Bakery',
+        'schema:TravelAgency',
+        'schema:EducationalOrganization',
+        'schema:Store',
+        'schema:ComputerStore',
+        'schema:ElectronicsStore',
+        'schema:FurnitureStore',
+        'schema:GroceryStore',
+        'schema:HardwareStore',
+        'schema:LodgingBusiness',
+        'schema:Hotel',
+        'schema:BedAndBreakfast',
+        'schema:Person',
+        'schema:EmployeeRole',
+        'schema:Article',
+        'schema:NewsArticle',
+        'schema:Blog',
+        'schema:BlogPosting',
+        'schema:Review',
+        'schema:Comment',
+        'schema:ImageObject',
+        'schema:VideoObject',
+        'schema:AudioObject',
+        'schema:Movie',
+        'schema:TVSeries',
         'schema:Product',
         'schema:Service',
         'schema:Offer',
+        'schema:AggregateOffer',
         'schema:AggregateRating',
-        'schema:Review',
-        'schema:FAQPage',
-        'schema:Article',
-        'schema:BlogPosting',
-        'schema:ImageObject',
-        'schema:VideoObject',
-        'schema:Corporation',
-        'schema:GovernmentOrganization',
-        'schema:EducationalOrganization',
-        'schema:NGO',
-        'schema:Consortium',
-        'schema:SportsOrganization',
-        'schema:PerformingGroup',
-        'schema:NewsMediaOrganization',
-        'schema:Store',
-        'schema:Restaurant',
-        'schema:Hotel',
-        'schema:Hospital',
-        'schema:School',
-        'schema:Library',
-        'schema:Museum',
-        'schema:ShoppingCenter',
-        'schema:AutoRepair',
-        'schema:BeautySalon',
-        'schema:Dentist',
-        'schema:Pharmacy',
-        'schema:Bank',
-        'schema:RealEstateAgent',
-        'schema:TravelAgency',
-        'schema:GasStation',
-        'schema:ParkingFacility',
-        'schema:NewsArticle',
-        'schema:TechArticle',
-        'schema:ScholarlyArticle',
-        'schema:Report',
-        'schema:WebContent',
-        'schema:CreativeWork',
-        'schema:MediaObject',
-        'schema:AudioObject',
-        'schema:Podcast',
-        'schema:ItemList',
-        'schema:CollectionPage',
-        'schema:AboutPage',
-        'schema:ContactPage',
-        'schema:ProfilePage',
-        'schema:SearchResultsPage',
-        'schema:GovernmentOrganization',
-        'schema:EducationalOrganization',
-        'schema:NGO',
-        'schema:Consortium',
-        'schema:SportsOrganization',
-        'schema:SiteNavigationElement',
-        'schema:PriceSpecification',
-        'schema:PaymentMethod',
-        'schema:Invoice',
-        'schema:Order',
-        'schema:Demand',
-        'schema:BusinessFunction',
+        'schema:Brand',
         'schema:Event',
         'schema:BusinessEvent',
         'schema:EducationEvent',
-        'schema:SocialEvent',
+        'schema:MusicEvent',
         'schema:SportsEvent',
+        'schema:SaleEvent',
+        'schema:Festival',
+        'schema:TheaterEvent',
         'schema:Place',
-        'schema:City',
-        'schema:Country',
+        'schema:CivicStructure',
         'schema:TouristAttraction',
         'schema:TouristDestination',
-        'schema:Thing',
-        'schema:Intangible',
-        'schema:StructuredValue',
-        'schema:PropertyValue',
-        'schema:QuantitativeValue',
-        'schema:OpeningHoursSpecification'
+        'schema:LandmarksOrHistoricalBuildings',
+        'schema:Airport',
+        'schema:Park',
+        'schema:Museum',
+        'schema:StadiumOrArena',
+        'schema:Hospital',
+        'schema:ItemList',
+        'schema:Menu',
+        'schema:MenuItem',
+        'schema:InteractionCounter',
+        'schema:LikeAction',
+        'schema:FollowAction',
+        'schema:ShareAction',
+        'schema:SoftwareApplication',
+        'schema:MobileApplication',
+        'schema:WebApplication',
+        'schema:HowTo',
+        'schema:Recipe',
+        'schema:JobPosting',
+        'schema:Game',
+        'schema:VideoGame',
+        'schema:MusicRecording',
+        'schema:MusicAlbum',
+        'schema:MusicGroup',
+        'schema:Book',
+        'schema:Dataset',
+        'schema:Vehicle',
+        'schema:Car'
     ],
 
 
     'Landing Page': [
+        'schema:WebSite',
         'schema:WebPage',
         'schema:Organization',
+        'schema:Corporation',
+        'schema:LocalBusiness',
+        'schema:ProfessionalService',
+        'schema:Service',
+        'schema:FinancialService',
+        'schema:MedicalOrganization',
+        'schema:Dentist',
+        'schema:LegalService',
+        'schema:AccountingService',
+        'schema:AutoRepair',
+        'schema:AutomotiveBusiness',
+        'schema:BeautySalon',
+        'schema:Store',
+        'schema:ComputerStore',
+        'schema:ElectronicsStore',
+        'schema:FurnitureStore',
+        'schema:GroceryStore',
+        'schema:HardwareStore',
+        'schema:HealthClub',
+        'schema:HomeAndConstructionBusiness',
+        'schema:InternetCafe',
+        'schema:Locksmith',
+        'schema:NailSalon',
+        'schema:RealEstateAgent',
+        'schema:Restaurant',
+        'schema:CafeOrCoffeeShop',
+        'schema:Bakery',
+        'schema:TravelAgency',
+        'schema:LodgingBusiness',
+        'schema:Hotel',
+        'schema:BedAndBreakfast',
+        'schema:Person',
         'schema:Product',
         'schema:Offer',
-        'schema:Service',
-        'schema:FAQPage',
-        'schema:Review',
+        'schema:AggregateOffer',
         'schema:AggregateRating',
-        'schema:ContactPoint',
-        'schema:BreadcrumbList',
-        'schema:Article',
-        'schema:BlogPosting',
-        'schema:NewsArticle',
+        'schema:Brand',
+        'schema:Review',
         'schema:VideoObject',
         'schema:ImageObject',
+        'schema:Article',
         'schema:HowTo',
-        'schema:Question',
-        'schema:Answer',
-        'schema:LocalBusiness',
-        'schema:Store',
-        'schema:Restaurant',
-        'schema:Hotel',
-        'schema:ProfessionalService',
-        'schema:Brand',
-        'schema:Corporation',
-        'schema:OnlineStore',
+        'schema:Recipe',
         'schema:Event',
-        'schema:Action',
-        'schema:BuyAction',
-        'schema:OrderAction',
-        'schema:SubscribeAction',
-        'schema:Place',
-        'schema:PostalAddress',
-        'schema:GeoCoordinates',
+        'schema:BusinessEvent',
+        'schema:EducationEvent',
+        'schema:MusicEvent',
+        'schema:SportsEvent',
+        'schema:SaleEvent',
+        'schema:Festival',
+        'schema:TheaterEvent',
+        'schema:BreadcrumbList',
         'schema:ItemList',
-        'schema:ListItem',
-        'schema:Table',
-        'schema:WebSite',
-        'schema:SiteNavigationElement',
-        'schema:SearchAction',
-        'schema:Comment',
-        'schema:UserReview',
-        'schema:Rating',
-        'schema:PriceSpecification',
-        'schema:PaymentMethod',
-        'schema:Invoice',
-        'schema:MonetaryAmount',
-        'schema:MediaObject',
-        'schema:AudioObject',
-        'schema:ImageGallery',
-        'schema:VideoGallery',
-        'schema:Certification',
-        'schema:Credential',
-        'schema:EducationalOccupationalCredential',
-        'schema:Person',
-        'schema:SocialMediaPosting',
-        'schema:UserComments',
+        'schema:FAQPage',
         'schema:SoftwareApplication',
-        'schema:WebApplication',
         'schema:MobileApplication',
-        'schema:Course',
-        'schema:EducationalOrganization'
+        'schema:WebApplication',
+        'schema:Place',
+        'schema:TouristAttraction',
+        'schema:TouristDestination',
+        'schema:LandmarksOrHistoricalBuildings',
+        'schema:Airport',
+        'schema:Park',
+        'schema:Museum',
+        'schema:StadiumOrArena',
+        'schema:EducationalOrganization',
+        'schema:LearningResource',
+        'schema:CourseInstance',
+        'schema:JobPosting',
+        'schema:SpeakableSpecification',
+        'schema:InteractionCounter'
     ],
 
 
     'Blog (Blog Listing)': [
+        'schema:WebSite',
+        'schema:WebPage',
+        'schema:CollectionPage',
         'schema:Blog',
         'schema:BlogPosting',
         'schema:Article',
-        'schema:Person',
-        'schema:Organization',
-        'schema:ImageObject',
-        'schema:Comment',
-        'schema:AggregateRating',
-        'schema:Rating',
-        'schema:WebPage',
         'schema:NewsArticle',
-        'schema:ScholarlyArticle',
-        'schema:TechArticle',
-        'schema:OpinionNewsArticle',
-        'schema:ReviewNewsArticle',
-        'schema:BackgroundNewsArticle',
         'schema:AnalysisNewsArticle',
-        'schema:ReportageNewsArticle',
-        'schema:SatiricalArticle',
-        'schema:AdvertiserContentArticle',
-        'schema:AskPublicNewsArticle',
-        'schema:CreativeWork',
-        'schema:MediaObject',
+        'schema:BackgroundNewsArticle',
+        'schema:Report',
+        'schema:Review',
+        'schema:CriticReview',
+        'schema:Comment',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:Person',
+        'schema:Brand',
+        'schema:ImageObject',
         'schema:VideoObject',
         'schema:AudioObject',
-        'schema:Photograph',
-        'schema:TextObject',
-        'schema:ItemList',
         'schema:BreadcrumbList',
-        'schema:CollectionPage',
-        'schema:WebSite',
-        'schema:SiteNavigationElement',
-        'schema:UserComments',
-        'schema:UserReview',
-        'schema:UserInteraction',
-        'schema:LikeAction',
-        'schema:ShareAction',
-        'schema:CommentAction',
-        'schema:PostalAddress',
-        'schema:ContactPoint',
-        'schema:Brand',
-        'schema:Language',
-        'schema:DefinedTerm',
-        'schema:CategoryCode',
-        'schema:DataFeed',
-        'schema:DataFeedItem',
-        'schema:PropertyValue',
-        'schema:StructuredValue',
-        'schema:DateTime',
-        'schema:Date',
-        'schema:Duration',
-        'cmns-dt:DateTime',
-        'cmns-dt:Date',
-        'cmns-dt:Duration',
-        'schema:Text',
-        'schema:URL',
-        'schema:Boolean',
-        'schema:Number',
-        'schema:Integer',
-        'schema:Float'
+        'schema:ItemList',
+        'schema:AggregateRating',
+        'schema:InteractionCounter',
+        'schema:SpeakableSpecification'
     ],
 
 
     'Blog Post / Article': [
-        'schema:BlogPosting',
-        'schema:Article',
-        'schema:ScholarlyArticle',
-        'schema:TechArticle',
-        'schema:AdvertiserContentArticle',
-        'schema:SatiricalArticle',
-        'schema:OpinionNewsArticle',
-        'schema:ReviewNewsArticle',
-        'schema:BackgroundNewsArticle',
-        'schema:ReportageNewsArticle',
-        'schema:AnalysisNewsArticle',
-        'schema:AskPublicNewsArticle',
-        'schema:WebPage',
         'schema:WebSite',
-        'schema:WebContent',
-        'schema:ItemPage',
-        'schema:AboutPage',
-        'schema:ContactPage',
-        'schema:FAQPage',
-        'schema:QAPage',
-        'schema:ProfilePage',
-        'schema:SearchResultsPage',
-        'schema:CollectionPage',
-        'schema:Person',
+        'schema:WebPage',
         'schema:Organization',
-        'foaf:Person',
-        'gs1:Organization',
-        'fibo-fnd-org-org:Organization',
-        'schema:Comment',
-        'schema:UserComments',
+        'schema:Corporation',
+        'schema:Person',
+        'schema:Article',
+        'schema:NewsArticle',
+        'schema:Blog',
+        'schema:BlogPosting',
+        'schema:AnalysisNewsArticle',
+        'schema:BackgroundNewsArticle',
+        'schema:Report',
         'schema:Review',
-        'schema:Rating',
-        'schema:AggregateRating',
-        'schema:UserReview',
         'schema:CriticReview',
-        'schema:MediaReview',
-        'schema:EmployerReview',
-        'schema:ClaimReview',
-        'schema:EndorsementRating',
-        'schema:ImageObject',
-        'schema:VideoObject',
+        'schema:Comment',
+        'schema:CreativeWork',
         'schema:AudioObject',
-        'schema:ImageObjectSnapshot',
-        'schema:VideoObjectSnapshot',
-        'schema:AudioObjectSnapshot',
-        'schema:Photograph',
-        'schema:MediaObject',
-        'dctype:Image',
-        'schema:HowTo',
-        'schema:Recipe',
-        'schema:Question',
-        'schema:Answer',
-        'schema:HowToStep',
-        'schema:HowToDirection',
-        'schema:HowToSection',
-        'schema:HowToTip',
-        'schema:HowToSupply',
-        'schema:HowToTool',
-        'schema:HowToItem',
-        'schema:Quiz',
-        'schema:ItemList',
-        'schema:BreadcrumbList',
-        'schema:ListItem',
-        'schema:Event',
-        'schema:BusinessEvent',
-        'schema:EducationEvent',
-        'schema:SocialEvent',
-        'schema:PublicationEvent',
+        'schema:VideoObject',
+        'schema:Movie',
+        'schema:ImageObject',
         'schema:Product',
         'schema:Offer',
-        'schema:AggregateOffer',
-        'schema:Review',
-        'schema:Place',
-        'schema:LocalBusiness',
-        'schema:PostalAddress',
-        'gs1:PostalAddress',
-        'fibo-fnd-plc-adr:PostalAddress',
-        'schema:DateTime',
-        'schema:Date',
-        'schema:Duration',
-        'schema:Time',
-        'cmns-dt:DateTime',
-        'cmns-dt:Date',
-        'cmns-dt:Duration',
-        'schema:PropertyValue',
-        'schema:QuantitativeValue',
-        'schema:StructuredValue',
-        'schema:DefinedTerm',
-        'schema:DefinedTermSet',
-        'schema:CategoryCode',
-        'schema:CategoryCodeSet',
-        'schema:Claim',
-        'schema:Quotation',
-        'schema:Statement',
-        'schema:DigitalDocument',
-        'schema:TextDigitalDocument',
-        'schema:PresentationDigitalDocument',
-        'schema:SpreadsheetDigitalDocument',
-        'schema:Thing',
-        'schema:CreativeWork',
-        'schema:Text',
-        'schema:URL',
-        'schema:Boolean',
-        'schema:Number',
-        'schema:Integer',
-        'schema:Float',
-        'schema:SocialMediaPosting',
-        'schema:DiscussionForumPosting',
-        'schema:LiveBlogPosting',
-        'schema:UserInteraction',
-        'schema:InteractionCounter',
-        'schema:Audience',
-        'schema:EducationalAudience',
-        'schema:BusinessAudience',
-        'schema:PeopleAudience',
-        'schema:SiteNavigationElement',
-        'schema:WPHeader',
-        'schema:WPFooter',
-        'schema:WPSideBar',
-        'schema:Dataset',
-        'schema:DataFeed',
-        'schema:DataFeedItem',
-        'dcat:Dataset',
-        'void:Dataset',
-        'dctype:Dataset'
+        'schema:AggregateRating',
+        'schema:Brand',
+        'schema:ItemList',
+        'schema:BreadcrumbList',
+        'schema:HowTo',
+        'schema:SpeakableSpecification',
+        'schema:Recipe',
+        'schema:Event',
+        'schema:Book',
+        'schema:LearningResource',
+        'schema:SoftwareApplication',
+        'schema:MobileApplication',
+        'schema:WebApplication',
+        'schema:VideoGame',
+        'schema:MusicRecording',
+        'schema:MusicAlbum',
+        'schema:InteractionCounter'
     ],
 
 
     'News Article': [
         'schema:NewsArticle',
-        'schema:Person',
+        'schema:AnalysisNewsArticle',
+        'schema:BackgroundNewsArticle',
+        'schema:Report',
+        'schema:Article',
+        'schema:WebPage',
+        'schema:WebSite',
         'schema:Organization',
+        'schema:Corporation',
+        'schema:Person',
+        'schema:Brand',
         'schema:ImageObject',
         'schema:VideoObject',
+        'schema:AudioObject',
+        'schema:Clip',
         'schema:Place',
         'schema:Event',
-        'schema:PostalAddress',
-        'schema:WebPage',
-        'schema:AnalysisNewsArticle',
-        'schema:AskPublicNewsArticle',
-        'schema:BackgroundNewsArticle',
-        'schema:OpinionNewsArticle',
-        'schema:ReportageNewsArticle',
-        'schema:ReviewNewsArticle',
-        'schema:AdvertiserContentArticle',
-        'schema:AudioObject',
-        'schema:VideoObjectSnapshot',
-        'schema:ImageObjectSnapshot',
-        'schema:Photograph',
-        'schema:MediaObject',
-        'schema:Clip',
-        'schema:VideoClip',
-        'schema:Author',
-        'schema:NewsMediaOrganization',
-        'schema:Journalist',
-        'schema:ContactPoint',
-        'schema:DateTime',
-        'schema:Date',
-        'schema:Duration',
-        'schema:Country',
-        'schema:City',
-        'schema:AdministrativeArea',
-        'schema:GeoCoordinates',
-        'schema:GeoShape',
-        'schema:SportsEvent',
-        'schema:BusinessEvent',
-        'schema:SocialEvent',
-        'schema:EducationEvent',
-        'schema:PublicationEvent',
-        'schema:GovernmentOrganization',
-        'schema:Corporation',
-        'schema:EducationalOrganization',
-        'schema:NGO',
-        'schema:PoliticalParty',
+        'schema:Product',
         'schema:Review',
-        'schema:Rating',
-        'schema:AggregateRating',
-        'schema:ClaimReview',
         'schema:CriticReview',
         'schema:Comment',
-        'schema:Answer',
-        'schema:Quotation',
-        'schema:TextObject',
-        'schema:PropertyValue',
-        'schema:QuantitativeValue',
-        'schema:StructuredValue',
-        'schema:DefinedTerm',
-        'schema:Language',
-        'schema:CreativeWork',
-        'schema:Thing',
-        'schema:URL',
-        'schema:Text',
-        'schema:Boolean',
-        'schema:Number',
-        'schema:Integer'
+        'schema:AggregateRating',
+        'schema:BreadcrumbList',
+        'schema:SpeakableSpecification',
+        'schema:InteractionCounter',
+        'schema:LikeAction',
+        'schema:DislikeAction',
+        'schema:ShareAction',
+        'schema:CommentAction'
     ],
 
 
     'Category / Archive': [
-        'schema:Article',
-        'schema:BlogPosting',
-        'schema:NewsArticle',
-        'schema:ScholarlyArticle',
-        'schema:OpinionNewsArticle',
-        'schema:BackgroundNewsArticle',
-        'schema:AdvertiserContentArticle',
-        'schema:SatiricalArticle',
-        'schema:ReportageNewsArticle',
-        'schema:AnalysisNewsArticle',
-        'schema:ReviewNewsArticle',
-        'schema:AskPublicNewsArticle',
-        'schema:Book',
-        'schema:Chapter',
-        'schema:ShortStory',
-        'schema:Thesis',
-        'schema:VideoObject',
-        'schema:AudioObject',
-        'schema:ImageObject',
-        'schema:Photograph',
-        'schema:Painting',
-        'schema:Drawing',
-        'schema:Sculpture',
-        'schema:VisualArtwork',
-        'schema:Movie',
-        'schema:MusicRecording',
-        'schema:MusicComposition',
-        'schema:Podcast',
-        'schema:PodcastEpisode',
-        'schema:CreativeWorkSeries',
-        'schema:BookSeries',
-        'schema:MovieSeries',
-        'schema:TVSeries',
-        'schema:RadioSeries',
-        'schema:PodcastSeries',
-        'schema:VideoGameSeries',
-        'schema:ComicSeries',
-        'schema:Collection',
-        'schema:ProductCollection',
-        'schema:Event',
-        'schema:BusinessEvent',
-        'schema:EducationEvent',
-        'schema:ExhibitionEvent',
-        'schema:Festival',
-        'schema:FoodEvent',
-        'schema:LiteraryEvent',
-        'schema:MusicEvent',
-        'schema:SportsEvent',
-        'schema:TheaterEvent',
-        'schema:VisualArtsEvent',
-        'schema:SocialEvent',
-        'schema:ComedyEvent',
-        'schema:DanceEvent',
-        'schema:SaleEvent',
-        'schema:Product',
-        'schema:IndividualProduct',
-        'schema:ProductModel',
-        'schema:ProductGroup',
-        'schema:SomeProducts',
-        'schema:Organization',
-        'schema:LocalBusiness',
-        'schema:Corporation',
-        'schema:EducationalOrganization',
-        'schema:GovernmentOrganization',
-        'schema:NewsMediaOrganization',
-        'schema:PerformingGroup',
-        'schema:SportsOrganization',
-        'schema:SportsTeam',
-        'schema:Place',
-        'schema:TouristAttraction',
-        'schema:TouristDestination',
-        'schema:LandmarksOrHistoricalBuildings',
-        'schema:Museum',
-        'schema:Park',
-        'schema:Course',
-        'schema:LearningResource',
-        'schema:Quiz',
-        'schema:HowTo',
-        'schema:Recipe',
         'schema:WebPage',
         'schema:CollectionPage',
-        'schema:QAPage',
-        'schema:FAQPage',
-        'dcat:Dataset',
-        'dcat:Catalog',
-        'schema:DataCatalog',
-        'schema:DefinedTermSet',
-        'schema:CategoryCodeSet'
+        'schema:SearchResultsPage',
+        'schema:ItemList',
+        'schema:BreadcrumbList',
+        'schema:Blog',
+        'schema:CreativeWorkSeries',
+        'schema:DataCatalog'
     ],
 
 
     'FAQ Page': [
+        'schema:WebSite',
         'schema:FAQPage',
-        'schema:Question',
-        'schema:Answer',
         'schema:WebPage',
         'schema:Organization',
-        'schema:Person',
-        'schema:BreadcrumbList',
-        'schema:CreativeWork',
-        'schema:Article',
-        'schema:HowTo',
-        'schema:HowToStep',
-        'schema:HowToDirection',
-        'schema:Guide',
-        'schema:Comment',
-        'schema:UserComments',
-        'schema:TextObject',
-        'schema:VideoObject',
-        'schema:ImageObject',
-        'schema:Clip',
-        'schema:ItemList',
-        'schema:ListItem',
-        'schema:WebPageElement',
-        'schema:SiteNavigationElement',
-        'schema:CollectionPage',
-        'schema:WebSite',
-        'schema:Action',
-        'schema:SearchAction',
-        'schema:AskAction',
-        'schema:CommentAction',
-        'schema:InteractionCounter',
-        'schema:UserInteraction',
-        'schema:Place',
+        'schema:Corporation',
         'schema:LocalBusiness',
-        'schema:PostalAddress',
-        'schema:ContactPoint',
+        'schema:ProfessionalService',
+        'schema:FinancialService',
+        'schema:MedicalOrganization',
+        'schema:Dentist',
+        'schema:LegalService',
+        'schema:AccountingService',
+        'schema:AutoRepair',
+        'schema:AutomotiveBusiness',
+        'schema:BeautySalon',
+        'schema:Store',
+        'schema:ComputerStore',
+        'schema:ElectronicsStore',
+        'schema:FurnitureStore',
+        'schema:GroceryStore',
+        'schema:HardwareStore',
+        'schema:HealthClub',
+        'schema:HomeAndConstructionBusiness',
+        'schema:InternetCafe',
+        'schema:Locksmith',
+        'schema:NailSalon',
+        'schema:RealEstateAgent',
+        'schema:Restaurant',
+        'schema:CafeOrCoffeeShop',
+        'schema:Bakery',
+        'schema:TravelAgency',
+        'schema:LodgingBusiness',
+        'schema:Hotel',
+        'schema:BedAndBreakfast',
+        'schema:EducationalOrganization',
+        'schema:Hospital',
+        'schema:Person',
+        'schema:Product',
         'schema:Brand',
         'schema:Service',
-        'schema:Product',
-        'schema:Event',
-        'schema:DateTime',
-        'schema:Date',
-        'schema:Duration',
-        'schema:Rating',
-        'schema:AggregateRating',
-        'schema:Review',
-        'schema:Thing',
-        'schema:Intangible',
-        'schema:StructuredValue',
-        'schema:PropertyValue',
-        'schema:DefinedTerm'
+        'schema:BreadcrumbList',
+        'schema:QAPage'
     ],
 
 
     'How‑To Page': [
+        'schema:WebSite',
+        'schema:WebPage',
         'schema:HowTo',
-        'schema:HowToStep',
-        'schema:HowToSection',
-        'schema:HowToDirection',
-        'schema:HowToTip',
-        'schema:HowToTool',
-        'schema:HowToSupply',
-        'schema:HowToItem',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:LocalBusiness',
+        'schema:Person',
+        'schema:Brand',
         'schema:ImageObject',
         'schema:VideoObject',
-        'schema:ImageObjectSnapshot',
-        'schema:VideoObjectSnapshot',
+        'schema:Clip',
+        'schema:AudioObject',
+        'schema:Product',
+        'schema:SoftwareApplication',
+        'schema:MobileApplication',
+        'schema:WebApplication',
+        'schema:ItemList',
+        'schema:BreadcrumbList',
+        'schema:AggregateRating',
+        'schema:Review',
+        'schema:Comment',
+        'schema:CreativeWork',
+        'schema:Article',
+        'schema:BlogPosting',
+        'schema:Recipe',
+        'schema:PropertyValue',
+        'schema:SpeakableSpecification'
+    ],
+
+
+    'Documentation / Knowledge Base': [
+        'schema:WebSite',
+        'schema:WebPage',
+        'schema:AboutPage',
+        'schema:ContactPage',
+        'schema:FAQPage',
+        'schema:QAPage',
+        'schema:Article',
+        'schema:NewsArticle',
+        'schema:Blog',
+        'schema:BlogPosting',
+        'schema:AnalysisNewsArticle',
+        'schema:BackgroundNewsArticle',
+        'schema:Report',
+        'schema:CreativeWork',
+        'schema:DigitalDocument',
+        'schema:HowTo',
+        'schema:Recipe',
+        'schema:LearningResource',
+        'schema:Book',
+        'schema:Dataset',
+        'schema:DataCatalog',
+        'schema:DataDownload',
+        'schema:SoftwareApplication',
+        'schema:WebApplication',
+        'schema:APIReference',
+        'schema:Code',
+        'schema:ComputerLanguage',
+        'schema:SoftwareSourceCode',
+        'schema:TechArticle'
+    ],
+
+
+    'Product Page': [
+        'schema:WebSite',
+        'schema:WebPage',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:LocalBusiness',
+        'schema:Store',
+        'schema:ComputerStore',
+        'schema:ElectronicsStore',
+        'schema:FurnitureStore',
+        'schema:GroceryStore',
+        'schema:HardwareStore',
+        'schema:Product',
+        'schema:Offer',
+        'schema:AggregateOffer',
+        'schema:AggregateRating',
+        'schema:Brand',
+        'schema:MerchantReturnPolicy',
+        'schema:SizeSpecification',
+        'schema:PropertyValue',
+        'schema:mpn',
+        'schema:gtin',
+        'schema:sku',
+        'schema:PriceSpecification',
+        'schema:UnitPriceSpecification',
+        'schema:DeliveryTimeSettings',
+        'schema:Demand',
+        'schema:ItemList',
+        'schema:BreadcrumbList',
+        'schema:Review',
+        'schema:CriticReview',
+        'schema:Comment',
+        'schema:ImageObject',
+        'schema:VideoObject',
+        'schema:AudioObject',
+        'schema:3DModel',
+        'schema:HowTo',
+        'schema:Recipe',
+        'schema:Vehicle',
+        'schema:Car',
+        'schema:Book',
+        'schema:SoftwareApplication',
+        'schema:MobileApplication',
+        'schema:WebApplication',
+        'schema:Game',
+        'schema:VideoGame',
+        'schema:MusicRecording',
+        'schema:MusicAlbum',
+        'schema:Drug',
+        'schema:DoseSchedule',
+        'schema:Diet'
+    ],
+
+
+    'E‑commerce Category': [
+        'schema:WebSite',
+        'schema:WebPage',
+        'schema:CollectionPage',
+        'schema:SearchResultsPage',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:Store',
+        'schema:ComputerStore',
+        'schema:ElectronicsStore',
+        'schema:FurnitureStore',
+        'schema:GroceryStore',
+        'schema:HardwareStore',
+        'schema:Product',
+        'schema:Offer',
+        'schema:AggregateOffer',
+        'schema:AggregateRating',
+        'schema:Brand',
+        'schema:MerchantReturnPolicy',
+        'schema:SizeSpecification',
+        'schema:PropertyValue',
+        'schema:mpn',
+        'schema:gtin',
+        'schema:sku',
+        'schema:PriceSpecification',
+        'schema:UnitPriceSpecification',
+        'schema:DeliveryTimeSettings',
+        'schema:Demand',
+        'schema:ItemList',
+        'schema:BreadcrumbList',
+        'schema:Review',
+        'schema:CriticReview',
+        'schema:ImageObject',
+        'schema:VideoObject',
+        'schema:SpeakableSpecification',
+        'schema:Vehicle',
+        'schema:Car',
+        'schema:WebPageElement',
+        'schema:InteractionCounter'
+    ],
+
+
+    'CheckoutPage': [
+        'schema:WebSite',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:LocalBusiness',
+        'schema:Product',
+        'schema:Offer',
+        'schema:AggregateOffer',
+        'schema:AggregateRating',
+        'schema:Brand',
+        'schema:MerchantReturnPolicy',
+        'schema:SizeSpecification',
+        'schema:PropertyValue',
+        'schema:mpn',
+        'schema:gtin',
+        'schema:sku',
+        'schema:PriceSpecification',
+        'schema:UnitPriceSpecification',
+        'schema:DeliveryTimeSettings',
+        'schema:Demand',
+        'schema:ItemList',
+        'schema:BreadcrumbList',
+        'schema:Person',
+        'schema:ImageObject',
+        'schema:Review',
+        'schema:PaymentService',
+        'schema:CreditCard',
+        'schema:Invoice'
+    ],
+
+
+    'Reservation, Order': [
+        'schema:Flight',
+        'schema:FlightReservation',
+        'schema:HotelRoom',
+        'schema:LodgingReservation',
+        'schema:TrainTrip',
+        'schema:BusTrip',
+        'schema:TouristTrip',
+        'schema:Car',
+        'schema:TaxiReservation',
+        'schema:Invoice',
+        'schema:Trip',
+        'schema:BoatTrip',
+        'schema:Event',
+        'schema:BusinessEvent',
+        'schema:EducationEvent',
+        'schema:MusicEvent',
+        'schema:SportsEvent',
+        'schema:SaleEvent',
+        'schema:Festival',
+        'schema:TheaterEvent',
+        'schema:CourseInstance',
+        'schema:EventSeries',
+        'schema:Product',
+        'schema:Offer',
+        'schema:Service',
+        'schema:FoodEstablishmentReservation'
+    ],
+
+
+    'Service Page': [
+        'schema:WebSite',
+        'schema:WebPage',
+        'schema:Service',
+        'schema:ProfessionalService',
+        'schema:FinancialService',
+        'schema:MedicalOrganization',
+        'schema:Dentist',
+        'schema:LegalService',
+        'schema:AccountingService',
+        'schema:AutoRepair',
+        'schema:AutomotiveBusiness',
+        'schema:BeautySalon',
+        'schema:HealthClub',
+        'schema:HomeAndConstructionBusiness',
+        'schema:Locksmith',
+        'schema:NailSalon',
+        'schema:RealEstateAgent',
+        'schema:TravelAgency',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:LocalBusiness',
+        'schema:Person',
+        'schema:EmployeeRole',
+        'schema:Offer',
+        'schema:AggregateOffer',
+        'schema:AggregateRating',
+        'schema:Review',
+        'schema:Brand',
+        'schema:PriceSpecification',
+        'schema:UnitPriceSpecification',
+        'schema:HowTo',
+        'schema:FAQPage',
+        'schema:BreadcrumbList',
+        'schema:ImageObject',
+        'schema:VideoObject',
+        'schema:Place',
+        'schema:SpeakableSpecification'
+    ],
+
+
+    'About Us': [
+        'schema:WebSite',
+        'schema:WebPage',
+        'schema:AboutPage',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:LocalBusiness',
+        'schema:ProfessionalService',
+        'schema:FinancialService',
+        'schema:MedicalOrganization',
+        'schema:Dentist',
+        'schema:LegalService',
+        'schema:AccountingService',
+        'schema:AutoRepair',
+        'schema:AutomotiveBusiness',
+        'schema:BeautySalon',
+        'schema:Store',
+        'schema:ComputerStore',
+        'schema:ElectronicsStore',
+        'schema:FurnitureStore',
+        'schema:GroceryStore',
+        'schema:HardwareStore',
+        'schema:HealthClub',
+        'schema:HomeAndConstructionBusiness',
+        'schema:InternetCafe',
+        'schema:Locksmith',
+        'schema:NailSalon',
+        'schema:RealEstateAgent',
+        'schema:Restaurant',
+        'schema:CafeOrCoffeeShop',
+        'schema:Bakery',
+        'schema:TravelAgency',
+        'schema:LodgingBusiness',
+        'schema:Hotel',
+        'schema:BedAndBreakfast',
+        'schema:Person',
+        'schema:EmployeeRole',
+        'schema:Brand',
+        'schema:Place',
+        'schema:EducationalOrganization',
+        'schema:SpeakableSpecification',
+        'schema:ImageObject',
+        'schema:VideoObject'
+    ],
+
+
+    'Contact Us': [
+        'schema:WebSite',
+        'schema:WebPage',
+        'schema:ContactPage',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:LocalBusiness',
+        'schema:ProfessionalService',
+        'schema:FinancialService',
+        'schema:MedicalOrganization',
+        'schema:Dentist',
+        'schema:LegalService',
+        'schema:AccountingService',
+        'schema:AutoRepair',
+        'schema:AutomotiveBusiness',
+        'schema:BeautySalon',
+        'schema:Store',
+        'schema:ComputerStore',
+        'schema:ElectronicsStore',
+        'schema:FurnitureStore',
+        'schema:GroceryStore',
+        'schema:HardwareStore',
+        'schema:HealthClub',
+        'schema:HomeAndConstructionBusiness',
+        'schema:InternetCafe',
+        'schema:Locksmith',
+        'schema:NailSalon',
+        'schema:RealEstateAgent',
+        'schema:Restaurant',
+        'schema:CafeOrCoffeeShop',
+        'schema:Bakery',
+        'schema:TravelAgency',
+        'schema:LodgingBusiness',
+        'schema:Hotel',
+        'schema:BedAndBreakfast',
+        'schema:Person',
+        'schema:Place',
+        'schema:CivicStructure',
+        'schema:EducationalOrganization',
+        'schema:Hospital',
+        'schema:PostalAddress',
+        'schema:ContactPoint',
+        'schema:Message',
+        'schema:CommunicateAction'
+    ],
+
+
+    'ProfilePage + Person': [
+        'schema:Person',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:LocalBusiness',
+        'schema:ProfessionalService',
+        'schema:FinancialService',
+        'schema:MedicalOrganization',
+        'schema:Dentist',
+        'schema:LegalService',
+        'schema:AccountingService',
+        'schema:AutoRepair',
+        'schema:AutomotiveBusiness',
+        'schema:BeautySalon',
+        'schema:Store',
+        'schema:ComputerStore',
+        'schema:ElectronicsStore',
+        'schema:FurnitureStore',
+        'schema:GroceryStore',
+        'schema:HardwareStore',
+        'schema:HealthClub',
+        'schema:HomeAndConstructionBusiness',
+        'schema:InternetCafe',
+        'schema:Locksmith',
+        'schema:NailSalon',
+        'schema:RealEstateAgent',
+        'schema:Restaurant',
+        'schema:CafeOrCoffeeShop',
+        'schema:Bakery',
+        'schema:TravelAgency',
+        'schema:LodgingBusiness',
+        'schema:Hotel',
+        'schema:BedAndBreakfast',
+        'schema:EducationalOrganization',
+        'schema:EmployeeRole',
+        'schema:Brand',
+        'schema:ImageObject',
+        'schema:AudioObject',
+        'schema:VideoObject',
+        'schema:Article',
+        'schema:NewsArticle',
+        'schema:Blog',
+        'schema:BlogPosting',
+        'schema:Review',
+        'schema:CriticReview',
+        'schema:CreativeWork',
+        'schema:Book',
+        'schema:MusicRecording',
+        'schema:MusicAlbum',
+        'schema:MusicGroup',
+        'schema:Movie',
+        'schema:VideoGame',
+        'schema:SoftwareApplication',
+        'schema:WebApplication',
+        'schema:MobileApplication',
+        'schema:Place',
+        'schema:PostalAddress',
+        'schema:ContactPoint',
+        'schema:Occupation',
+        'schema:EducationEvent',
+        'schema:Event',
+        'schema:Product',
+        'schema:Offer',
+        'schema:AggregateRating',
+        'schema:InteractionCounter',
+        'schema:SpeakableSpecification'
+    ],
+
+
+    'Local Business Page': [
+        'schema:WebSite',
+        'schema:WebPage',
+        'schema:ContactPage',
+        'schema:FAQPage',
+        'schema:LocalBusiness',
+        'schema:ProfessionalService',
+        'schema:Service',
+        'schema:FinancialService',
+        'schema:MedicalOrganization',
+        'schema:Dentist',
+        'schema:LegalService',
+        'schema:AccountingService',
+        'schema:AutoRepair',
+        'schema:AutomotiveBusiness',
+        'schema:BeautySalon',
+        'schema:Store',
+        'schema:ComputerStore',
+        'schema:ElectronicsStore',
+        'schema:FurnitureStore',
+        'schema:GroceryStore',
+        'schema:HardwareStore',
+        'schema:HealthClub',
+        'schema:HomeAndConstructionBusiness',
+        'schema:InternetCafe',
+        'schema:Locksmith',
+        'schema:NailSalon',
+        'schema:RealEstateAgent',
+        'schema:Restaurant',
+        'schema:CafeOrCoffeeShop',
+        'schema:Bakery',
+        'schema:TravelAgency',
+        'schema:LodgingBusiness',
+        'schema:Hotel',
+        'schema:BedAndBreakfast',
+        'schema:Person',
+        'schema:EmployeeRole',
+        'schema:Article',
+        'schema:BlogPosting',
+        'schema:Review',
+        'schema:ImageObject',
+        'schema:VideoObject',
+        'schema:Product',
+        'schema:Offer',
+        'schema:AggregateOffer',
+        'schema:AggregateRating',
+        'schema:Brand',
+        'schema:MerchantReturnPolicy',
+        'schema:JobPosting',
+        'schema:PropertyValue',
+        'schema:PriceSpecification',
+        'schema:BreadcrumbList',
+        'schema:HowTo',
+        'schema:Recipe',
+        'schema:Event',
+        'schema:BusinessEvent',
+        'schema:Place',
+        'schema:Hospital',
+        'schema:Menu',
+        'schema:MenuItem',
+        'schema:InteractionCounter'
+    ],
+
+
+    'Event Page': [
+        'schema:WebSite',
+        'schema:WebPage',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:LocalBusiness',
+        'schema:ProfessionalService',
+        'schema:EducationalOrganization',
+        'schema:Person',
+        'schema:Event',
+        'schema:BusinessEvent',
+        'schema:EducationEvent',
+        'schema:MusicEvent',
+        'schema:SportsEvent',
+        'schema:SaleEvent',
+        'schema:Festival',
+        'schema:TheaterEvent',
+        'schema:CourseInstance',
+        'schema:EventSeries',
+        'schema:Place',
+        'schema:CivicStructure',
+        'schema:TouristAttraction',
+        'schema:TouristDestination',
+        'schema:LandmarksOrHistoricalBuildings',
+        'schema:Airport',
+        'schema:Park',
+        'schema:Museum',
+        'schema:StadiumOrArena',
+        'schema:Offer',
+        'schema:AggregateOffer',
+        'schema:AggregateRating',
+        'schema:Review',
+        'schema:ImageObject',
+        'schema:VideoObject',
+        'schema:BreadcrumbList',
+        'schema:Brand',
+        'schema:PriceSpecification',
+        'schema:UnitPriceSpecification',
+        'schema:MusicGroup',
+        'schema:MusicRecording',
+        'schema:MusicAlbum',
+        'schema:PerformingGroup'
+    ],
+
+
+    'Course Page': [
+        'schema:WebSite',
+        'schema:WebPage',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:EducationalOrganization',
+        'schema:Person',
+        'schema:Course',
+        'schema:CourseInstance',
+        'schema:LearningResource',
+        'schema:EducationEvent',
+        'schema:Article',
+        'schema:BlogPosting',
+        'schema:Review',
+        'schema:AggregateRating',
+        'schema:Offer',
+        'schema:AggregateOffer',
+        'schema:PriceSpecification',
+        'schema:UnitPriceSpecification',
+        'schema:Brand',
+        'schema:VideoObject',
+        'schema:ImageObject',
+        'schema:AudioObject',
+        'schema:BreadcrumbList',
+        'schema:ItemList',
+        'schema:FAQPage',
+        'schema:HowTo',
+        'schema:SpeakableSpecification',
+        'schema:Occupation',
+        'schema:PropertyValue'
+    ],
+
+
+    'Video Page': [
+        'schema:WebSite',
+        'schema:WebPage',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:LocalBusiness',
+        'schema:Person',
+        'schema:VideoObject',
+        'schema:Movie',
+        'schema:TVSeries',
+        'schema:Episode',
+        'schema:Clip',
+        'schema:CreativeWork',
+        'schema:AudioObject',
+        'schema:ImageObject',
+        'schema:Brand',
+        'schema:AggregateRating',
+        'schema:Review',
+        'schema:Comment',
+        'schema:InteractionCounter',
+        'schema:BreadcrumbList',
+        'schema:ItemList',
+        'schema:Article',
+        'schema:BlogPosting',
+        'schema:Event',
+        'schema:MusicEvent',
+        'schema:SportsEvent',
+        'schema:Product',
+        'schema:Offer',
+        'schema:HowTo',
+        'schema:Recipe',
+        'schema:LearningResource',
+        'schema:Course',
+        'schema:WebPageElement',
+        'schema:EntryPoint',
+        'schema:SpeakableSpecification'
+    ],
+
+
+    'Podcast Page': [
+        'schema:WebSite',
+        'schema:WebPage',
+        'schema:CollectionPage',
+        'schema:ProfilePage',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:Person',
+        'schema:CreativeWork',
+        'schema:CreativeWorkSeries',
+        'schema:PodcastSeries',
+        'schema:PodcastEpisode',
         'schema:AudioObject',
         'schema:AudioObjectSnapshot',
         'schema:Clip',
-        'schema:VideoClip',
-        'schema:Duration',
-        'schema:DateTime',
-        'schema:Date',
-        'schema:Time',
-        'cmns-dt:Duration',
-        'cmns-dt:DateTime',
-        'cmns-dt:Date',
-        'schema:QuantitativeValue',
-        'schema:PropertyValue',
-        'schema:Quantity',
-        'schema:Mass',
-        'schema:Energy',
-        'schema:Distance',
-        'schema:MonetaryAmount',
-        'schema:Product',
-        'schema:IndividualProduct',
-        'schema:ProductModel',
-        'schema:SomeProducts',
         'schema:Brand',
-        'unece:TradeProduct',
-        'unece:SpecifiedTradeProduct',
-        'fibo-fnd-pas-pas:Product',
-        'schema:Text',
-        'schema:TextObject',
-        'schema:Comment',
-        'schema:Answer',
-        'schema:Question',
-        'schema:CreativeWork',
         'schema:ItemList',
-        'schema:ListItem',
-        'schema:Thing',
-        'schema:Intangible',
-        'schema:Rating',
-        'schema:AggregateRating',
+        'schema:BreadcrumbList',
+        'schema:SpeakableSpecification',
+        'schema:ImageObject',
         'schema:Review',
-        'schema:UserReview',
+        'schema:AggregateRating',
+        'schema:Comment',
+        'schema:LikeAction',
+        'schema:DislikeAction',
+        'schema:FollowAction',
+        'schema:ShareAction',
+        'schema:CommentAction',
+        'schema:InteractionCounter',
+        'schema:WebPageElement',
+        'schema:EntryPoint'
+    ],
+
+
+    'Movie, TVSeries, TVEpisode': [
+        'schema:VideoObject',
+        'schema:Movie',
+        'schema:TVSeries',
+        'schema:Episode',
+        'schema:Clip',
+        'schema:CreativeWork',
+        'schema:CreativeWorkSeries',
         'schema:Person',
         'schema:Organization',
-        'gs1:Organization',
-        'foaf:Person',
-        'schema:DefinedTerm',
-        'schema:PropertyValueSpecification',
-        'schema:StructuredValue',
-        'schema:TypeAndQuantityNode',
-        'schema:NutritionInformation',
-        'schema:Recipe',
-        'schema:Action',
-        'schema:CreateAction',
-        'schema:CookAction',
-        'schema:DrawAction',
-        'schema:PaintAction',
-        'schema:WriteAction',
+        'schema:Corporation',
+        'schema:Brand',
+        'schema:Review',
+        'schema:CriticReview',
+        'schema:Comment',
+        'schema:AggregateRating',
+        'schema:Offer',
+        'schema:ImageObject',
+        'schema:AudioObject',
+        'schema:MusicRecording',
+        'schema:MusicGroup',
+        'schema:Event',
         'schema:Place',
-        'schema:PostalAddress',
-        'gs1:PostalAddress',
-        'schema:URL',
+        'schema:Country',
+        'schema:Language',
+        'schema:InteractionCounter',
+        'schema:EntryPoint',
+        'schema:BreadcrumbList',
+        'schema:ItemList',
         'schema:WebPage',
         'schema:WebSite'
     ],
 
 
-    'Documentation / Knowledge Base': ['schema:TechArticle', 'schema:Article'],
+    'MusicAlbum, MusicRecording': [
+        'schema:Person',
+        'schema:Organization',
+        'schema:MusicGroup',
+        'schema:Brand',
+        'schema:AggregateRating',
+        'schema:Review',
+        'schema:CriticReview',
+        'schema:Comment',
+        'schema:Offer',
+        'schema:AggregateOffer',
+        'schema:PriceSpecification',
+        'schema:UnitPriceSpecification',
+        'schema:PropertyValue',
+        'schema:ImageObject',
+        'schema:AudioObject',
+        'schema:VideoObject',
+        'schema:Clip',
+        'schema:MusicRecording',
+        'schema:MusicAlbum',
+        'schema:Event',
+        'schema:MusicEvent',
+        'schema:Place',
+        'schema:ItemList',
+        'schema:LikeAction',
+        'schema:DislikeAction',
+        'schema:ShareAction',
+        'schema:InteractionCounter'
+    ],
 
 
-    'Product Page': ['schema:Product'],
+    'Book': [
+        'schema:Person',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:EducationalOrganization',
+        'schema:Brand',
+        'schema:Review',
+        'schema:CriticReview',
+        'schema:AggregateRating',
+        'schema:Offer',
+        'schema:AggregateOffer',
+        'schema:PriceSpecification',
+        'schema:UnitPriceSpecification',
+        'schema:PropertyValue',
+        'schema:ImageObject',
+        'schema:AudioObject',
+        'schema:VideoObject',
+        'schema:Comment',
+        'schema:InteractionCounter',
+        'schema:LikeAction',
+        'schema:DislikeAction',
+        'schema:ShareAction',
+        'schema:CommentAction',
+        'schema:Place',
+        'schema:Event',
+        'schema:BusinessEvent',
+        'schema:EducationEvent',
+        'schema:SaleEvent',
+        'schema:ItemList',
+        'schema:WebPage',
+        'schema:AboutPage',
+        'schema:ContactPage',
+        'schema:FAQPage',
+        'schema:ProfilePage',
+        'schema:QAPage',
+        'schema:CheckoutPage',
+        'schema:CollectionPage',
+        'schema:SearchResultsPage',
+        'schema:WebPageElement',
+        'schema:EntryPoint'
+    ],
 
 
-    'E‑commerce Category': ['schema:CollectionPage'],
+    'Recipe': [
+        'schema:Person',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:LocalBusiness',
+        'schema:ProfessionalService',
+        'schema:ImageObject',
+        'schema:VideoObject',
+        'schema:AudioObject',
+        'schema:AggregateRating',
+        'schema:Review',
+        'schema:Comment',
+        'schema:NutritionInformation',
+        'schema:HowToStep',
+        'schema:HowToSection',
+        'schema:ItemList',
+        'schema:PropertyValue',
+        'schema:Brand',
+        'schema:Place',
+        'schema:CreativeWork',
+        'schema:Article',
+        'schema:BlogPosting'
+    ],
 
 
-    'CheckoutPage': ['schema:CheckoutPage'],
+    'Review Page': [
+        'schema:WebSite',
+        'schema:WebPage',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:LocalBusiness',
+        'schema:ProfessionalService',
+        'schema:Service',
+        'schema:FinancialService',
+        'schema:MedicalOrganization',
+        'schema:Dentist',
+        'schema:LegalService',
+        'schema:AccountingService',
+        'schema:AutoRepair',
+        'schema:AutomotiveBusiness',
+        'schema:BeautySalon',
+        'schema:Store',
+        'schema:ComputerStore',
+        'schema:ElectronicsStore',
+        'schema:FurnitureStore',
+        'schema:GroceryStore',
+        'schema:HardwareStore',
+        'schema:HealthClub',
+        'schema:HomeAndConstructionBusiness',
+        'schema:InternetCafe',
+        'schema:Locksmith',
+        'schema:NailSalon',
+        'schema:RealEstateAgent',
+        'schema:Restaurant',
+        'schema:CafeOrCoffeeShop',
+        'schema:Bakery',
+        'schema:TravelAgency',
+        'schema:LodgingBusiness',
+        'schema:Hotel',
+        'schema:BedAndBreakfast',
+        'schema:Person',
+        'schema:Article',
+        'schema:NewsArticle',
+        'schema:Blog',
+        'schema:BlogPosting',
+        'schema:DiscussionForumPosting',
+        'schema:AnalysisNewsArticle',
+        'schema:BackgroundNewsArticle',
+        'schema:Report',
+        'schema:Review',
+        'schema:CriticReview',
+        'schema:CreativeWork',
+        'schema:CreativeWorkSeries',
+        'schema:DigitalDocument',
+        'schema:AudioObject',
+        'schema:VideoObject',
+        'schema:Movie',
+        'schema:TVSeries',
+        'schema:Episode',
+        'schema:ImageObject',
+        'schema:Product',
+        'schema:Offer',
+        'schema:AggregateOffer',
+        'schema:AggregateRating',
+        'schema:Brand',
+        'schema:Book',
+        'schema:Place',
+        'schema:CivicStructure',
+        'schema:TouristAttraction',
+        'schema:TouristDestination',
+        'schema:LandmarksOrHistoricalBuildings',
+        'schema:Airport',
+        'schema:Park',
+        'schema:Museum',
+        'schema:StadiumOrArena',
+        'schema:MedicalCondition',
+        'schema:Hospital',
+        'schema:Diet',
+        'schema:Drug',
+        'schema:SoftwareApplication',
+        'schema:MobileApplication',
+        'schema:WebApplication',
+        'schema:HotelRoom',
+        'schema:Car',
+        'schema:Game',
+        'schema:VideoGame',
+        'schema:MusicRecording',
+        'schema:MusicAlbum',
+        'schema:Vehicle',
+        'schema:Menu',
+        'schema:MenuItem',
+        'schema:EducationalOrganization',
+        'schema:LearningResource',
+        'schema:Event',
+        'schema:BusinessEvent',
+        'schema:EducationEvent',
+        'schema:MusicEvent',
+        'schema:SportsEvent',
+        'schema:SaleEvent',
+        'schema:Festival',
+        'schema:TheaterEvent',
+        'schema:CourseInstance'
+    ],
 
 
-    'Reservation, Order': ['schema:Order', 'schema:Reservation'],
+    'Comparison Page': [
+        'schema:WebSite',
+        'schema:WebPage',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:LocalBusiness',
+        'schema:Brand',
+        'schema:Product',
+        'schema:Offer',
+        'schema:AggregateOffer',
+        'schema:AggregateRating',
+        'schema:Review',
+        'schema:CriticReview',
+        'schema:Rating',
+        'schema:ItemList',
+        'schema:BreadcrumbList',
+        'schema:Service',
+        'schema:SoftwareApplication',
+        'schema:MobileApplication',
+        'schema:WebApplication',
+        'schema:Vehicle',
+        'schema:Car',
+        'schema:Hotel',
+        'schema:Restaurant',
+        'schema:Book',
+        'schema:Movie',
+        'schema:VideoGame',
+        'schema:Game',
+        'schema:MusicAlbum',
+        'schema:CreativeWork',
+        'schema:Place',
+        'schema:LodgingBusiness',
+        'schema:Store',
+        'schema:ComputerStore',
+        'schema:ElectronicsStore',
+        'schema:FurnitureStore',
+        'schema:PriceSpecification',
+        'schema:PropertyValue',
+        'schema:ImageObject',
+        'schema:VideoObject'
+    ],
 
 
-    'Service Page': ['schema:Service'],
+    'Portfolio / Project': [
+        'schema:WebSite',
+        'schema:WebPage',
+        'schema:CollectionPage',
+        'schema:CreativeWork',
+        'schema:CreativeWorkSeries',
+        'schema:DigitalDocument',
+        'schema:Article',
+        'schema:Blog',
+        'schema:BlogPosting',
+        'schema:Report',
+        'schema:AudioObject',
+        'schema:VideoObject',
+        'schema:Movie',
+        'schema:ImageObject',
+        'schema:Clip',
+        'schema:Drawing',
+        'schema:3DModel',
+        'schema:Product',
+        'schema:SoftwareApplication',
+        'schema:MobileApplication',
+        'schema:WebApplication',
+        'schema:APIReference',
+        'schema:Code',
+        'schema:SoftwareSourceCode',
+        'schema:ComputerLanguage',
+        'schema:Dataset',
+        'schema:DataCatalog',
+        'schema:DataDownload',
+        'schema:Book',
+        'schema:LearningResource',
+        'schema:Game',
+        'schema:VideoGame',
+        'schema:MusicRecording',
+        'schema:MusicAlbum',
+        'schema:Brand',
+        'schema:ItemList',
+        'schema:HowTo',
+        'schema:Recipe',
+        'schema:Event',
+        'schema:EventSeries'
+    ],
 
 
-    'About Us': ['schema:AboutPage'],
+    'Software / App Page': [
+        'schema:WebSite',
+        'schema:WebPage',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:Person',
+        'schema:Article',
+        'schema:BlogPosting',
+        'schema:Review',
+        'schema:CriticReview',
+        'schema:Comment',
+        'schema:CreativeWork',
+        'schema:VideoObject',
+        'schema:ImageObject',
+        'schema:Product',
+        'schema:Offer',
+        'schema:AggregateOffer',
+        'schema:AggregateRating',
+        'schema:Brand',
+        'schema:SoftwareApplication',
+        'schema:MobileApplication',
+        'schema:WebApplication',
+        'schema:APIReference',
+        'schema:Code',
+        'schema:SoftwareSourceCode',
+        'schema:ComputerLanguage',
+        'schema:HowTo',
+        'schema:FAQPage',
+        'schema:QAPage',
+        'schema:BreadcrumbList',
+        'schema:ItemList',
+        'schema:SpeakableSpecification',
+        'schema:LikeAction',
+        'schema:DislikeAction',
+        'schema:FollowAction',
+        'schema:ShareAction',
+        'schema:CommentAction',
+        'schema:InteractionCounter',
+        'schema:EntryPoint',
+        'schema:VideoGame',
+        'schema:Game'
+    ],
 
 
-    'Contact Us': ['schema:ContactPage'],
+    'RealEstateListing': [
+        'schema:WebSite',
+        'schema:WebPage',
+        'schema:Organization',
+        'schema:Corporation',
+        'schema:LocalBusiness',
+        'schema:RealEstateAgent',
+        'schema:Person',
+        'schema:Place',
+        'schema:CivicStructure',
+        'schema:Offer',
+        'schema:AggregateOffer',
+        'schema:AggregateRating',
+        'schema:PriceSpecification',
+        'schema:UnitPriceSpecification',
+        'schema:PropertyValue',
+        'schema:ImageObject',
+        'schema:VideoObject',
+        'schema:Review',
+        'schema:Rating',
+        'schema:PostalAddress',
+        'schema:GeoCoordinates',
+        'schema:QuantitativeValue',
+        'schema:FloorPlan',
+        'schema:Accommodation',
+        'schema:Apartment',
+        'schema:House',
+        'schema:SingleFamilyResidence'
+    ],
 
 
-    'ProfilePage + Person': ['schema:ProfilePage', 'schema:Person'],
+    'Hotel, LodgingBusiness': [
+        'schema:WebSite',
+        'schema:WebPage',
+        'schema:AboutPage',
+        'schema:ContactPage',
+        'schema:FAQPage',
+        'schema:Organization',
+        'schema:LocalBusiness',
+        'schema:LodgingBusiness',
+        'schema:Hotel',
+        'schema:BedAndBreakfast',
+        'schema:Place',
+        'schema:CivicStructure',
+        'schema:TouristAttraction',
+        'schema:TouristDestination',
+        'schema:Person',
+        'schema:EmployeeRole',
+        'schema:Service',
+        'schema:Offer',
+        'schema:AggregateOffer',
+        'schema:AggregateRating',
+        'schema:Review',
+        'schema:Brand',
+        'schema:PropertyValue',
+        'schema:PriceSpecification',
+        'schema:UnitPriceSpecification',
+        'schema:ImageObject',
+        'schema:VideoObject',
+        'schema:HotelRoom',
+        'schema:LodgingReservation',
+        'schema:Event',
+        'schema:BusinessEvent',
+        'schema:SaleEvent',
+        'schema:Menu',
+        'schema:MenuItem',
+        'schema:Restaurant',
+        'schema:CafeOrCoffeeShop',
+        'schema:Article',
+        'schema:BlogPosting',
+        'schema:ItemList',
+        'schema:BreadcrumbList',
+        'schema:SpeakableSpecification',
+        'schema:InteractionCounter',
+        'schema:EntryPoint'
+    ],
 
 
-    'Local Business Page': ['schema:LocalBusiness'],
+    'DiscussionForumPosting': [
+        'schema:DiscussionForumPosting'
+    ],
 
 
-    'Event Page': ['schema:Event'],
+    'MedicalWebPage, HealthTopicContent': [
+        'schema:MedicalWebPage'
+    ],
 
 
-    'Course Page': ['schema:Course'],
+    'SearchResultsPage': [
+        'schema:SearchResultsPage'
+    ],
 
 
-    'Video Page': ['schema:VideoObject'],
+    'Job Posting': [
+        'schema:JobPosting'
+    ]
 
 
-    'Podcast Page': ['schema:PodcastEpisode', 'schema:PodcastSeries'],
-
-
-    'Movie, TVSeries, TVEpisode': ['schema:Movie', 'schema:TVSeries', 'schema:TVEpisode'],
-
-
-    'MusicAlbum, MusicRecording': ['schema:MusicAlbum', 'schema:MusicRecording'],
-
-
-    'Book': ['schema:Book'],
-
-
-    'Recipe': ['schema:Recipe'],
-
-
-    'Review Page': ['schema:Review'],
-
-
-    'Comparison Page': ['schema:Product'],
-
-
-    'Portfolio / Project': ['schema:CreativeWork', 'schema:VisualArtwork'],
-
-
-    'Software / App Page': ['schema:SoftwareApplication', 'schema:WebApplication', 'schema:MobileApplication'],
-
-
-    'RealEstateListing': ['schema:RealEstateListing'],
-
-
-    'Hotel, LodgingBusiness': ['schema:Hotel', 'schema:LodgingBusiness'],
-
-
-    'DiscussionForumPosting': ['schema:DiscussionForumPosting'],
-
-
-    'MedicalWebPage, HealthTopicContent': ['schema:MedicalWebPage', 'schema:HealthTopicContent'],
-
-
-    'SearchResultsPage': ['schema:SearchResultsPage'],
-
-
-    'Job Posting': ['schema:JobPosting']
 };
 
 function getAllowedClassIds(pageType) {
@@ -973,7 +1684,7 @@ function getAllowedClassIds(pageType) {
     return entry || [];
 }
 
-// ==================== WIZARD STATE (MULTI-SELECT) ====================
+/* ------------------------- WIZARD STATE & STEPS ------------------------- */
 let wizardState = {
     currentStep: 0,
     selectedClasses: [],
@@ -989,17 +1700,16 @@ const STEPS = [
 
 let currentDisplayLimit = 20;
 let currentFilteredList = [];
+let currentSearchQuery = '';
 
-// ==================== BADGE (حالا بر اساس لیست داخلی کار می‌کند) ====================
+/* ------------------------- UI RENDERING FUNCTIONS ------------------------- */
 function getPriorityBadge(priority, classId) {
-    // اگر اولویت بالا باشد یا در لیست داخلی اسکیماهای مهم باشد، نشان را نمایش بده
     if (priority === 'high' || TRENDING_CLASS_IDS.has(classId)) {
         return '<span class="trending-badge" style="background: rgba(224,164,20,0.12); color: #E0A414; font-size: 0.7rem; padding: 2px 8px; border-radius: 20px; font-weight: 500;">Trending</span>';
     }
     return '';
 }
 
-// ==================== UI RENDERING ====================
 function renderStepIndicator() {
     const indicator = document.getElementById('stepIndicator');
     indicator.innerHTML = STEPS.map((step, idx) => `
@@ -1019,7 +1729,7 @@ function renderStep() {
     updateNavigationButtons();
 }
 
-// -------------------- STEP 1: NO CHECKBOX, CARD CLICK TOGGLE --------------------
+/* ---------- STEP 1: SELECT TYPE ---------- */
 function renderSelectTypeStep(container) {
     const suggested = suggestSchemaType();
     const suggestedLabel = classesMap.get(suggested)?.label || 'WebPage';
@@ -1045,11 +1755,14 @@ function renderSelectTypeStep(container) {
         </div>
     `;
     container.innerHTML = html;
+
     renderPageTypeTabs();
+    currentSearchQuery = '';
     renderClassGrid(wizardState.activePageType);
+
     document.getElementById('classSearch').addEventListener('input', debounce((e) => {
         currentDisplayLimit = 20;
-        filterClasses(e.target.value);
+        renderClassGrid(wizardState.activePageType, e.target.value);
     }, 300));
 
     document.getElementById('selectAllBtn').addEventListener('click', () => {
@@ -1064,15 +1777,29 @@ function renderSelectTypeStep(container) {
     });
 }
 
-function renderClassGrid(pageType) {
+/**
+ * Renders the schema class cards. Optional query filters by label/comment.
+ */
+function renderClassGrid(pageType, query = null) {
+    if (query !== null) currentSearchQuery = query;
     const grid = document.getElementById('classGrid');
     const allowedIds = getAllowedClassIds(pageType);
-    let classesToShow = allowedIds.length ? classList.filter(cls => allowedIds.includes(cls.id)) : classList;
-    currentFilteredList = classesToShow;
-    const total = currentFilteredList.length;
+    let baseList = allowedIds.length ? classList.filter(cls => allowedIds.includes(cls.id)) : classList;
+
+    // Filter by search query
+    let filtered = baseList;
+    if (currentSearchQuery.trim()) {
+        const q = currentSearchQuery.toLowerCase();
+        filtered = baseList.filter(cls =>
+            cls.label.toLowerCase().includes(q) ||
+            (cls.comment && cls.comment.toLowerCase().includes(q))
+        );
+    }
+    currentFilteredList = filtered;
+    const total = filtered.length;
     const hasMore = total > currentDisplayLimit;
-    const visibleClasses = currentFilteredList.slice(0, currentDisplayLimit);
-    
+    const visibleClasses = filtered.slice(0, currentDisplayLimit);
+
     grid.innerHTML = visibleClasses.map(cls => {
         const isSelected = wizardState.selectedClasses.includes(cls.id);
         const selectedClass = isSelected ? 'selected' : '';
@@ -1086,26 +1813,13 @@ function renderClassGrid(pageType) {
         </div>`;
     }).join('');
 
-    // attach click toggles
-    grid.querySelectorAll('.class-card').forEach(card => {
-        card.addEventListener('click', () => {
-            const id = card.dataset.id;
-            if (wizardState.selectedClasses.includes(id)) {
-                wizardState.selectedClasses = wizardState.selectedClasses.filter(c => c !== id);
-                card.classList.remove('selected');
-            } else {
-                wizardState.selectedClasses.push(id);
-                card.classList.add('selected');
-            }
-        });
-    });
-    
+    attachClassCardEvents(grid);
+
     const loadMoreContainer = document.getElementById('loadMoreContainer');
     if (loadMoreContainer) {
         if (hasMore) {
             loadMoreContainer.innerHTML = `<button id="loadMoreBtn" class="minimal-btn">Load more (${total - currentDisplayLimit} remaining)</button>`;
-            const btn = document.getElementById('loadMoreBtn');
-            btn.addEventListener('click', () => {
+            document.getElementById('loadMoreBtn').addEventListener('click', () => {
                 currentDisplayLimit += 20;
                 renderClassGrid(pageType);
             });
@@ -1115,33 +1829,7 @@ function renderClassGrid(pageType) {
     }
 }
 
-function filterClasses(query) {
-    const grid = document.getElementById('classGrid');
-    const activeTab = wizardState.activePageType;
-    const allowedIds = getAllowedClassIds(activeTab);
-    let baseList = allowedIds.length ? classList.filter(cls => allowedIds.includes(cls.id)) : classList;
-    const filtered = baseList.filter(cls => 
-        cls.label.toLowerCase().includes(query.toLowerCase()) ||
-        (cls.comment && cls.comment.toLowerCase().includes(query.toLowerCase()))
-    );
-    currentFilteredList = filtered;
-    currentDisplayLimit = 20;
-    const total = filtered.length;
-    const visibleClasses = filtered.slice(0, currentDisplayLimit);
-    
-    grid.innerHTML = visibleClasses.map(cls => {
-        const isSelected = wizardState.selectedClasses.includes(cls.id);
-        const selectedClass = isSelected ? 'selected' : '';
-        return `
-        <div class="class-card ${selectedClass}" data-id="${cls.id}">
-            <div class="class-name" style="display: flex; justify-content: space-between; align-items: center;">
-                <span>${cls.label}</span>
-                ${getPriorityBadge(cls.priority, cls.id)}
-            </div>
-            <div class="class-desc">${cls.comment ? cls.comment.substring(0, 80) + '...' : ''}</div>
-        </div>`;
-    }).join('');
-    
+function attachClassCardEvents(grid) {
     grid.querySelectorAll('.class-card').forEach(card => {
         card.addEventListener('click', () => {
             const id = card.dataset.id;
@@ -1154,23 +1842,9 @@ function filterClasses(query) {
             }
         });
     });
-    
-    const loadMoreContainer = document.getElementById('loadMoreContainer');
-    if (loadMoreContainer) {
-        if (total > currentDisplayLimit) {
-            loadMoreContainer.innerHTML = `<button id="loadMoreBtn" class="minimal-btn">Load more (${total - currentDisplayLimit} remaining)</button>`;
-            const btn = document.getElementById('loadMoreBtn');
-            btn.addEventListener('click', () => {
-                currentDisplayLimit += 20;
-                filterClasses(query);
-            });
-        } else {
-            loadMoreContainer.innerHTML = '';
-        }
-    }
 }
 
-// -------------------- STEP 2: TABS FOR EACH SELECTED SCHEMA --------------------
+/* ---------- STEP 2: FILL PROPERTIES ---------- */
 function renderFillPropsStep(container) {
     if (wizardState.selectedClasses.length === 0) {
         container.innerHTML = `<div class="step-title">No schema selected</div><div class="step-desc">You haven't selected any schema type. Please go back and select at least one.</div>`;
@@ -1190,7 +1864,7 @@ function renderFillPropsStep(container) {
     });
     tabsHtml += `</div><div id="propsPanelContainer"></div>`;
     container.innerHTML = tabsHtml;
-    
+
     function showTab(index) {
         const clsId = wizardState.selectedClasses[index];
         const recommended = getRecommendedProperties(clsId);
@@ -1205,7 +1879,7 @@ function renderFillPropsStep(container) {
         });
         html += `</div>`;
         document.getElementById('propsPanelContainer').innerHTML = html;
-        // attach input events
+
         document.querySelectorAll('.prop-input').forEach(input => {
             input.addEventListener('input', (e) => {
                 const classId = input.dataset.class;
@@ -1215,8 +1889,8 @@ function renderFillPropsStep(container) {
             });
         });
     }
+
     showTab(0);
-    // attach tab click events
     const tabs = document.querySelectorAll('.schema-tab');
     tabs.forEach((tab, idx) => {
         tab.addEventListener('click', () => {
@@ -1227,7 +1901,7 @@ function renderFillPropsStep(container) {
     });
 }
 
-// -------------------- STEP 3: REVIEW --------------------
+/* ---------- STEP 3: REVIEW ---------- */
 function renderReviewStep(container) {
     let html = `<div class="step-title">Review All Schemas</div><div class="step-desc">Check the information for each schema below.</div>`;
     for (const clsId of wizardState.selectedClasses) {
@@ -1251,7 +1925,7 @@ function renderReviewStep(container) {
     container.innerHTML = html;
 }
 
-// -------------------- NAVIGATION --------------------
+/* ---------- NAVIGATION ---------- */
 function updateNavigationButtons() {
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
@@ -1286,7 +1960,7 @@ function prevStep() {
     }
 }
 
-// -------------------- GENERATE JSON-LD --------------------
+/* ------------------------- JSON-LD GENERATION ------------------------- */
 function generateJSONLD() {
     const graph = [];
     for (const clsId of wizardState.selectedClasses) {
@@ -1321,7 +1995,7 @@ function generateJSONLD() {
     document.getElementById('wizardCard').classList.add('hidden');
 }
 
-// -------------------- PAGE TABS RENDERING (unchanged) --------------------
+/* ------------------------- PAGE TABS RENDERING ------------------------- */
 function renderPageTypeTabs() {
     const tabs = document.getElementById('pageTypeTabs');
     const pageTypes = Object.keys(PAGE_TYPE_MAP);
@@ -1332,6 +2006,7 @@ function renderPageTypeTabs() {
             btn.classList.add('active');
             wizardState.activePageType = btn.dataset.type;
             currentDisplayLimit = 20;
+            currentSearchQuery = '';
             renderClassGrid(wizardState.activePageType);
             document.getElementById('classSearch').value = '';
             btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
@@ -1343,17 +2018,20 @@ function renderPageTypeTabs() {
 }
 
 let tabScrollInitialized = false;
+
 function initTabScroll() {
     if (tabScrollInitialized) return;
     const tabsDiv = document.getElementById('pageTypeTabs');
     const leftArrow = document.getElementById('tabArrowLeft');
     const rightArrow = document.getElementById('tabArrowRight');
     if (!tabsDiv || !leftArrow || !rightArrow) return;
+
     function updateArrows() {
         const tolerance = 1;
         leftArrow.disabled = !(tabsDiv.scrollLeft > tolerance);
         rightArrow.disabled = !(tabsDiv.scrollLeft < tabsDiv.scrollWidth - tabsDiv.clientWidth - tolerance);
     }
+
     const scrollAmount = () => 200;
     leftArrow.addEventListener('click', () => tabsDiv.scrollBy({ left: -scrollAmount(), behavior: 'smooth' }));
     rightArrow.addEventListener('click', () => tabsDiv.scrollBy({ left: scrollAmount(), behavior: 'smooth' }));
@@ -1363,7 +2041,7 @@ function initTabScroll() {
     tabScrollInitialized = true;
 }
 
-// ==================== INITIALIZATION ====================
+/* ------------------------- INITIALIZATION & EVENT LISTENERS ------------------------- */
 async function initApp() {
     const statusText = document.getElementById('statusText');
     const loadingStatus = document.getElementById('loadingStatus');
@@ -1371,11 +2049,10 @@ async function initApp() {
     const retryBtn = document.getElementById('manualRetryBtn');
     try {
         statusText.textContent = 'Loading local schema definitions...';
-        
         buildClassesFromLocalDefinitions();
 
         if (classList.length === 0) {
-            throw new Error('Semora300.js not loaded or schemaDefinitions not set. Please check the script order and add `window.schemaDefinitions = schemaAllData["@graph"];` to the end of semora300.js');
+            throw new Error('Semora300.js not loaded or schemaDefinitions not set. Please check the script order and add window.schemaDefinitions = schemaAllData["@graph"]; to the end of semora300.js');
         }
 
         statusText.textContent = `Loaded ${classList.length} schema types. Now loading properties...`;
@@ -1406,7 +2083,6 @@ async function initApp() {
     }
 }
 
-// ==================== EVENT LISTENERS ====================
 document.getElementById('prevBtn').addEventListener('click', prevStep);
 document.getElementById('nextBtn').addEventListener('click', nextStep);
 document.getElementById('finishBtn').addEventListener('click', generateJSONLD);
@@ -1429,8 +2105,11 @@ document.getElementById('restartBtn').addEventListener('click', () => {
     document.getElementById('outputCard').classList.add('hidden');
     document.getElementById('wizardCard').classList.remove('hidden');
     tabScrollInitialized = false;
+    currentSearchQuery = '';
+    currentDisplayLimit = 20;
     renderStepIndicator();
     renderStep();
 });
 document.getElementById('manualRetryBtn').addEventListener('click', initApp);
+
 initApp();

@@ -1,0 +1,85 @@
+<!--
+  ****************************************************
+  *  Author: Armin Silatani
+  *  Date: 2026-04-25
+  *  Version: 1.0.0
+  ****************************************************
+-->
+
+<!-- =========================== DOCUMENT ============================ -->
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Code Refactor - Offline</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/images/logos/Re.svg">
+  <link rel="stylesheet" href="../assets/css/Refacto.css">
+</head>
+<body>
+  <!-- =========================== HEADER ============================ -->
+  <header class="app-header">
+    <div class="logo-area">
+      <img src="../assets/images/logos/Re.svg" alt="Re" class="logo-img" onerror="this.style.display='none'">
+      <span>CODE REFACTOR</span>
+    </div>
+    <div class="header-actions">
+      <button id="clearBtn" class="small" title="Clear all fields">Clear All</button>
+    </div>
+  </header>
+
+  <!-- ------------------------- MAIN CONTENT ------------------------- -->
+  <div class="main-grid">
+    <!-- INPUT PANEL -->
+    <div class="panel">
+      <div class="panel-header">
+        <span>Input</span>
+        <span class="badge" id="langBadge">HTML</span>
+      </div>
+      <div class="panel-body">
+        <textarea id="inputCode" placeholder="Paste your HTML, CSS, or JavaScript code here..."></textarea>
+      </div>
+      <div class="toolbar">
+        <button id="refactorBtn" class="accent">Refactor</button>
+        <button id="beautifyOnlyBtn" class="small">Beautify Only</button>
+        <select id="langSelect">
+          <option value="auto">Auto Detect</option>
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+          <option value="js">JavaScript</option>
+        </select>
+      </div>
+      <div class="stats" id="inputStats">Characters: 0 | Lines: 0</div>
+    </div>
+
+    <!-- OUTPUT PANEL -->
+    <div class="panel">
+      <div class="panel-header">
+        <span>Output</span>
+        <button id="copyBtn" class="small">Copy</button>
+      </div>
+      <div class="panel-body">
+        <textarea id="outputCode" readonly placeholder="Refactored code will appear here..."></textarea>
+      </div>
+      <div class="toolbar">
+        <button id="downloadBtn" class="small">Download</button>
+        <button id="clearOutputBtn" class="small danger">Clear Output</button>
+      </div>
+      <div class="stats" id="outputStats">Characters: 0 | Lines: 0</div>
+    </div>
+  </div>
+
+  <!-- ------------------------- FOOTER ------------------------- -->
+  <footer class="footer">
+    <div class="footer-signature">
+      <span class="crafted">crafted by</span>
+      <img src="../assets/images/signature.svg" alt="Armin Silatani" class="signature">
+    </div>
+  </footer>
+
+  <div id="toast" class="toast"></div>
+<!-- ------------------------- SCRIPTS ------------------------- -->
+  <script src="../assets/js/Refacto.js"></script>
+</body>
+</html>
