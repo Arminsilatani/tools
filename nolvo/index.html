@@ -1,6 +1,14 @@
+<!--
+  ****************************************************
+  *  Author: Armin Silatani
+  *  Date: 2026-04-30
+  *  Version: 1.0.0
+  ****************************************************
+-->
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
+  <!-- :::::::::::::::::::::::::: META & STYLES :::::::::::::::::::::::::: -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nolvo - Sitemap Builder</title>
@@ -11,17 +19,26 @@
 </head>
 <body>
 
+  <!-- =========================== SITEMAP BUILDER PAGE ============================ -->
   <div class="app-wrapper">
-    <!-- Header -->
+
+    <!-- ------------------------- HEADER SECTION ------------------------- -->
     <header class="app-header">
-      <div class="logo-icon">
-        <img src="../assets/images/logos/No.svg" alt="Sitemap Builder Logo" style="width:100%; height:100%; object-fit:contain;">
+      <div class="title-row">
+        <div class="logo-icon">
+          <img src="../assets/images/logos/No.svg" alt="logo">
+        </div>
+        <h1 class="inline-title">
+          <span class="nolvo">Nolvo</span>
+          <span class="sb">Sitemap Builder</span>
+        </h1>
       </div>
-      <h1>Nolvo - Sitemap Builder</h1>
-      <p class="subtitle">The most advanced sitemap generator with multi-language support</p>
+      <p class="subtitle tagline">
+        The most advanced sitemap generator with multi-language support
+      </p>
     </header>
 
-    <!-- Domain Input Card -->
+    <!-- ------------------------- DOMAIN INPUT SECTION ------------------------- -->
     <div class="card">
       <div class="form-group">
         <label>Website Domain</label>
@@ -32,7 +49,7 @@
       </div>
     </div>
 
-    <!-- Folder Upload Card -->
+    <!-- ------------------------- FOLDER UPLOAD SECTION ------------------------- -->
     <div class="card">
       <label>Website Folder (HTML)</label>
       <div class="file-upload-area" id="drop-area">
@@ -42,22 +59,22 @@
       </div>
     </div>
 
-    <!-- Output Section -->
+    <!-- ------------------------- OUTPUT SECTION ------------------------- -->
     <div id="output" class="output-section"></div>
 
-    <!-- Report Card -->
+    <!-- ------------------------- REPORT SECTION ------------------------- -->
     <div class="card">
       <h3 class="section-title">Processing Report</h3>
       <div id="report" class="report">Ready to process</div>
     </div>
 
-    <!-- Footer -->
-        <footer class="footer">
-            <div class="footer-signature">
-                <span class="crafted">crafted by</span>
-                <img src="../assets/images/signature.svg" alt="Armin Silatani" class="signature">
-            </div>
-        </footer>
+    <!-- ------------------------- FOOTER SECTION ------------------------- -->
+    <footer class="footer">
+      <div class="footer-signature">
+        <span class="crafted">crafted by</span>
+        <img src="../assets/images/signature.svg" alt="Armin Silatani" class="signature">
+      </div>
+    </footer>
   </div>
 
   <script src="../assets/js/Nolvo.js"></script>

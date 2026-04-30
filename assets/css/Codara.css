@@ -1,14 +1,12 @@
 /*
   ****************************************************
   *  Author: Armin Silatani
-  *  Date: 2026-04-25
+  *  Date: 2026-04-30
   *  Version: 1.0.0
   ****************************************************
 */
 
-
-/* ::::::::::::::::::::::::::::::: STYLESHEET ::::::::::::::::::::::::::::::: */
-
+/* =========================== MAIN STYLESHEET ============================ */
 
 /* ------------------------------ KALAMEH FONTS ------------------------------ */
 @font-face {
@@ -55,17 +53,15 @@ body {
   padding: 24px;
 }
 
-.title-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+.main-grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 24px;
 }
 
+/* ------------------------------ HEADER / TITLE ------------------------------ */
 .logo-img {
-  height: 40px;
+  height: 55px;
   width: auto;
   display: block;
 }
@@ -78,10 +74,36 @@ h1 {
   line-height: 1.2;
 }
 
-.main-grid {
-  display: grid;
-  grid-template-columns: 380px 1fr;
-  gap: 24px;
+.title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 26px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.title-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.main-title {
+  font-size: 2.4rem;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  color: #F04E98;
+}
+
+.sub-title {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  margin-top: 4px;
+  color: #b7bdc6;
 }
 
 /* ------------------------------ CARDS (GLASSMORPHISM) ------------------------------ */
@@ -180,7 +202,7 @@ select:focus {
   margin-top: 4px;
 }
 
-/* Custom Select Wrapper */
+/* ------------------------------ CUSTOM SELECT ------------------------------ */
 .custom-select {
   position: relative;
   width: 100%;
@@ -239,7 +261,10 @@ select:focus {
   color: #fff;
 }
 
-.custom-select .options::-webkit-scrollbar { width: 6px; }
+.custom-select .options::-webkit-scrollbar {
+  width: 6px;
+}
+
 .custom-select .options::-webkit-scrollbar-thumb {
   background: rgba(240, 78, 152, 0.4);
   border-radius: 10px;
@@ -321,3 +346,35 @@ select:focus {
   opacity: 0.85;
   filter: brightness(0.9) contrast(1.05);
 }
+
+/* ------------------------------ RESPONSIVE ------------------------------ */
+@media (max-width: 640px) {
+  .title-wrapper {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .logo-img {
+    height: 54px;
+  }
+
+  .main-title {
+    font-size: 1.9rem;
+    line-height: 1.1;
+  }
+
+  .sub-title {
+    font-size: 0.95rem;
+    margin-top: 3px;
+  }
+
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  body {
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+}
+

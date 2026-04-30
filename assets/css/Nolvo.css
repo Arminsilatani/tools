@@ -1,12 +1,14 @@
 /*
   ****************************************************
   *  Author: Armin Silatani
-  *  Date: 2026-04-25
+  *  Date: 2026-04-30
   *  Version: 1.0.0
   ****************************************************
 */
 
-/* ------------------------------ KALAMEH FONTS ------------------------------ */
+/* =========================== SITEMAP BUILDER ============================ */
+
+/* ------------------------- KALAMEH FONTS ------------------------- */
 @font-face {
   font-family: "Kalameh";
   src: url("../../assets/fonts/KalamehWeb-Regular.woff2") format("woff2"),
@@ -25,7 +27,7 @@
   font-display: swap;
 }
 
-/* ::::::::::::::::::::::::: GLOBAL RESET & BASE ::::::::::::::::::::::::: */
+/* :::::::::::::::::::::::::: GLOBAL RESET & BASE :::::::::::::::::::::::::: */
 * {
   margin: 0;
   padding: 0;
@@ -51,7 +53,7 @@ html {
 }
 
 body {
-  font-family: 'Kalameh', sans-serif;            /* <-- فونت اصلی کل صفحه */
+  font-family: 'Kalameh', sans-serif;
   background-color: var(--bg-deep);
   background-image:
     radial-gradient(ellipse at 50% 0%, rgba(63,169,245,0.08) 0%, transparent 60%),
@@ -65,7 +67,7 @@ body {
   line-height: 1.6;
 }
 
-/* ------------------------------ LAYOUT ------------------------------ */
+/* ------------------------- HEADER ------------------------- */
 .app-wrapper {
   max-width: 800px;
   width: 100%;
@@ -78,36 +80,34 @@ body {
 }
 
 .logo-icon {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
-  background: rgba(63,169,245,0.08);
-  border: 1px solid rgba(63,169,245,0.2);
-  border-radius: 18px;
-  margin-bottom: 1rem;
-  backdrop-filter: blur(10px);
-  transition: box-shadow 0.3s ease;
-}
-.logo-icon:hover {
-  box-shadow: 0 0 28px var(--accent-glow);
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
 }
 
 .logo-icon svg {
-  width: 28px;
-  height: 28px;
-  fill: none;
+  width: 30px;
+  height: 30px;
   stroke: var(--accent);
-  stroke-width: 2;
+  stroke-width: 2.4;
+  fill: none;
+}
+
+.logo-icon img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
 }
 
 h1 {
-  font-weight: 700;
-  font-family: 'Kalameh', sans-serif;            /* <-- تأکید بر استفاده از کلمه */
+  font-weight: 900;
+  font-family: 'Kalameh', sans-serif;
   font-size: 2.25rem;
   letter-spacing: -0.5px;
-  background: linear-gradient(to bottom, #ffffff, #b0c4de);
+  background: #3FA9F5;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -121,7 +121,60 @@ h1 {
   font-weight: 400;
 }
 
-/* ------------------------------ CARDS (GLASSMORPHISM) ------------------------------ */
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.title-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.main-title {
+  font-size: 2.4rem;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+.sub-title {
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin-top: 0.15rem;
+}
+
+.inline-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  line-height: 1;
+  transform: translateY(5px);
+}
+
+.inline-title .nolvo {
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: #3FA9F5;
+  line-height: 1;
+}
+
+.inline-title .sb {
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin-top: 0.4rem;
+}
+
+.tagline {
+  margin-top: 12px;
+}
+
+/* ------------------------- CARDS (GLASSMORPHISM) ------------------------- */
 .card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
@@ -133,8 +186,12 @@ h1 {
   margin-bottom: 2rem;
   transition: box-shadow 0.25s ease;
 }
+
 .card:hover {
-  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8), 0 0 0 1px var(--card-border), 0 0 30px var(--accent-glow);
+  box-shadow:
+    0 25px 50px -12px rgba(0,0,0,0.8),
+    0 0 0 1px var(--card-border),
+    0 0 30px var(--accent-glow);
 }
 
 .card-header {
@@ -143,6 +200,7 @@ h1 {
   justify-content: space-between;
   margin-bottom: 1.25rem;
 }
+
 .card-header h2,
 .card-header h3 {
   font-weight: 600;
@@ -160,7 +218,7 @@ h1 {
   margin-bottom: 1rem;
 }
 
-/* ------------------------------ FORM INPUTS ------------------------------ */
+/* ------------------------- FORM INPUTS ------------------------- */
 .form-group {
   margin-bottom: 1.5rem;
 }
@@ -179,6 +237,7 @@ label {
 .domain-input-wrapper {
   position: relative;
 }
+
 .domain-input-wrapper input {
   padding-right: 3rem;
 }
@@ -200,18 +259,20 @@ input {
   border: 1.5px solid rgba(255,255,255,0.12);
   border-radius: var(--radius-md);
   padding: 0.95rem 1.2rem;
-  font-family: 'Kalameh', sans-serif;            /* <-- فونت ورودی‌ها */
+  font-family: 'Kalameh', sans-serif;
   font-size: 0.95rem;
   color: #f0f0f0;
   outline: none;
   transition: all 0.25s ease;
   caret-color: var(--accent);
 }
+
 input:focus {
   border-color: var(--accent);
   box-shadow: 0 0 18px var(--accent-glow);
   background: rgba(10,10,12,0.85);
 }
+
 input::placeholder {
   color: rgba(255,255,255,0.3);
 }
@@ -233,33 +294,38 @@ input::placeholder {
   position: relative;
   margin-top: 0.5rem;
 }
+
 .file-upload-area:hover,
 .file-upload-area.dragover {
   border-color: var(--accent);
   background: rgba(63,169,245,0.04);
 }
+
 .file-upload-area input[type="file"] {
   position: absolute;
   inset: 0;
   opacity: 0;
   cursor: pointer;
 }
+
 .upload-icon {
   font-size: 2rem;
   color: var(--accent);
   opacity: 0.9;
 }
+
 .upload-text {
   color: var(--text-secondary);
   font-family: 'Kalameh', sans-serif;
   font-size: 0.9rem;
 }
+
 .upload-text strong {
   color: var(--accent);
   font-weight: 600;
 }
 
-/* ------------------------------ BUTTONS ------------------------------ */
+/* ------------------------- BUTTONS ------------------------- */
 .copy-btn-minimal,
 button {
   background: transparent;
@@ -272,9 +338,10 @@ button {
   cursor: pointer;
   transition: all 0.25s ease;
   backdrop-filter: blur(4px);
-  font-family: 'Kalameh', sans-serif;            /* <-- فونت دکمه‌ها */
+  font-family: 'Kalameh', sans-serif;
   letter-spacing: 0.3px;
 }
+
 .copy-btn-minimal:hover,
 button:hover {
   background: rgba(63,169,245,0.1);
@@ -283,13 +350,15 @@ button:hover {
   box-shadow: 0 0 15px rgba(63,169,245,0.4);
 }
 
-/* ------------------------------ OUTPUT CODE AREA ------------------------------ */
+/* ------------------------- OUTPUT CODE AREA ------------------------- */
 .output-section {
   margin-top: 0.5rem;
 }
+
 .output-card {
   margin-bottom: 1.5rem;
 }
+
 .output-card .card-header {
   margin-bottom: 0.75rem;
 }
@@ -301,7 +370,7 @@ textarea {
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: var(--radius-md);
   padding: 1rem;
-  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; /* monospace برای کدهای XML */
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
   font-size: 0.85rem;
   line-height: 1.6;
   color: #c9d1d9;
@@ -312,12 +381,13 @@ textarea {
   transition: border-color 0.3s, box-shadow 0.3s;
   caret-color: var(--accent);
 }
+
 textarea:focus {
   border-color: var(--accent);
   box-shadow: 0 0 24px rgba(63,169,245,0.3);
 }
 
-/* ------------------------------ REPORT ------------------------------ */
+/* ------------------------- REPORT ------------------------- */
 .report {
   background: transparent;
   padding: 0.5rem 0;
@@ -330,7 +400,7 @@ textarea:focus {
 .warn { color: #ffcc66; }
 .bad  { color: #ff6b6b; }
 
-/* ------------------------------ FOOTER ------------------------------ */
+/* ------------------------- FOOTER ------------------------- */
 .footer {
   padding: 30px 0 3px;
   display: flex;
@@ -362,7 +432,7 @@ textarea:focus {
   filter: brightness(0.9) contrast(1.05);
 }
 
-/* ------------------------------ RESPONSIVE ------------------------------ */
+/* ------------------------- RESPONSIVE ------------------------- */
 @media (max-width: 600px) {
   body {
     padding: 1.5rem 1rem;
