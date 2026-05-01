@@ -1,12 +1,13 @@
 /*
   ****************************************************
   *  Author: Armin Silatani
-  *  Date: 2026-04-25
+  *  Date: 2026-05-01
   *  Version: 1.0.0
   ****************************************************
 */
 
 /* =========================== MAIN PAGE SCRIPTS ============================ */
+
 document.addEventListener("DOMContentLoaded", () => {
 
   /* ------------------------- TOOLS DATA ------------------------- */
@@ -39,55 +40,98 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ------------------------- FLOATING LOGOS CLOUD ------------------------- */
   const cloud = document.getElementById("logo-cloud");
-  const MAX_LOGOS = 7;
-  const SPAWN_INTERVAL = 3600;
-  const LOGO_LIFETIME = 14000;
+  const MAX_LOGOS = 3;
+  const GRID_COLS = 8;
+  const GRID_ROWS = 5;
 
-  function pruneLogos() {
-    while (cloud.children.length > MAX_LOGOS) {
-      const oldest = cloud.firstElementChild;
-      if (oldest) oldest.remove();
+  let activeLogos = [];
+
+  /* Build grid of possible cell positions */
+  function getCells() {
+    const cells = [];
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const cellW = vw / GRID_COLS;
+    const cellH = vh / GRID_ROWS;
+
+    for (let y = 0; y < GRID_ROWS; y++) {
+      for (let x = 0; x < GRID_COLS; x++) {
+        cells.push({
+          id: `${x}-${y}`,
+          x: x * cellW + cellW / 2,
+          y: y * cellH + cellH / 2
+        });
+      }
     }
+    return cells;
   }
 
+  /* Create and animate a single floating logo */
   function spawnLogo() {
-    pruneLogos();
-    const t = tools[Math.floor(Math.random() * tools.length)];
+    if (activeLogos.length >= MAX_LOGOS) return;
+
+    const cells = getCells();
+    const usedCells = activeLogos.map(l => l.cell);
+    const freeCells = cells.filter(c => !usedCells.includes(c.id));
+
+    if (!freeCells.length) return;
+
+    const cell = freeCells[Math.floor(Math.random() * freeCells.length)];
+    const tool = tools[Math.floor(Math.random() * tools.length)];
+
     const img = document.createElement("img");
-    img.src = t.icon;
+    img.src = tool.icon;
     img.className = "logo-floating";
-    img.style.left = (10 + Math.random() * 80) + "vw";
-    img.style.top = (20 + Math.random() * 60) + "vh";
-    const size = 28 + Math.floor(Math.random() * 16);
-    img.style.width = size + "px";
-    img.style.height = size + "px";
-    img.style.opacity = 0.12 + Math.random() * 0.18;
+    img.style.left = `${cell.x}px`;
+    img.style.top = `${cell.y}px`;
+    img.style.transform = "translate(-50%, -50%)";
+
+    const size = 28 + Math.random() * 14;
+    img.style.width = `${size}px`;
+    img.style.height = `${size}px`;
+    img.style.opacity = 0;
+
     cloud.appendChild(img);
 
+    activeLogos.push({
+      el: img,
+      cell: cell.id
+    });
+
+    /* fade in */
+    requestAnimationFrame(() => {
+      img.style.opacity = 0.15 + Math.random() * 0.15;
+    });
+
+    /* random lifetime then fade out and respawn */
+    const lifetime = 5000 + Math.random() * 7000;
     setTimeout(() => {
-      img.style.transition = "opacity 2s ease, transform 2s ease";
-      img.style.opacity = "0";
-      img.style.transform = "translateY(-20px) scale(0.8)";
-      setTimeout(() => img.remove(), 2000);
-    }, LOGO_LIFETIME - 2000);
+      img.style.opacity = 0;
+      img.style.transform = "translate(-50%, -60%) scale(0.85)";
+
+      setTimeout(() => {
+        img.remove();
+        activeLogos = activeLogos.filter(l => l.el !== img);
+        spawnLogo();
+      }, 1200);
+    }, lifetime);
   }
 
-  setInterval(spawnLogo, SPAWN_INTERVAL);
-  for (let i = 0; i < 4; i++) {
-    setTimeout(spawnLogo, i * 400);
+  /* initial population */
+  for (let i = 0; i < MAX_LOGOS; i++) {
+    setTimeout(spawnLogo, i * 600);
   }
 
   /* ------------------------- SEARCH ENGINE ------------------------- */
   const searchWrapper = document.querySelector('.search-wrapper');
   const input = document.getElementById('search-input');
 
-  // Results container
   const resultsDiv = document.createElement('div');
   resultsDiv.className = 'search-results';
   resultsDiv.style.display = 'none';
   searchWrapper.appendChild(resultsDiv);
 
-  // Delegate clicks on result items
+  /* Handle clicks on result items */
   resultsDiv.addEventListener('click', (e) => {
     const item = e.target.closest('.result-item');
     if (!item) return;
@@ -99,6 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  /* Live filtering */
   input.addEventListener('input', () => {
     const query = input.value.trim().toLowerCase();
 
@@ -123,24 +168,44 @@ document.addEventListener("DOMContentLoaded", () => {
     resultsDiv.style.display = 'block';
   });
 
-  // Hide results on outside click
+  /* Hide results when clicking outside */
   document.addEventListener('click', (e) => {
     if (!searchWrapper.contains(e.target)) {
       resultsDiv.style.display = 'none';
     }
   });
 
-  // Hide results on Escape key
+  /* Hide results on Escape key */
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       resultsDiv.style.display = 'none';
     }
   });
 
-  // Re‑show results if input is focused and has text
+  /* Re-shows results if input refocused with text */
   input.addEventListener('focus', () => {
     if (input.value.trim() !== '') {
       resultsDiv.style.display = 'block';
     }
   });
+
+  /* ------------------------- PREVENT DEFAULT SCROLLING ------------------------- */
+  /**
+   * Disable all native scrolling gestures (touch, wheel, keyboard)
+   * to create a completely static non-scrollable page. (iOS-safe)
+   */
+  function preventTouchScroll(e) {
+    e.preventDefault();
+  }
+
+  window.addEventListener('touchmove', preventTouchScroll, { passive: false });
+  window.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
+
+  window.addEventListener('keydown', (e) => {
+    const scrollKeys = ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '];
+    if (scrollKeys.includes(e.key)) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
 });

@@ -1,15 +1,14 @@
 /*
   ****************************************************
   *  Author: Armin Silatani
-  *  Date: 2026-04-25
+  *  Date: 2026-05-01
   *  Version: 1.0.0
   ****************************************************
 */
 
-/* =========================
-   Kalameh Font Faces
-========================= */
+/* =========================== LANDING PAGE STYLES ============================ */
 
+/* ------------------------- FONTS ------------------------- */
 @font-face {
   font-family: "Kalameh";
   src: url("../../fonts/KalamehWeb-Regular.woff2") format("woff2"),
@@ -28,10 +27,7 @@
   font-display: swap;
 }
 
-/* =========================
-   Base & Reset
-========================= */
-
+/* ------------------------- RESET & BASE ------------------------- */
 * {
   margin: 0;
   padding: 0;
@@ -53,10 +49,28 @@ main {
   display: flex;
 }
 
-/* =========================
-   Landing Page Overrides
-========================= */
+/* ------------------------- GLOBAL SCROLL LOCK ------------------------- */
+html,
+body {
+  height: 100%;
+  overflow: hidden !important;
+  overscroll-behavior: none;   /* prevent pull-to-refresh / bounce */
+  touch-action: none;          /* disable touch scroll/pinch gestures */
+}
 
+/* For iOS dynamic viewport */
+@supports (height: 100dvh) {
+  body.landing {
+    height: 100dvh;
+  }
+}
+
+/* Utility class – do not apply to containers with internal scroll */
+.no-scroll {
+  overflow: hidden !important;
+}
+
+/* ------------------------- LANDING PAGE OVERRIDES ------------------------- */
 body.landing {
   margin: 0;
   background: #0d0d0d;
@@ -74,10 +88,7 @@ body.landing {
   align-items: center;
 }
 
-/* =========================
-   Footer & Signature
-========================= */
-
+/* ------------------------- FOOTER ------------------------- */
 .footer {
   padding: 30px 0;
   display: flex;
@@ -109,57 +120,55 @@ body.landing {
   filter: brightness(0.9) contrast(1.05);
 }
 
-/* =========================
-   Floating Logos
-========================= */
-
+/* ------------------------- FLOATING LOGOS ------------------------- */
 .logo-floating {
-  position: fixed;
+  position: absolute;
   pointer-events: none;
   user-select: none;
   z-index: 0;
-  animation: gentleFloat 10s infinite ease-in-out;
-  transition: opacity 0.6s ease, transform 0.6s ease;
-  will-change: transform, opacity;
+  transition: opacity 1.2s ease, transform 1.2s ease;
+  will-change: opacity, transform;
 }
 
-@keyframes gentleFloat {
-  0% {
-    transform: translateY(0) rotate(0deg) scale(1);
-  }
-  25% {
-    transform: translateY(-8px) rotate(1deg) scale(1.02);
-  }
-  50% {
-    transform: translateY(-3px) rotate(-0.5deg) scale(0.98);
-  }
-  75% {
-    transform: translateY(-10px) rotate(0.8deg) scale(1.01);
-  }
-  100% {
-    transform: translateY(0) rotate(0deg) scale(1);
-  }
+#logo-cloud {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
 }
 
-/* =========================
-   Search Area
-========================= */
+/* :::::::::::::::::::::::::: CUSTOM PROPERTIES & ANIMATIONS :::::::::::::::::::::::::: */
+@property --gradient-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
 
+@keyframes neonSpin {
+  0%   { --gradient-angle: 0deg; }
+  100% { --gradient-angle: 360deg; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; top: 30px; }
+  to   { opacity: 1; top: 0; }
+}
+
+/* ------------------------- SEARCH AREA ------------------------- */
 .search-wrapper {
-  width: 100%;
-  display: flex;                /* ← این خط رو اضافه کردم */
+  position: fixed;
+  inset: 0;
+  display: flex;
   justify-content: center;
-  padding-top: 120px;
-  position: relative;
+  align-items: center;
 }
 
-/* Hidden layer that blurs the floating logos behind the search box */
 .search-wrapper::after {
   content: "";
   position: absolute;
-  top: 120px;
   left: 50%;
-  transform: translateX(-50%);
+  top: 50%;
+  transform: translate(-50%, -50%);
   width: 480px;
   max-width: 90vw;
   height: 58px;
@@ -168,13 +177,9 @@ body.landing {
   pointer-events: none;
   backdrop-filter: blur(60px) grayscale(1) brightness(0.45);
   -webkit-backdrop-filter: blur(60px) grayscale(1) brightness(0.45);
-  background: transparent;
 }
 
-/* =========================
-   Search Box
-========================= */
-
+/* ------------------------- SEARCH BOX ------------------------- */
 .search-box {
   position: relative;
   z-index: 1;
@@ -185,16 +190,16 @@ body.landing {
   padding: 0 18px 0 48px;
   display: flex;
   align-items: center;
-  transition: background 0.35s ease;
   overflow: hidden;
   background: rgba(13, 13, 13, 0.8);
   border: none;
   box-shadow: none;
   animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
   top: 0;
+  transition: background 0.35s ease;
 }
 
-/* Neon ring – visible on focus */
+/* Neon ring (visible on focus) */
 .search-box::before {
   content: "";
   position: absolute;
@@ -296,33 +301,10 @@ body.landing {
   text-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
 }
 
-/* =========================
-   Custom Properties & Animations
-========================= */
-
-@property --gradient-angle {
-  syntax: "<angle>";
-  initial-value: 0deg;
-  inherits: false;
-}
-
-@keyframes neonSpin {
-  0%   { --gradient-angle: 0deg; }
-  100% { --gradient-angle: 360deg; }
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; top: 30px; }
-  to   { opacity: 1; top: 0; }
-}
-
-/* =========================
-   Search Results Dropdown
-========================= */
-
+/* ------------------------- SEARCH RESULTS DROPDOWN ------------------------- */
 .search-results {
   position: absolute;
-  top: calc(120px + 64px);
+  top: calc(50% + 44px);
   left: 50%;
   transform: translateX(-50%);
   width: 480px;
@@ -357,10 +339,7 @@ body.landing {
   text-align: center;
 }
 
-/* =========================
-   Categories Links
-========================= */
-
+/* ------------------------- CATEGORIES ------------------------- */
 .categories {
   display: flex;
   gap: 30px;
