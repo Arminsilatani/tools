@@ -1,7 +1,7 @@
 /*
   ****************************************************
   *  Author: Armin Silatani
-  *  Date: 2026-04-25
+  *  Date: 2026-05-01
   *  Version: 1.0.0
   ****************************************************
 */
@@ -28,6 +28,10 @@
 
 /* =========================== RESET & BASE ============================ */
 
+:root {
+    --zorio-accent: #FD7E14;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -37,11 +41,12 @@
 body {
     background: #0d0d0d;
     font-family: 'Kalameh', system-ui, -apple-system, 'Segoe UI', 'Roboto', sans-serif;
-    padding: 1.8rem;
+    padding: 1.8rem 1.8rem 0 1.8rem;
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     color: #f5f5f5;
 }
 
@@ -75,6 +80,7 @@ body {
                 0 0 0 1px rgba(253, 126, 20, 0.1) inset;
     overflow: hidden;
     transition: all 0.3s ease;
+    margin-bottom: 1rem;
 }
 
 /* ------------------------- TWO-COLUMN GRID ------------------------- */
@@ -88,7 +94,7 @@ body {
 
 @media (max-width: 780px) {
     body {
-        padding: 1rem;
+        padding: 1rem 1rem 0 1rem;
     }
 
     .two-col-grid {
@@ -107,7 +113,7 @@ body {
     }
 }
 
-/* =========================== HEADER ============================ */
+/* =========================== HEADER (CARD) ============================ */
 
 .glass-header {
     background: rgba(10, 10, 15, 0.7);
@@ -157,6 +163,50 @@ body {
     letter-spacing: 0.3px;
 }
 
+/* =========================== TOOL HEADER (PAGE) ============================ */
+
+.tool-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 1.7rem;
+}
+
+.tool-logo {
+    height: 45px;
+    width: auto;
+}
+
+.tool-title-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    line-height: 0.9;
+}
+
+.title-main {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--zorio-accent);
+    margin: 0;
+}
+
+.title-sub {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #a0a0b0;
+    margin: 0;
+    margin-top: 2px;
+}
+
+.tool-description {
+    text-align: center;
+    margin: 0 auto;
+    max-width: 700px;
+}
+
 /* =========================== SECTIONS ============================ */
 
 .premium-section {
@@ -176,10 +226,11 @@ body {
 
 .section-title {
     font-size: 1.4rem;
-    font-weight: 700;
+    font-weight: 900;
     margin-bottom: 1.5rem;
-    border-right: 4px solid #FD7E14;
-    padding-right: 1rem;
+    border-left: 2px solid #FD7E14;
+    padding-left: 1rem;
+    border-right: none;
     color: #ffffff;
     letter-spacing: -0.2px;
 }
@@ -286,13 +337,17 @@ input:focus {
 
 input[type="range"] {
     appearance: none;
-    background: #1e1e2a;
-    height: 6px;
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
     border-radius: 10px;
+    background: linear-gradient(90deg, #FD7E14 85%, #1e1e2a 85%);
+    cursor: pointer;
 }
 
-input[type="range"]:focus {
-    outline: none;
+input[type="range"]::-webkit-slider-runnable-track {
+    height: 8px;
+    border-radius: 10px;
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -302,23 +357,16 @@ input[type="range"]::-webkit-slider-thumb {
     background: #FD7E14;
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 0 6px #FD7E14;
+    box-shadow: 0 0 8px rgba(253, 126, 20, 0.8);
+    margin-top: -5px;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: #FD7E14;
+    border-radius: 50%;
     border: none;
-}
-
-.range-value {
-    background: rgba(253, 126, 20, 0.125);
-    padding: 0.2rem 0.8rem;
-    border-radius: 30px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #FFCD99;
-}
-
-.flex-row {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
 }
 
 /* =========================== BUTTONS ============================ */
@@ -420,7 +468,7 @@ input[type="range"]::-webkit-slider-thumb {
 /* ------------------------- PAGE FOOTER SIGNATURE ------------------------- */
 
 .footer {
-    padding: 20px 0 3px;
+    padding: 30px 0 30px;
     display: flex;
     justify-content: center;
 }
@@ -453,65 +501,10 @@ input[type="range"]::-webkit-slider-thumb {
 /* =========================== UTILITY ============================ */
 
 .glow-text {
-    color: #FD7E14;  /* اکنون نارنجی اصلی */
+    color: #FD7E14;
 }
 
 hr {
     border-color: #2a2a38;
     margin: 0.7rem 0;
 }
-
-
-        /* ------------------------- BODY & LAYOUT ------------------------- */
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            min-height: 100vh;
-            padding: 1.8rem 1.8rem 0 1.8rem;
-            margin: 0;
-        }
-
-        .premium-card {
-            width: 100%;
-            margin-bottom: 1rem;
-        }
-
-/* ------------------------------ FOOTER ------------------------------ */
-.footer {
-  padding: 30px 0 3px;
-  display: flex;
-  justify-content: center;
-}
-
-.footer-signature {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  opacity: 0.7;
-  transition: opacity 0.3s ease;
-}
-
-.footer-signature:hover {
-  opacity: 1;
-}
-
-.crafted {
-  font-size: 10px;
-  color: #7a7a7a;
-  letter-spacing: 0.08em;
-}
-
-.signature {
-  height: 20px;
-  transform: translateY(-2px);
-  opacity: 0.85;
-  filter: brightness(0.9) contrast(1.05);
-}
-        /* ------------------------- RESPONSIVE ------------------------- */
-        @media (max-width: 640px) {
-            body {
-                padding: 1rem 1rem 0 1rem;
-            }
-        }

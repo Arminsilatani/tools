@@ -1,10 +1,11 @@
 /*
   ****************************************************
   *  Author: Armin Silatani
-  *  Date: 2026-04-25
+  *  Date: 2026-05-01
   *  Version: 1.0.0
   ****************************************************
-/*
+*/
+
 /* =========================== IMAGE OPTIMIZER SCRIPT ============================ */
 
 /* ------------------------- DOM ELEMENTS ------------------------- */
@@ -113,6 +114,13 @@ function toggleQualityControl() {
         qualitySlider.disabled = false;
         qualityGroup.style.opacity = '1';
     }
+}
+
+function updateQualitySlider() {
+    const percent = Math.round(qualitySlider.value * 100);
+    qualityValSpan.innerText = `${percent}%`;
+    qualitySlider.style.background =
+        `linear-gradient(90deg, #FD7E14 ${percent}%, #1e1e2a ${percent}%)`;
 }
 
 /* ------------------------- IMAGE LOADING ------------------------- */
@@ -271,10 +279,10 @@ fileInput.addEventListener('change', (e) => {
 });
 
 outputFormatSelect.addEventListener('change', toggleQualityControl);
-qualitySlider.addEventListener('input', () => {
-    const percent = Math.round(qualitySlider.value * 100);
-    qualityValSpan.innerText = `${percent}%`;
-});
+
+qualitySlider.addEventListener('input', updateQualitySlider);
+updateQualitySlider();
+
 toggleQualityControl();
 
 convertBtn.addEventListener('click', async () => {
@@ -299,9 +307,6 @@ window.addEventListener('beforeunload', () => {
     if (currentImageBlobURL) URL.revokeObjectURL(currentImageBlobURL);
     if (currentOutputBlobURL) URL.revokeObjectURL(currentOutputBlobURL);
 });
-
-/* ------------------------- INITIAL STATE ------------------------- */
-resetResultArea();
 
 /* :::::::::::::::::::::::::: HEIC SUPPORT OVERRIDE :::::::::::::::::::::::::: */
 (function () {
@@ -365,3 +370,6 @@ resetResultArea();
         console.warn('Original loadImageFromFile not found. HEIC support may not be fully integrated.');
     }
 })();
+
+/* ------------------------- INITIAL STATE ------------------------- */
+resetResultArea();

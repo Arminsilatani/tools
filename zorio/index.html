@@ -1,11 +1,10 @@
 <!--
   ****************************************************
   *  Author: Armin Silatani
-  *  Date: 2026-04-25
+  *  Date: 2026-05-01
   *  Version: 1.0.0
   ****************************************************
 -->
-<!-- =========================== IMAGE CONVERTER ============================ -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,31 +25,32 @@
 
     <!-- :::::::::: EXTERNAL DEPENDENCY (HEIC/HEIF SUPPORT) :::::::::: -->
     <script src="https://cdn.jsdelivr.net/npm/@tuily/heic2any@0.0.6/dist/heic2any.min.js"></script>
-
-
 </head>
 
 <!-- ------------------------- BODY ------------------------- -->
 <body>
+    <!-- =========================== IMAGE CONVERTER ============================ -->
 
     <!-- :::::::::::::::::::::: MAIN CARD :::::::::::::::::::::: -->
     <div class="premium-card">
 
         <!-- ------------------------- HEADER ------------------------- -->
         <div class="glass-header">
-            <h1>
+            <div class="tool-header">
                 <img
                     src="../assets/images/logos/Zo.svg"
-                    alt="Image-Converter Logo"
-                    class="logo-h1"
+                    alt="Zorio Logo"
+                    class="tool-logo"
                     onerror="this.style.display='none'"
                 >
-                Zorio - Image Converter
-                <span class="badge-premium">OFFLINE · PROFESSIONAL</span>
-            </h1>
-            <div class="sub-premium">
-                Convert, optimize & resize images directly in your browser. Zero upload, total privacy.
+                <div class="tool-title-wrapper">
+                    <h1 class="title-main">Zorio</h1>
+                    <h2 class="title-sub">Image Converter</h2>
+                </div>
             </div>
+            <p class="tool-description">
+                Convert, optimize & resize images directly in your browser. Zero upload, total privacy.
+            </p>
         </div>
 
         <!-- ------------------------- TWO-COLUMN LAYOUT ------------------------- -->
@@ -186,15 +186,14 @@
     </div>
 
     <!-- :::::::::::::::::::::: FOOTER :::::::::::::::::::::: -->
-        <footer class="footer">
-            <div class="footer-signature">
-                <span class="crafted">crafted by</span>
-                <img src="../assets/images/signature.svg" alt="Armin Silatani" class="signature">
-            </div>
-        </footer>
+    <footer class="footer">
+        <div class="footer-signature">
+            <span class="crafted">crafted by</span>
+            <img src="../assets/images/signature.svg" alt="Armin Silatani" class="signature">
+        </div>
+    </footer>
 
-    <!-- :::::::::::::::::::::: SCRIPTS :::::::::::::::::::::: -->
+    <!-- :::::::::: SCRIPTS :::::::::: -->
     <script src="../assets/js/Zorio.js" defer></script>
-
 </body>
 </html>
