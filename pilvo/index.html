@@ -1,0 +1,114 @@
+<!--
+  ****************************************************
+  *  Author: Armin Silatani
+  *  Date: 2026-05-01
+  *  Version: 1.0.0
+  ****************************************************
+-->
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <!-- :::::::::::::::::::::::::: META & STYLES :::::::::::::::::::::::::: -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pilvo - Text Editor</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="../assets/images/logos/Pi.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/css/Pilvo.css">
+</head>
+<body>
+
+  <!-- =========================== PILVO TEXT EDITOR ============================ -->
+
+  <!-- ------------------------- TOP BAR ------------------------- -->
+  <div class="top-bar">
+    <img src="../assets/images/logos/Pi.svg" alt="Pilvo logo" class="logo-img">
+    <h1 class="site-title">
+      <span class="pilvo">Pilvo</span>
+      <span class="sub">Professional Text Editor</span>
+    </h1>
+  </div>
+
+  <!-- ------------------------- TOOLBAR ------------------------- -->
+  <div class="toolbar" id="toolbar">
+    <button class="tool-btn" data-cmd="undo" title="Undo">↩</button>
+    <button class="tool-btn" data-cmd="redo" title="Redo">↪</button>
+    <span class="divider"></span>
+
+    <button class="tool-btn" data-cmd="bold" title="Bold"><b>B</b></button>
+    <button class="tool-btn" data-cmd="italic" title="Italic"><i>I</i></button>
+    <button class="tool-btn" data-cmd="underline" title="Underline"><u>U</u></button>
+    <button class="tool-btn" data-cmd="strikeThrough" title="Strikethrough"><s>S</s></button>
+    <span class="divider"></span>
+
+    <select class="tool-select" id="fontSizeSelect" title="Font Size">
+      <option value="1">8px</option>
+      <option value="2">10px</option>
+      <option value="3" selected>12px</option>
+      <option value="4">14px</option>
+      <option value="5">18px</option>
+      <option value="6">24px</option>
+      <option value="7">36px</option>
+    </select>
+    <span class="divider"></span>
+
+    <button class="tool-btn" data-cmd="formatBlock" data-value="h1" title="Heading 1">H1</button>
+    <button class="tool-btn" data-cmd="formatBlock" data-value="h2" title="Heading 2">H2</button>
+    <button class="tool-btn" data-cmd="formatBlock" data-value="h3" title="Heading 3">H3</button>
+    <button class="tool-btn" data-cmd="formatBlock" data-value="p" title="Paragraph">¶</button>
+    <span class="divider"></span>
+
+    <button class="tool-btn" data-cmd="insertUnorderedList" title="Bullet List">•</button>
+    <button class="tool-btn" data-cmd="insertOrderedList" title="Numbered List">1.</button>
+    <span class="divider"></span>
+
+    <button class="tool-btn" data-cmd="justifyLeft" title="Align Left">⫷</button>
+    <button class="tool-btn" data-cmd="justifyCenter" title="Center">⫿</button>
+    <button class="tool-btn" data-cmd="justifyRight" title="Align Right">⫸</button>
+    <span class="divider"></span>
+
+    <button class="tool-btn" id="textColorBtn" title="Text Color">A<span style="text-decoration: underline; text-decoration-color: currentColor;">▾</span></button>
+    <input type="color" id="textColorInput" class="hidden-color-input" value="#f0f0f0">
+    <button class="tool-btn" id="bgColorBtn" title="Background Color">🖌️</button>
+    <input type="color" id="bgColorInput" class="hidden-color-input" value="#000000">
+    <span class="divider"></span>
+
+    <button class="tool-btn" data-cmd="createLink" title="Insert Link">🔗</button>
+    <button class="tool-btn" data-cmd="unlink" title="Remove Link">⛓️‍💥</button>
+    <button class="tool-btn" id="insertImageBtn" title="Insert Image URL">🖼️</button>
+    <span class="divider"></span>
+
+    <button class="tool-btn" id="codeViewBtn" title="Code View"><></button>
+    <button class="tool-btn" id="emojiBtn" title="Emoji">😊</button>
+    <button class="tool-btn" id="fullscreenBtn" title="Fullscreen">⛶</button>
+    <span class="divider"></span>
+
+    <button class="tool-btn" id="exportTxtBtn" title="Export as .txt">↓</button>
+    <button class="tool-btn" id="loremBtn" title="Insert Lorem Ipsum">Li</button>
+  </div>
+
+  <!-- ------------------------- EMOJI PANEL ------------------------- -->
+  <div class="emoji-panel" id="emojiPanel">
+    <div class="emoji-row" id="emojiRow"></div>
+  </div>
+
+  <!-- ------------------------- EDITOR AREA ------------------------- -->
+  <div class="editor-wrapper">
+    <div class="editor" id="editor" contenteditable="true" lang="en" dir="ltr"></div>
+    <div class="counter-bar">
+      <span class="counter" id="wordCharCounter">Words: 0 · Chars: 0</span>
+    </div>
+  </div>
+
+  <!-- ------------------------- FOOTER ------------------------- -->
+  <footer class="footer">
+    <div class="footer-signature">
+      <span class="crafted">crafted by</span>
+      <img src="../assets/images/signature.svg" alt="Armin Silatani" class="signature">
+    </div>
+  </footer>
+
+  <!-- :::::::::::::::::::::::::: SCRIPTS :::::::::::::::::::::::::: -->
+  <script src="../assets/js/Pilvo.js"></script>
+</body>
+</html>
