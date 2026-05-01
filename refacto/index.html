@@ -13,7 +13,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>Code Refactor - Offline</title>
+  <title>Refacto - Code Beautifier</title>
+
+  <!-- :::::::::::::::::::::::::: FAVICON & STYLES :::::::::::::::::::::::::: -->
   <link rel="icon" type="image/svg+xml" href="../assets/images/logos/Re.svg">
   <link rel="stylesheet" href="../assets/css/Refacto.css">
 </head>
@@ -22,16 +24,17 @@
   <header class="app-header">
     <div class="logo-area">
       <img src="../assets/images/logos/Re.svg" alt="Re" class="logo-img" onerror="this.style.display='none'">
-      <span>CODE REFACTOR</span>
-    </div>
-    <div class="header-actions">
-      <button id="clearBtn" class="small" title="Clear all fields">Clear All</button>
+      <h1 class="logo-title">
+        <span class="logo-title-main">Refacto</span>
+        <span class="logo-title-sub">Code Beautifier</span>
+      </h1>
     </div>
   </header>
 
-  <!-- ------------------------- MAIN CONTENT ------------------------- -->
+  <!-- =========================== MAIN CONTENT ============================ -->
   <div class="main-grid">
-    <!-- INPUT PANEL -->
+
+    <!-- ------------------------- INPUT PANEL ------------------------- -->
     <div class="panel">
       <div class="panel-header">
         <span>Input</span>
@@ -41,8 +44,7 @@
         <textarea id="inputCode" placeholder="Paste your HTML, CSS, or JavaScript code here..."></textarea>
       </div>
       <div class="toolbar">
-        <button id="refactorBtn" class="accent">Refactor</button>
-        <button id="beautifyOnlyBtn" class="small">Beautify Only</button>
+        <button id="beautifyOnlyBtn" class="accent">Beautify</button>
         <select id="langSelect">
           <option value="auto">Auto Detect</option>
           <option value="html">HTML</option>
@@ -53,24 +55,25 @@
       <div class="stats" id="inputStats">Characters: 0 | Lines: 0</div>
     </div>
 
-    <!-- OUTPUT PANEL -->
+    <!-- ------------------------- OUTPUT PANEL ------------------------- -->
     <div class="panel">
       <div class="panel-header">
         <span>Output</span>
-        <button id="copyBtn" class="small">Copy</button>
       </div>
       <div class="panel-body">
         <textarea id="outputCode" readonly placeholder="Refactored code will appear here..."></textarea>
       </div>
       <div class="toolbar">
-        <button id="downloadBtn" class="small">Download</button>
-        <button id="clearOutputBtn" class="small danger">Clear Output</button>
+        <button id="copyBtn">Copy</button>
+        <button id="downloadBtn">Download</button>
+        <button id="clearOutputBtn" class="danger">Clear</button>
       </div>
       <div class="stats" id="outputStats">Characters: 0 | Lines: 0</div>
     </div>
+
   </div>
 
-  <!-- ------------------------- FOOTER ------------------------- -->
+  <!-- =========================== FOOTER ============================ -->
   <footer class="footer">
     <div class="footer-signature">
       <span class="crafted">crafted by</span>
@@ -78,8 +81,10 @@
     </div>
   </footer>
 
+  <!-- :::::::::::::::::::::::::: TOAST NOTIFICATION :::::::::::::::::::::::::: -->
   <div id="toast" class="toast"></div>
-<!-- ------------------------- SCRIPTS ------------------------- -->
+
+  <!-- :::::::::::::::::::::::::: SCRIPTS :::::::::::::::::::::::::: -->
   <script src="../assets/js/Refacto.js"></script>
 </body>
 </html>

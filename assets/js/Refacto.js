@@ -1,8 +1,16 @@
+/*
+  ****************************************************
+  *  Author: Armin Silatani
+  *  Date: 2026-06-01
+  *  Version: 1.0.0
+  ****************************************************
+*/
+
 /* =========================== SCRIPTS ============================ */
 (function() {
   'use strict';
 
-  // ─────────────────── DOM REFERENCES ───────────────────
+  /* ------------------------- DOM REFERENCES ------------------------- */
   const inputCode = document.getElementById('inputCode');
   const outputCode = document.getElementById('outputCode');
   const langBadge = document.getElementById('langBadge');
@@ -10,8 +18,28 @@
   const outputStats = document.getElementById('outputStats');
   const toast = document.getElementById('toast');
   const langSelect = document.getElementById('langSelect');
+  const clearBtn = document.getElementById('clearBtn');
 
-  // ─────────────────── HELPERS ───────────────────
+  /* ------------------------- CONSTANTS ------------------------- */
+  const TARGET_WIDTH = 80;
+  const NON_LATIN_REGEX = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+  const HTML_TAG_REGEX = /<[^>]*>/i;
+  const VOID_ELEMENTS_REGEX = /<(area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr)\b[^>]*>/i;
+  const SCRIPT_STYLE_OPEN_REGEX = /<(script|style)\b[^>]*>/i;
+  const SCRIPT_STYLE_CLOSE_REGEX = /<\/(script|style)>/i;
+
+  const SEMANTIC_TAGS = {
+    'header': 'HEADER',
+    'nav': 'NAVIGATION',
+    'main': 'MAIN CONTENT',
+    'footer': 'FOOTER',
+    'section': 'SECTION',
+    'article': 'ARTICLE',
+    'aside': 'SIDEBAR',
+    'form': 'FORM'
+  };
+
+  /* ------------------------- HELPERS ------------------------- */
   function updateStats() {
     const inLen = inputCode.value.length;
     const outLen = outputCode.value.length;
@@ -28,21 +56,28 @@
     toast._timeout = setTimeout(() => toast.classList.remove('show'), 2500);
   }
 
+  function hasNonLatin(text) {
+    return NON_LATIN_REGEX.test(text);
+  }
+
+  /* ------------------------- LANGUAGE DETECTION ------------------------- */
   function detectLanguage(code) {
     const trimmed = code.trim();
     if (!trimmed) return 'html';
-    if (/<!DOCTYPE\s+html/i.test(trimmed) || /<html[\s>]/i.test(trimmed) || /<\/?[a-z][\s\S]*?>/i.test(trimmed))
+    if (/<!DOCTYPE\s+html/i.test(trimmed) || /<html[\s>]/i.test(trimmed) || HTML_TAG_REGEX.test(trimmed)) {
       return 'html';
-    if (/[{}]/.test(trimmed) && /[:;]/.test(trimmed) && /[\w-]+\s*\{/.test(trimmed) && !/function\s*\(/.test(trimmed))
+    }
+    if (/[{}]/.test(trimmed) && /[:;]/.test(trimmed) && /[\w-]+\s*\{/.test(trimmed) && !/function\s*\(/.test(trimmed)) {
       return 'css';
-    if (/\b(function|var|let|const|=>|import|export)\b/.test(trimmed))
+    }
+    if (/\b(function|var|let|const|=>|import|export)\b/.test(trimmed)) {
       return 'js';
+    }
     return 'html';
   }
 
+  /* ------------------------- SIGNATURE GENERATION ------------------------- */
   function generateSignature(lang) {
-    const open = lang === 'html' ? '<!--' : '/*';
-    const close = lang === 'html' ? '-->' : '*/';
     if (lang === 'html') {
       return `<!--
   ****************************************************
@@ -51,34 +86,25 @@
   *  Version: 1.0.0
   ****************************************************
 -->`;
-    } else {
-      return `/*
+    }
+    return `/*
   ****************************************************
   *  Author: Armin Silatani
   *  Date: 2026-04-25
   *  Version: 1.0.0
   ****************************************************
 */`;
-    }
   }
 
-  function hasNonLatin(text) {
-    return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(text);
-  }
-
-  // ─────────────────── COMMENT REFORMATTER ───────────────────
-  const TARGET_WIDTH = 80;
-
+  /* ------------------------- COMMENT GENERATION ------------------------- */
   function createCommentLine(style, label, lang) {
     const open = lang === 'html' ? '<!--' : '/*';
     const close = lang === 'html' ? '-->' : '*/';
-    const inner = TARGET_WIDTH - open.length - close.length - 2; // 1 space each side
+    const inner = TARGET_WIDTH - open.length - close.length - 2;
     const symbol = style === 'page' ? ':' : '-';
-    const sideCount = Math.floor((inner - label.length - 2) / 2); // 2 spaces around label
-    const sides = symbol.repeat(sideCount);
-    const adjusted = label.length % 2 !== (inner - 2) % 2 ? ' ' : ''; // adjust for odd length
-    const left = sides;
-    const right = sides + (label.length % 2 !== (inner - 2) % 2 ? symbol : '');
+    const sideCount = Math.floor((inner - label.length - 2) / 2);
+    const left = symbol.repeat(sideCount);
+    const right = symbol.repeat(sideCount + (label.length % 2 !== (inner - 2) % 2 ? 1 : 0));
     return `${open} ${left} ${label} ${right} ${close}`;
   }
 
@@ -87,10 +113,15 @@
     return /(GLOBAL|RESET|BASE|STYLESHEET|SCRIPTS|DOCUMENT|IMPORTS|VARIABLES|FONTS)/.test(upper);
   }
 
+  function addPageLevelComment(code, lang) {
+    const label = lang === 'html' ? 'DOCUMENT' : (lang === 'css' ? 'STYLESHEET' : 'SCRIPTS');
+    return createCommentLine('page', label, lang) + '\n' + code;
+  }
+
+  /* ------------------------- COMMENT REFORMATTING ------------------------- */
   function normalizeExistingComments(code, lang) {
     const lines = code.split('\n');
     const output = [];
-    // Regex to detect decorative comments
     const decorativePattern = (lang === 'html')
       ? /^(\s*)<!--\s*[=\-:*]{3,}\s+(.*?)\s+[=\-:*]{3,}\s*-->\s*$/
       : /^(\s*)\/\*\s*[=\-:*]{3,}\s+(.*?)\s+[=\-:*]{3,}\s*\*\/\s*$/;
@@ -101,20 +132,13 @@
       if (match) {
         const indent = match[1] || '';
         const content = match[2].trim();
-        if (!content) {
-          // Empty decorative comment – skip (or could keep as is)
-          continue;
-        }
-        // Determine style
+        if (!content) continue;
         const style = isPageLevelCommentText(content) ? 'page' : 'section';
         const newComment = createCommentLine(style, content, lang);
-        // Add two blank lines before comment (if not first line)
-        if (output.length > 0 && output[output.length-1] !== '') {
-          output.push('', ''); // two empty lines
+        if (output.length > 0 && output[output.length - 1] !== '') {
+          output.push('', '');
         } else if (output.length === 1 && output[0] === '') {
           output.push('', '');
-        } else if (output.length === 0) {
-          // at very beginning, don't add extra blanks before signature? We'll handle later.
         }
         output.push(indent + newComment);
         continue;
@@ -124,22 +148,7 @@
     return output.join('\n');
   }
 
-  function addPageLevelComment(code, lang) {
-    const label = lang === 'html' ? 'DOCUMENT' : (lang === 'css' ? 'STYLESHEET' : 'SCRIPTS');
-    return createCommentLine('page', label, lang) + '\n' + code;
-  }
-
   function insertHTMLStructureComments(code) {
-    const semantic = {
-      'header': 'HEADER',
-      'nav': 'NAVIGATION',
-      'main': 'MAIN CONTENT',
-      'footer': 'FOOTER',
-      'section': 'SECTION',
-      'article': 'ARTICLE',
-      'aside': 'SIDEBAR',
-      'form': 'FORM'
-    };
     const lines = code.split('\n');
     const output = [];
     const commentPattern = /^\s*<!--\s*[=\-:]{3,}\s+.*\s+[=\-:]{3,}\s*-->$/;
@@ -159,14 +168,14 @@
       const tagMatch = line.match(/^\s*<([a-zA-Z]+)[\s>]/);
       if (tagMatch) {
         const tag = tagMatch[1].toLowerCase();
-        if (semantic[tag] && !commentPattern.test(line) && !commentPattern.test(lines[i-1] || '')) {
+        if (SEMANTIC_TAGS[tag] && !commentPattern.test(line) && !commentPattern.test(lines[i - 1] || '')) {
           ensureBlanks(2);
-          output.push(createCommentLine('section', semantic[tag], 'html'));
+          output.push(createCommentLine('section', SEMANTIC_TAGS[tag], 'html'));
         }
       }
       output.push(line);
-      if (/^\s*<script[\s>]/.test(line) && i > 0 && !/<\/head>/i.test(lines[i-1])) {
-        if (!commentPattern.test(lines[i-1])) {
+      if (/^\s*<script[\s>]/.test(line) && i > 0 && !/<\/head>/i.test(lines[i - 1])) {
+        if (!commentPattern.test(lines[i - 1])) {
           ensureBlanks(2);
           output.push(createCommentLine('section', 'SCRIPTS', 'html'));
         }
@@ -195,32 +204,32 @@
     return filtered.join('\n');
   }
 
-  // ─────────────────── SAFE BEAUTIFY ───────────────────
+  /* ------------------------- CODE BEAUTIFICATION ------------------------- */
   function safeBeautifyHTML(code) {
     const lines = code.split('\n');
     let indent = 0;
     const tab = '  ';
     const result = [];
-    const voidElements = /<(area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr)\b[^>]*>/i;
-    const scriptStyleOpen = /<(script|style)\b[^>]*>/i;
-    const scriptStyleClose = /<\/(script|style)>/i;
     let insideSpecial = false;
 
     for (let line of lines) {
       const trimmed = line.trim();
-      if (!trimmed) { result.push(''); continue; }
-      if (insideSpecial) {
-        result.push(line);
-        if (scriptStyleClose.test(trimmed)) insideSpecial = false;
+      if (!trimmed) {
+        result.push('');
         continue;
       }
-      if (scriptStyleOpen.test(trimmed)) {
+      if (insideSpecial) {
+        result.push(line);
+        if (SCRIPT_STYLE_CLOSE_REGEX.test(trimmed)) insideSpecial = false;
+        continue;
+      }
+      if (SCRIPT_STYLE_OPEN_REGEX.test(trimmed)) {
         insideSpecial = true;
         result.push(tab.repeat(indent) + trimmed);
         continue;
       }
       const isClosing = /^<\//.test(trimmed);
-      const isSelfClosing = /\/>$/.test(trimmed) || voidElements.test(trimmed);
+      const isSelfClosing = /\/>$/.test(trimmed) || VOID_ELEMENTS_REGEX.test(trimmed);
       if (isClosing) indent = Math.max(0, indent - 1);
       result.push(tab.repeat(indent) + trimmed);
       if (!isClosing && !isSelfClosing && /^<[a-zA-Z][^>]*[^/]>$/.test(trimmed)) indent++;
@@ -235,7 +244,10 @@
     const result = [];
     for (let line of lines) {
       const trimmed = line.trim();
-      if (!trimmed) { result.push(''); continue; }
+      if (!trimmed) {
+        result.push('');
+        continue;
+      }
       const openBraces = (trimmed.match(/{/g) || []).length;
       const closeBraces = (trimmed.match(/}/g) || []).length;
       if (closeBraces) indent = Math.max(0, indent - closeBraces);
@@ -256,23 +268,18 @@
     return code;
   }
 
-  // ─────────────────── MAIN REFACTOR ───────────────────
+  /* ------------------------- MAIN REFACTORING ------------------------- */
   function refactorCode(code, forcedLang = null) {
     if (!code.trim()) return '';
     const lang = forcedLang || detectLanguage(code);
     langBadge.textContent = lang.toUpperCase();
 
-    // 1. Remove useless / non-English comments
     let cleaned = removeUselessComments(code, lang);
-
-    // 2. Normalize existing separator comments to uniform style
     cleaned = normalizeExistingComments(cleaned, lang);
 
-    // 3. Signature + page-level comment
     let result = generateSignature(lang) + '\n\n';
     cleaned = addPageLevelComment(cleaned, lang);
 
-    // 4. Insert structural comments for HTML tags (if HTML)
     if (lang === 'html') {
       cleaned = insertHTMLStructureComments(cleaned);
     }
@@ -281,19 +288,7 @@
     return result.trim();
   }
 
-  // ─────────────────── EVENT BINDINGS ───────────────────
-  document.getElementById('refactorBtn').addEventListener('click', () => {
-    const forced = langSelect.value !== 'auto' ? langSelect.value : null;
-    try {
-      outputCode.value = refactorCode(inputCode.value, forced);
-      updateStats();
-      showToast('Refactoring completed successfully', 'success');
-    } catch (e) {
-      showToast('Error during refactoring', 'error');
-      console.error(e);
-    }
-  });
-
+  /* ------------------------- EVENT HANDLERS ------------------------- */
   document.getElementById('beautifyOnlyBtn').addEventListener('click', () => {
     const lang = langSelect.value !== 'auto' ? langSelect.value : detectLanguage(inputCode.value);
     try {
@@ -305,11 +300,13 @@
     }
   });
 
-  document.getElementById('clearBtn').addEventListener('click', () => {
-    inputCode.value = '';
-    outputCode.value = '';
-    updateStats();
-  });
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      inputCode.value = '';
+      outputCode.value = '';
+      updateStats();
+    });
+  }
 
   document.getElementById('clearOutputBtn').addEventListener('click', () => {
     outputCode.value = '';
@@ -342,7 +339,7 @@
     showToast('File downloaded', 'success');
   });
 
-  // Auto-update language badge
+  /* ------------------------- AUTO-UPDATE LISTENERS ------------------------- */
   inputCode.addEventListener('input', () => {
     updateStats();
     if (langSelect.value === 'auto') {
@@ -358,5 +355,6 @@
     }
   });
 
+  /* ------------------------- INITIALIZATION ------------------------- */
   updateStats();
 })();
