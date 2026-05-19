@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ------------------------- TOOLS DATA ------------------------- */
   const tools = [
-    { name: "Codara Service Generator", icon: "assets/images/logos/Co.svg", url: "codara" },
+    { name: "Codara Service Generator", icon: "assets/images/logos/Co.svg", url: "https://codara.arminsilatani.com/" },
     { name: "Nolvo Sitemap Builder", icon: "assets/images/logos/No.svg", url: "nolvo" },
     { name: "Qerlo Shortener", icon: "assets/images/logos/Qe.svg", url: "#" },
     { name: "Tivra Minify", icon: "assets/images/logos/Ti.svg", url: "#" },
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "Brilo Speed Check", icon: "assets/images/logos/Br.svg", url: "#" },
     { name: "Sorbi Robots Builder", icon: "assets/images/logos/So.svg", url: "#" },
     { name: "Velto Meta Inspector", icon: "assets/images/logos/Ve.svg", url: "#" },
-    { name: "Zorio Image Converter", icon: "assets/images/logos/Zo.svg", url: "zorio" },
+    { name: "Zorio Image Converter", icon: "assets/images/logos/Zo.svg", url: "https://zorio.arminsilatani.com/" },
     { name: "Galvo Video Converter", icon: "assets/images/logos/Ga.svg", url: "#" },
     { name: "Xelpo Pass Generator", icon: "assets/images/logos/Xe.svg", url: "#" },
     { name: "Dirmo DNS Checker", icon: "assets/images/logos/Di.svg", url: "#" },

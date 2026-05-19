@@ -314,3 +314,14 @@ body {
   opacity: 0.85;
   filter: brightness(0.9) contrast(1.05);
 }
+
+/* =========================== FOOTER LINK OVERRIDE ============================ */
+.footer-signature a {
+    display: contents;          /* لینک هیچ تأثیری در چیدمان نمی‌ذاره */
+    text-decoration: none;      /* خط زیرش رو حذف می‌کنه */
+    color: inherit;             /* رنگ رو از والد می‌گیره */
+}
+
+.footer-signature a:hover {
+    text-decoration: none;      /* مطمئن می‌شیم در هاور هم خط نیفته */
+}
