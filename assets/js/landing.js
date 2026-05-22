@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "Fresca Colors Tool", icon: "assets/images/logos/Fr.svg", url: "#" },
     { name: "Ubiro Beer Cost", icon: "assets/images/logos/Ub.svg", url: "ubiro" },
     { name: "Refacto Code Beautifier", icon: "assets/images/logos/Re.svg", url: "refacto" },
-    { name: "Pilvo Text Editor", icon: "assets/images/logos/Pi.svg", url: "Pilvo" }
+    { name: "Pilvo Text Editor", icon: "assets/images/logos/Pi.svg", url: "https://pilvo.arminsilatani.com/" }
   ];
 
   /* ------------------------- FLOATING LOGOS CLOUD ------------------------- */
