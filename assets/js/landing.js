@@ -36,7 +36,10 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "Fresca Colors Tool", icon: "assets/images/logos/Fr.svg", url: "#" },
     { name: "Ubiro Beer Cost", icon: "assets/images/logos/Ub.svg", url: "ubiro" },
     { name: "Refacto Code Beautifier", icon: "assets/images/logos/Re.svg", url: "refacto" },
-    { name: "Pilvo Text Editor", icon: "assets/images/logos/Pi.svg", url: "https://pilvo.arminsilatani.com/" }
+    { name: "Pilvo Text Editor", icon: "assets/images/logos/Pi.svg", url: "https://pilvo.arminsilatani.com/" },
+    { name: "Tavio Prompt Library", icon: "assets/images/logos/Ta.svg", url: "https://tavio.arminsilatani.com/" },
+    { name: "Falco Favicon Generator", icon: "assets/images/logos/Fa.svg", url: "https://falco.arminsilatani.com/" },
+    { name: "Lume Epoch Converter", icon: "assets/images/logos/Lu.svg", url: "https://lume.arminsilatani.com/" }
   ];
 
   /* ------------------------- FLOATING LOGOS CLOUD ------------------------- */
