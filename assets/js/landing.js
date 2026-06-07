@@ -24,7 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "Galvo Video Converter", icon: "assets/images/logos/Ga.svg", url: "#" },
     { name: "Xelpo Pass Generator", icon: "assets/images/logos/Xe.svg", url: "#" },
     { name: "Dirmo DNS Checker", icon: "assets/images/logos/Di.svg", url: "#" },
-    { name: "Pavro Checklist", icon: "assets/images/logos/Pa.svg", url: "#" },
     { name: "Lemro Keyword Research", icon: "assets/images/logos/Le.svg", url: "#" },
     { name: "Hirvo Density", icon: "assets/images/logos/Hi.svg", url: "#" },
     { name: "Jorvi Redirect", icon: "assets/images/logos/Jo.svg", url: "#" },
