@@ -38,7 +38,12 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "Pilvo Text Editor", icon: "assets/images/logos/Pi.svg", url: "https://pilvo.arminsilatani.com/" },
     { name: "Tavio Prompt Library", icon: "assets/images/logos/Ta.svg", url: "https://tavio.arminsilatani.com/" },
     { name: "Falco Favicon Generator", icon: "assets/images/logos/Fa.svg", url: "https://falco.arminsilatani.com/" },
-    { name: "Lume Epoch Converter", icon: "assets/images/logos/Lu.svg", url: "https://lume.arminsilatani.com/" }
+    { name: "Lume Epoch Converter", icon: "assets/images/logos/Lu.svg", url: "https://lume.arminsilatani.com/" },
+    { name: "Valeno Expiry Date Reminder", icon: "assets/images/logos/Va.svg", url: "#" },
+    { name: "Alviano Recipe Manager", icon: "assets/images/logos/Al.svg", url: "#" },
+    { name: "Mavero Workout Tracker", icon: "assets/images/logos/Ma.svg", url: "#" },
+    { name: "Tempozio Time Tracker", icon: "assets/images/logos/Te.svg", url: "#" },
+    { name: "Belluno Wishlist", icon: "assets/images/logos/Be.svg", url: "#" },
   ];
 
   /* ------------------------- FLOATING LOGOS CLOUD ------------------------- */
