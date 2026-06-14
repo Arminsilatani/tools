@@ -44,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "Mavero Workout Tracker", icon: "assets/images/logos/Ma.svg", url: "#" },
     { name: "Tempozio Time Tracker", icon: "assets/images/logos/Te.svg", url: "#" },
     { name: "Belluno Wishlist", icon: "assets/images/logos/Be.svg", url: "#" },
+    { name: "Nuvello Wallpaper App", icon: "assets/images/logos/Nu.svg", url: "#" },
   ];
 
   /* ------------------------- FLOATING LOGOS CLOUD ------------------------- */
