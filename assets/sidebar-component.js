@@ -267,9 +267,10 @@ _renderMenu() {
     container.innerHTML = '';
 
     const role = normalizeRole(this._currentUserRole);
+    const currentApp = this.getAttribute('current-app') || '';   // ← ابزار فعلی
 
     MENU_TOOLS.forEach(tool => {
-        // حذف شرط if (tool.label === currentApp) return;
+        if (tool.label === currentApp) return;   // ← این خط ابزار جاری را مخفی می‌کند
 
         const allowed = hasAccess(role, tool.minRole);
         const btn = document.createElement('button');
