@@ -261,16 +261,15 @@ class SidebarComponent extends HTMLElement {
     }
 
     /* ---------- MENU RENDERING ---------- */
-    _renderMenu() {
+_renderMenu() {
     const container = this.shadowRoot.getElementById('sidebar-menu-items');
     if (!container) return;
     container.innerHTML = '';
 
     const role = normalizeRole(this._currentUserRole);
-    const currentApp = this.getAttribute('current-app') || '';
 
     MENU_TOOLS.forEach(tool => {
-        if (tool.label === currentApp) return;
+        // حذف شرط if (tool.label === currentApp) return;
 
         const allowed = hasAccess(role, tool.minRole);
         const btn = document.createElement('button');
