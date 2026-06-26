@@ -130,7 +130,7 @@ class SidebarComponent extends HTMLElement {
         const currentApp = this.getAttribute('current-app') || '';
         this.shadowRoot.innerHTML = `
             <style>
-                @import url('https://arminsilatani.github.io/shared/sidebar.css');
+                @import url('https://arminsilatani.github.io/tools/assets/sidebar.css');
             </style>
             <button id="menu-toggle-btn" class="hamburger-btn" aria-label="Menu">
                 <span class="hamburger-line"></span>
