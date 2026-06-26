@@ -362,6 +362,12 @@
     transform: translateX(1px);
 }
 
+/* جابجایی عنوان منوها به اندازه ۱ پیکسل پایین‌تر */
+.sidebar-item > span:last-child {
+    display: inline-block;
+    transform: translateY(1px);
+}
+
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50%      { opacity: 0.2; }
