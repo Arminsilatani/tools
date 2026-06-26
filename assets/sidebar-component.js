@@ -262,48 +262,50 @@ class SidebarComponent extends HTMLElement {
 
     /* ---------- MENU RENDERING ---------- */
     _renderMenu() {
-        const container = this.shadowRoot.getElementById('sidebar-menu-items');
-        if (!container) return;
-        container.innerHTML = '';
+    const container = this.shadowRoot.getElementById('sidebar-menu-items');
+    if (!container) return;
+    container.innerHTML = '';
 
-        const role = normalizeRole(this._currentUserRole);
+    const role = normalizeRole(this._currentUserRole);
+    const currentApp = this.getAttribute('current-app') || '';
 
-        MENU_TOOLS.forEach(tool => {
-            if (tool.isSelf) return;
-            const allowed = hasAccess(role, tool.minRole);
-            const btn = document.createElement('button');
-            btn.className = 'sidebar-item' + (allowed ? '' : ' disabled');
-            btn.disabled = !allowed;
-            btn.innerHTML = `
-                <span class="sidebar-icon">
-                    <img src="${tool.iconURL}" width="20" height="20" alt="${tool.label}">
-                </span>
-                <span>${tool.label}</span>
-                ${!tool.link ? '<span class="coming-soon-tooltip">Coming Soon</span>' : ''}
-            `;
-            btn.addEventListener('click', () => {
-                if (!this._currentUser) {
-                    this.dispatchEvent(new CustomEvent('login-request', { bubbles: true, composed: true }));
-                    return;
-                }
-                if (!hasAccess(this._currentUserRole, tool.minRole)) {
-                    this.dispatchEvent(new CustomEvent('tool-click', {
-                        detail: { tool, error: 'Access denied' },
-                        bubbles: true,
-                        composed: true
-                    }));
-                    return;
-                }
+    MENU_TOOLS.forEach(tool => {
+        if (tool.label === currentApp) return;
+
+        const allowed = hasAccess(role, tool.minRole);
+        const btn = document.createElement('button');
+        btn.className = 'sidebar-item' + (allowed ? '' : ' disabled');
+        btn.disabled = !allowed;
+        btn.innerHTML = `
+            <span class="sidebar-icon">
+                <img src="${tool.iconURL}" width="20" height="20" alt="${tool.label}">
+            </span>
+            <span>${tool.label}</span>
+            ${!tool.link ? '<span class="coming-soon-tooltip">Coming Soon</span>' : ''}
+        `;
+        btn.addEventListener('click', () => {
+            if (!this._currentUser) {
+                this.dispatchEvent(new CustomEvent('login-request', { bubbles: true, composed: true }));
+                return;
+            }
+            if (!hasAccess(this._currentUserRole, tool.minRole)) {
                 this.dispatchEvent(new CustomEvent('tool-click', {
-                    detail: { tool },
+                    detail: { tool, error: 'Access denied' },
                     bubbles: true,
                     composed: true
                 }));
-                if (tool.link) window.open(tool.link, '_blank');
-            });
-            container.appendChild(btn);
+                return;
+            }
+            this.dispatchEvent(new CustomEvent('tool-click', {
+                detail: { tool },
+                bubbles: true,
+                composed: true
+            }));
+            if (tool.link) window.open(tool.link, '_blank');
         });
-    }
+        container.appendChild(btn);
+    });
+}
 
     _renderDashboardLink() {
         const dashboard = this.shadowRoot.getElementById('sidebar-dashboard');
