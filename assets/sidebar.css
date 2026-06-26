@@ -362,13 +362,11 @@
     transform: translateX(1px);
 }
 
-/* تنظیم عمودی عنوان ابزارها (۱ پیکسل به سمت پایین) */
 .sidebar-item > span:last-child {
     display: inline-block;
     transform: translateY(1px);
 }
 
-/* تنظیم عمودی نام کاربر (۱ پیکسل به سمت پایین) */
 .sidebar-dashboard-text {
     display: inline-block;
     transform: translateY(1px);
