@@ -21,7 +21,7 @@ const MENU_TOOLS = [
     { label: 'Hirvo Density', minRole: 'general', link: '', iconURL: 'https://arminsilatani.github.io/tools/assets/logos/Hi.svg' },
     { label: 'Jorvi Redirect', minRole: 'general', link: '', iconURL: 'https://arminsilatani.github.io/tools/assets/logos/Jo.svg' },
     { label: 'Mirto CRM', minRole: 'general', link: '', iconURL: 'https://arminsilatani.github.io/tools/assets/logos/Mi.svg' },
-    { label: 'Ravlo Calendar', minRole: 'sergeant', link: '', iconURL: 'https://arminsilatani.github.io/tools/assets/logos/Ra.svg', isSelf: true },
+    { label: 'Ravlo Calendar', minRole: 'sergeant', link: '', iconURL: 'https://arminsilatani.github.io/tools/assets/logos/Ra.svg' },
     { label: 'Rinvo Accounting', minRole: 'general', link: '', iconURL: 'https://arminsilatani.github.io/tools/assets/logos/Ri.svg' },
     { label: 'Yelmo Brand Namer', minRole: 'general', link: '', iconURL: 'https://arminsilatani.github.io/tools/assets/logos/Ye.svg' },
     { label: 'Cedro Flashcards', minRole: 'general', link: '', iconURL: 'https://arminsilatani.github.io/tools/assets/logos/Ce.svg' },
