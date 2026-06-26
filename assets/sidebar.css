@@ -215,10 +215,27 @@
   height: auto;
 }
 
-/* دکمه‌های Login / Logout */
+.login-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.login-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent, #6bcbff);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.login-item:hover::before {
+    opacity: 0.15;                         /* یک لایه‌ی ۱۵٪ شفاف از اکسنت */
+}
+
 .login-item:hover {
-  color: #6bcbff;
-  background: rgba(100, 180, 255, 0.1);
+    color: var(--accent);                  /* متن هم رنگ اکسنت می‌شود */
+    background: transparent;               /* پس‌زمینه‌ی پیش‌فرض را حذف کن */
 }
 
 .logout-item:hover {
