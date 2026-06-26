@@ -364,12 +364,12 @@
 
 .sidebar-item > span:last-child {
     display: inline-block;
-    transform: translateY(1px);
+    transform: translateY(4px);
 }
 
 .sidebar-dashboard-text {
     display: inline-block;
-    transform: translateY(1px);
+    transform: translateY(-3px);
 }
 
 @keyframes blink {
