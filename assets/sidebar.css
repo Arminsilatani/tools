@@ -178,7 +178,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 16px;
+  padding: 10px 16px;
   border-radius: 12px;
   background: transparent;
   border: none;
@@ -360,6 +360,18 @@
 #sidebar-dashboard .sidebar-icon,
 #sidebar-dashboard .sidebar-dashboard-text {
     transform: translateX(1px);
+}
+
+/* تنظیم عمودی عنوان ابزارها (۱ پیکسل به سمت پایین) */
+.sidebar-item > span:last-child {
+    display: inline-block;
+    transform: translateY(1px);
+}
+
+/* تنظیم عمودی نام کاربر (۱ پیکسل به سمت پایین) */
+.sidebar-dashboard-text {
+    display: inline-block;
+    transform: translateY(1px);
 }
 
 @keyframes blink {
