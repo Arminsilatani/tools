@@ -362,7 +362,6 @@
     transform: translateX(1px);
 }
 
-/* جابجایی عنوان منوها به اندازه ۱ پیکسل پایین‌تر */
 .sidebar-item > span:last-child {
     display: inline-block;
     transform: translateY(1px);
