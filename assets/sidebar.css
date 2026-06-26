@@ -362,16 +362,6 @@
     transform: translateX(1px);
 }
 
-.sidebar-item > span:last-child {
-    display: inline-block;
-    transform: translateY(4px);
-}
-
-.sidebar-dashboard-text {
-    display: inline-block;
-    transform: translateY(-3px);
-}
-
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50%      { opacity: 0.2; }
