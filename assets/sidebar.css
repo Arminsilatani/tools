@@ -361,7 +361,17 @@
 #sidebar-dashboard .sidebar-dashboard-text {
     transform: translateX(1px);
 }
+/* حرکت ۱ پیکسل پایین‌تر برای عنوان ابزارها */
+.sidebar-item > span:last-child {
+    position: relative;
+    top: 1px;
+}
 
+/* حرکت ۱ پیکسل پایین‌تر برای نام کاربر */
+.sidebar-dashboard-text {
+    position: relative;
+    top: 1px;
+}
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50%      { opacity: 0.2; }
