@@ -371,12 +371,13 @@ _renderMenu() {
             itemEl.addEventListener('click', () => {
                 const eventId = itemEl.dataset.eventId;
                 const date = itemEl.dataset.date;
-                if (eventId) {
-                    this.dispatchEvent(new CustomEvent('today-item-click', {
-                        detail: { eventId, date },
-                        bubbles: true,
-                        composed: true
-                    }));
+                if (eventId && window.ravloOpenEvent) {
+                    // بستن سایدبار (با کلیک روی overlay)
+                    const overlayEl = this.shadowRoot.getElementById('sidebar-overlay');
+                    if (overlayEl && overlayEl.classList.contains('open')) {
+                        overlayEl.click();
+                    }
+                    window.ravloOpenEvent(eventId, date);
                 }
             });
         });
