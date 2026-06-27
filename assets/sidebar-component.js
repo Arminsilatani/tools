@@ -178,7 +178,7 @@ class SidebarComponent extends HTMLElement {
                     </button>
                     <a id="sidebar-coffee" class="sidebar-item" href="#" target="_blank" rel="noopener noreferrer">
                         <span class="sidebar-icon">
-                            <a id="sidebar-coffee" class="sidebar-item" href="#" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
                                 <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
                                 <line x1="6" y1="1" x2="6" y2="4"/>
