@@ -28,7 +28,7 @@
   position: fixed;
   top: 41px;
   left: 60px;
-  z-index: 10;
+  z-index: 4;
   width: 18px;
   height: 24px;
   background: transparent;
@@ -74,7 +74,7 @@
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
-  z-index: 5;
+  z-index: 2;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
