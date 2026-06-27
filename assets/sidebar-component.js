@@ -331,41 +331,56 @@ _renderMenu() {
     }
 
     _renderTodayList() {
-    const container = this.shadowRoot.getElementById('sidebar-today-list');
-    if (!container) return;
+        const container = this.shadowRoot.getElementById('sidebar-today-list');
+        if (!container) return;
 
-    let html = '';
+        let html = '';
 
-    if (this._todayItems.length > 0) {
-        html += '<div style="padding:8px 16px; font-size:10px; text-transform:uppercase; color:#aaa; letter-spacing:0.5px;">Today</div>';
-        this._todayItems.forEach(item => {
-            html += `
-                <div class="sidebar-today-item" data-event-id="${item.id}" style="cursor:pointer;">
-                    <span class="dot" style="background:${item.color}"></span>
-                    <span class="title">${item.title}</span>
-                </div>`;
+        if (this._todayItems.length > 0) {
+            html += '<div style="padding:8px 16px; font-size:10px; text-transform:uppercase; color:#aaa; letter-spacing:0.5px;">Today</div>';
+            this._todayItems.forEach(item => {
+                html += `
+                    <div class="sidebar-today-item" data-event-id="${item.id}" data-date="${item.date}" style="cursor:pointer;">
+                        <span class="dot" style="background:${item.color}"></span>
+                        <span class="title">${item.title}</span>
+                    </div>`;
+            });
+        }
+
+        if (this._overdueItems.length > 0) {
+            html += '<div style="padding:8px 16px; font-size:10px; text-transform:uppercase; color:#ff6b6b; letter-spacing:0.5px;">Overdue</div>';
+            html += '<div class="sidebar-overdue-box">';
+            this._overdueItems.forEach(item => {
+                html += `
+                    <div class="sidebar-today-item overdue-item" data-event-id="${item.id}" data-date="${item.date}" style="cursor:pointer;">
+                        <span class="dot" style="background:${item.color}"></span>
+                        <span class="title">${item.title}</span>
+                    </div>`;
+            });
+            html += '</div>';
+        }
+
+        if (html === '') {
+            html = '<div style="padding:8px 16px;font-size:12px;color:#555;">No events today</div>';
+        }
+
+        container.innerHTML = html;
+
+        // 🔥 اضافه کردن event listener برای کلیک روی آیتم‌ها
+        container.querySelectorAll('.sidebar-today-item').forEach(itemEl => {
+            itemEl.addEventListener('click', () => {
+                const eventId = itemEl.dataset.eventId;
+                const date = itemEl.dataset.date;
+                if (eventId) {
+                    this.dispatchEvent(new CustomEvent('today-item-click', {
+                        detail: { eventId, date },
+                        bubbles: true,
+                        composed: true
+                    }));
+                }
+            });
         });
     }
-
-    if (this._overdueItems.length > 0) {
-        html += '<div style="padding:8px 16px; font-size:10px; text-transform:uppercase; color:#ff6b6b; letter-spacing:0.5px;">Overdue</div>';
-        html += '<div class="sidebar-overdue-box">';
-        this._overdueItems.forEach(item => {
-            html += `
-                <div class="sidebar-today-item overdue-item" data-event-id="${item.id}" data-date="${item.date}" style="cursor:pointer;">
-                    <span class="dot" style="background:${item.color}"></span>
-                    <span class="title">${item.title}</span>
-                </div>`;
-        });
-        html += '</div>';
-    }
-
-    if (html === '') {
-        html = '<div style="padding:8px 16px;font-size:12px;color:#555;">No events today</div>';
-    }
-
-    container.innerHTML = html;
-}
 
     /* ---------- SESSION ---------- */
     async _restoreSession() {
