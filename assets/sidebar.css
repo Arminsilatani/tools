@@ -340,8 +340,8 @@
   white-space: nowrap;
 }
 
-#sidebar-dashboard .sidebar-icon {
-    transform: translateX(1px) translateY(2px);
+#sidebar-dashboard .sidebar-icon img {
+    transform: translateY(2px);
 }
 
 /* ------------------------- DASHBOARD LINK ------------------------- */
