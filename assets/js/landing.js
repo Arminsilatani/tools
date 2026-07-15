@@ -46,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "Belluno Wishlist", icon: "assets/images/logos/Be.svg", url: "#" },
     { name: "Nuvello Wallpaper App", icon: "assets/images/logos/Nu.svg", url: "#" },
     { name: "Fiora Period Tracker", icon: "assets/images/logos/Fi.svg", url: "#" },
+    { name: "Orvella Internal Link Manager", icon: "assets/images/logos/Or.svg", url: "#" },
   ];
 
   /* ------------------------- FLOATING LOGOS CLOUD ------------------------- */
