@@ -39,7 +39,7 @@ const MENU_TOOLS = [
     { label: 'Belluno Wishlist', minRole: 'sergeant', link: '', iconURL: 'https://arminsilatani.github.io/tools/assets/images/logos/Be.svg' },
     { label: 'Nuvello Wallpaper App', minRole: 'general', link: '', iconURL: 'https://arminsilatani.github.io/tools/assets/images/logos/Nu.svg' },
     { label: 'Fiora Period Tracker', minRole: 'sergeant', link: '', iconURL: 'https://arminsilatani.github.io/tools/assets/images/logos/Fi.svg' },
-    { label: 'Orvella Internal Link Manager', minRole: 'commander', link: '', iconURL: 'https://arminsilatani.github.io/tools/assets/images/logos/Or.svg' },
+    { label: 'Orvella Internal Link Manager', minRole: 'commander', link: 'https://arminsilatani.github.io/orvella/', iconURL: 'https://arminsilatani.github.io/tools/assets/images/logos/Or.svg' },
 ];
 
 const ROLE_HIERARCHY = ['recruit', 'sergeant', 'commander', 'general'];
